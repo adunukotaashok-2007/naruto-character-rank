@@ -1,51 +1,52 @@
 const SERVER_URL =
 "https://naruto-character-rank.onrender.com";
 
-const socket = io(SERVER_URL);
+const socket =
+io(SERVER_URL);
 
-// ========================================
-// CHARACTER DATA
-// ========================================
+// ============================================
+// CHARACTERS
+// ============================================
 
 const characters = {
 
 Naruto: {
-    name: "Naruto Uzumaki",
+    name: "Naruto",
     image: "assets/characters/images%20%282%29.jpeg"
 },
 
 Sasuke: {
-    name: "Sasuke Uchiha",
+    name: "Sasuke",
     image: "assets/characters/images%20%283%29.jpeg"
 },
 
 Itachi: {
-    name: "Itachi Uchiha",
+    name: "Itachi",
     image: "assets/characters/images%20%284%29.jpeg"
 },
 
 Madara: {
-    name: "Madara Uchiha",
+    name: "Madara",
     image: "assets/characters/images%20%285%29.jpeg"
 },
 
 Kakashi: {
-    name: "Kakashi Hatake",
+    name: "Kakashi",
     image: "assets/characters/why-do-people-believe-dms-kakashi-is-stronger-than-naruto-v0-6vyk8nfzaqre1.jpg"
 },
 
 Minato: {
-    name: "Minato Namikaze",
+    name: "Minato",
     image: "assets/characters/images%20%286%29.jpeg"
 },
 
 Tobirama: {
-    name: "Tobirama Senju",
+    name: "Tobirama",
     image: "assets/characters/images%20%287%29.jpeg"
 },
 
 Hashirama: {
-    name: "Hashirama Senju",
+    name: "Hashirama",
     image: "assets/characters/images%20%288%29.jpeg"
 },
 
@@ -55,7 +56,7 @@ Jiraiya: {
 },
 
 Hiruzen: {
-    name: "Hiruzen Sarutobi",
+    name: "Hiruzen",
     image: "assets/characters/images%20%2810%29.jpeg"
 },
 
@@ -75,12 +76,12 @@ Lee: {
 },
 
 Shikamaru: {
-    name: "Shikamaru Nara",
+    name: "Shikamaru",
     image: "assets/characters/images%20%2814%29.jpeg"
 },
 
 Neji: {
-    name: "Neji Hyuga",
+    name: "Neji",
     image: "assets/characters/images%20%2815%29.jpeg"
 },
 
@@ -90,12 +91,12 @@ Gaara: {
 },
 
 Kisame: {
-    name: "Kisame Hoshigaki",
+    name: "Kisame",
     image: "assets/characters/images%20%2817%29.jpeg"
 },
 
 Sakura: {
-    name: "Sakura Haruno",
+    name: "Sakura",
     image: "assets/characters/images%20%2818%29.jpeg"
 },
 
@@ -105,426 +106,21 @@ Nagato: {
 },
 
 Obito: {
-    name: "Obito Uchiha",
+    name: "Obito",
     image: "assets/characters/images%20%2820%29.jpeg"
 }
 
 };
 
-// ========================================
-// STATE
-// ========================================
-
-let playerName = "";
-let roomCode = "";
-let selectedGame = "";
-let isHost = false;
-
-let selectedOption = null;
-let currentCategory = 0;
-
-// ========================================
-// ELEMENTS
-// ========================================
-
-const sections = [
-"home",
-"lobby",
-"room",
-"rankGame",
-"waiting",
-"categoryResult",
-"auction",
-"auctionResult",
-"final"
-];
-
-// ========================================
-// SHOW SECTION
-// ========================================
-
-function show(id) {
-
-sections.forEach(section => {
-
-    document
-        .getElementById(section)
-        .classList.add("hidden");
-
-});
-
-document
-    .getElementById(id)
-    .classList.remove("hidden");
-
-}
-
-// ========================================
-// HOME BUTTONS
-// ========================================
-
-document.getElementById(
-"rankGameBtn"
-).onclick = () => {
-
-selectedGame = "rank";
-
-document.getElementById(
-    "lobbyTitle"
-).textContent =
-    "🏆 CHARACTER RANK";
-
-show("lobby");
-
-};
-
-document.getElementById(
-"auctionGameBtn"
-).onclick = () => {
-
-selectedGame = "auction";
-
-document.getElementById(
-    "lobbyTitle"
-).textContent =
-    "🔨 NARUTO AUCTION";
-
-show("lobby");
-
-};
-
-// ========================================
-// BACK
-// ========================================
-
-document.getElementById(
-"backHome"
-).onclick = () => {
-
-show("home");
-
-};
-
-// ========================================
-// CONNECTION
-// ========================================
-
-socket.on("connect", () => {
-
-document.getElementById(
-    "status"
-).textContent =
-    "🟢 Server connected";
-
-});
-
-socket.on("connect_error", error => {
-
-document.getElementById(
-    "status"
-).textContent =
-    "🔴 Server connection failed";
-
-console.error(
-    "Socket connection error:",
-    error
-);
-
-});
-
-socket.on("disconnect", () => {
-
-document.getElementById(
-    "status"
-).textContent =
-    "🔴 Server disconnected";
-
-});
-
-// ========================================
-// CREATE ROOM
-// ========================================
-
-document.getElementById(
-"createRoom"
-).onclick = () => {
-
-playerName =
-    document.getElementById(
-        "playerName"
-    ).value.trim();
-
-
-if (!playerName) {
-
-    alert(
-        "Please enter your name."
-    );
-
-    return;
-}
-
-
-socket.emit(
-    "createRoom",
-    {
-        playerName: playerName,
-        game: selectedGame
-    }
-);
-
-};
-
-// ========================================
-// JOIN ROOM
-// ========================================
-
-document.getElementById(
-"joinRoom"
-).onclick = () => {
-
-playerName =
-    document.getElementById(
-        "playerName"
-    ).value.trim();
-
-
-roomCode =
-    document.getElementById(
-        "roomInput"
-    ).value.trim().toUpperCase();
-
-
-if (!playerName) {
-
-    alert(
-        "Please enter your name."
-    );
-
-    return;
-}
-
-
-if (roomCode.length !== 6) {
-
-    alert(
-        "Room code must be 6 characters."
-    );
-
-    return;
-}
-
-
-socket.emit(
-    "joinRoom",
-    {
-        roomCode: roomCode,
-        playerName: playerName,
-        game: selectedGame
-    }
-);
-
-};
-
-// ========================================
-// ROOM CREATED
-// ========================================
-
-socket.on(
-"roomCreated",
-data => {
-
-    roomCode =
-        data.roomCode;
-
-    isHost = true;
-
-    updateRoom(
-        data.players
-    );
-
-    show("room");
-
-}
-
-);
-
-// ========================================
-// ROOM JOINED
-// ========================================
-
-socket.on(
-"roomJoined",
-data => {
-
-    roomCode =
-        data.roomCode;
-
-    isHost = false;
-
-    updateRoom(
-        data.players
-    );
-
-    show("room");
-
-}
-
-);
-
-// ========================================
-// ROOM ERROR
-// ========================================
-
-socket.on(
-"roomError",
-message => {
-
-    alert(message);
-
-}
-
-);
-
-// ========================================
-// PLAYERS UPDATED
-// ========================================
-
-socket.on(
-"playersUpdated",
-data => {
-
-    updateRoom(
-        data.players
-    );
-
-}
-
-);
-
-// ========================================
-// UPDATE ROOM
-// ========================================
-
-function updateRoom(players) {
-
-document.getElementById(
-    "roomCode"
-).textContent =
-    roomCode;
-
-
-const list =
-    document.getElementById(
-        "players"
-    );
-
-
-list.innerHTML = "";
-
-
-players.forEach(
-    (player, index) => {
-
-        const row =
-            document.createElement(
-                "div"
-            );
-
-
-        row.className =
-            "player-row";
-
-
-        row.innerHTML = `
-            <span>
-                ${index + 1}. ${player.name}
-            </span>
-
-            <strong>
-                ${
-                    index === 0
-                        ? "👑 HOST"
-                        : "👤"
-                }
-            </strong>
-        `;
-
-
-        list.appendChild(row);
-
-    }
-);
-
-
-document.getElementById(
-    "playerCount"
-).textContent =
-    `${players.length}/6 players`;
-
-
-document.getElementById(
-    "startGame"
-).style.display =
-    isHost
-        ? "block"
-        : "none";
-
-}
-
-// ========================================
-// START GAME
-// ========================================
-
-document.getElementById(
-"startGame"
-).onclick = () => {
-
-socket.emit(
-    "startGame",
-    {
-        roomCode: roomCode
-    }
-);
-
-};
-
-// ========================================
-// GAME STARTED
-// ========================================
-
-socket.on(
-"gameStarted",
-data => {
-
-    if (
-        selectedGame === "rank"
-    ) {
-
-        currentCategory = 0;
-
-        show("rankGame");
-
-        loadCategory();
-
-    } else {
-
-        show("auction");
-
-    }
-
-}
-
-);
-
-// ========================================
+// ============================================
 // CATEGORIES
-// ========================================
+// ============================================
 
 const categories = [
 
 {
     name: "🧬 Talent",
+    type: "character",
     options: [
         "Naruto",
         "Sasuke",
@@ -536,6 +132,7 @@ const categories = [
 
 {
     name: "💪 Body",
+    type: "character",
     options: [
         "Guy",
         "Lee",
@@ -547,6 +144,7 @@ const categories = [
 
 {
     name: "🧠 Mind / IQ",
+    type: "character",
     options: [
         "Shikamaru",
         "Itachi",
@@ -558,7 +156,8 @@ const categories = [
 
 {
     name: "🩸 Clan",
-    clans: [
+    type: "clan",
+    options: [
         "Uzumaki",
         "Senju",
         "Uchiha",
@@ -569,6 +168,7 @@ const categories = [
 
 {
     name: "🔵 Chakra",
+    type: "character",
     options: [
         "Naruto",
         "Hashirama",
@@ -580,6 +180,7 @@ const categories = [
 
 {
     name: "👨‍🏫 Sensei",
+    type: "character",
     options: [
         "Jiraiya",
         "Kakashi",
@@ -591,6 +192,7 @@ const categories = [
 
 {
     name: "🥋 Taijutsu",
+    type: "character",
     options: [
         "Guy",
         "Lee",
@@ -602,6 +204,7 @@ const categories = [
 
 {
     name: "🌀 Ninjutsu",
+    type: "character",
     options: [
         "Naruto",
         "Sasuke",
@@ -613,6 +216,7 @@ const categories = [
 
 {
     name: "🔥 Kekkei Genkai",
+    type: "character",
     options: [
         "Hashirama",
         "Sasuke",
@@ -624,6 +228,7 @@ const categories = [
 
 {
     name: "⚡ Speed",
+    type: "character",
     options: [
         "Minato",
         "Naruto",
@@ -635,6 +240,7 @@ const categories = [
 
 {
     name: "💥 Strength",
+    type: "character",
     options: [
         "Guy",
         "Hashirama",
@@ -646,6 +252,7 @@ const categories = [
 
 {
     name: "🎯 Battle IQ",
+    type: "character",
     options: [
         "Itachi",
         "Shikamaru",
@@ -657,6 +264,7 @@ const categories = [
 
 {
     name: "👻 Genjutsu",
+    type: "character",
     options: [
         "Itachi",
         "Sasuke",
@@ -668,6 +276,7 @@ const categories = [
 
 {
     name: "🌪️ Chakra Nature",
+    type: "character",
     options: [
         "Naruto",
         "Sasuke",
@@ -679,6 +288,7 @@ const categories = [
 
 {
     name: "🐉 Tailed Beast",
+    type: "character",
     options: [
         "Naruto",
         "Obito",
@@ -690,6 +300,7 @@ const categories = [
 
 {
     name: "❤️ Healing",
+    type: "character",
     options: [
         "Sakura",
         "Naruto",
@@ -701,45 +312,437 @@ const categories = [
 
 ];
 
-// ========================================
+// ============================================
+// STATE
+// ============================================
+
+let gameType = "";
+
+let playerName = "";
+
+let roomCode = "";
+
+let host = false;
+
+let categoryIndex = 0;
+
+let selectedChoice = null;
+
+// ============================================
+// SCREENS
+// ============================================
+
+function screen(id) {
+
+document
+    .querySelectorAll(".screen")
+    .forEach(
+        element =>
+            element.classList
+                .add("hidden")
+    );
+
+document
+    .getElementById(id)
+    .classList
+    .remove("hidden");
+
+}
+
+// ============================================
+// HOME
+// ============================================
+
+document
+.getElementById("rankButton")
+.onclick = () => {
+
+    gameType = "rank";
+
+    document
+        .getElementById("gameTitle")
+        .textContent =
+        "🏆 CHARACTER RANK";
+
+    screen("lobby");
+
+};
+
+document
+.getElementById("auctionButton")
+.onclick = () => {
+
+    gameType = "auction";
+
+    document
+        .getElementById("gameTitle")
+        .textContent =
+        "🔨 NARUTO AUCTION";
+
+    screen("lobby");
+
+};
+
+document
+.getElementById("homeButton")
+.onclick = () => {
+
+    screen("home");
+
+};
+
+// ============================================
+// SOCKET
+// ============================================
+
+socket.on(
+"connect",
+() => {
+
+    document
+        .getElementById(
+            "connectionStatus"
+        )
+        .textContent =
+        "🟢 Server connected";
+
+}
+
+);
+
+socket.on(
+"connect_error",
+() => {
+
+    document
+        .getElementById(
+            "connectionStatus"
+        )
+        .textContent =
+        "🔴 Server connection failed";
+
+}
+
+);
+
+// ============================================
+// CREATE ROOM
+// ============================================
+
+document
+.getElementById("createButton")
+.onclick = () => {
+
+    playerName =
+        document
+            .getElementById(
+                "nameInput"
+            )
+            .value
+            .trim();
+
+    if (!playerName) {
+
+        alert(
+            "Enter your name first."
+        );
+
+        return;
+
+    }
+
+    socket.emit(
+        "createRoom",
+        {
+            playerName,
+            game: gameType
+        }
+    );
+
+};
+
+// ============================================
+// JOIN ROOM
+// ============================================
+
+document
+.getElementById("joinButton")
+.onclick = () => {
+
+    playerName =
+        document
+            .getElementById(
+                "nameInput"
+            )
+            .value
+            .trim();
+
+    roomCode =
+        document
+            .getElementById(
+                "codeInput"
+            )
+            .value
+            .trim()
+            .toUpperCase();
+
+    if (!playerName) {
+
+        alert(
+            "Enter your name first."
+        );
+
+        return;
+
+    }
+
+    if (roomCode.length !== 6) {
+
+        alert(
+            "Enter a 6-character room code."
+        );
+
+        return;
+
+    }
+
+    socket.emit(
+        "joinRoom",
+        {
+            playerName,
+            roomCode,
+            game: gameType
+        }
+    );
+
+};
+
+// ============================================
+// ROOM CREATED
+// ============================================
+
+socket.on(
+"roomCreated",
+data => {
+
+    roomCode =
+        data.roomCode;
+
+    host = true;
+
+    updatePlayers(
+        data.players
+    );
+
+    screen("room");
+
+}
+
+);
+
+// ============================================
+// ROOM JOINED
+// ============================================
+
+socket.on(
+"roomJoined",
+data => {
+
+    roomCode =
+        data.roomCode;
+
+    host = false;
+
+    updatePlayers(
+        data.players
+    );
+
+    screen("room");
+
+}
+
+);
+
+// ============================================
+// ROOM ERROR
+// ============================================
+
+socket.on(
+"roomError",
+message => {
+
+    alert(message);
+
+}
+
+);
+
+// ============================================
+// PLAYERS
+// ============================================
+
+socket.on(
+"playersUpdated",
+data => {
+
+    updatePlayers(
+        data.players
+    );
+
+}
+
+);
+
+function updatePlayers(players) {
+
+document
+    .getElementById(
+        "roomCode"
+    )
+    .textContent =
+    roomCode;
+
+
+const list =
+    document.getElementById(
+        "playerList"
+    );
+
+list.innerHTML = "";
+
+
+players.forEach(
+    (player, index) => {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.className =
+            "player";
+
+        div.innerHTML = `
+
+            <span>
+                ${index + 1}.
+                ${player.name}
+            </span>
+
+            <b>
+                ${
+                    index === 0
+                        ? "👑 HOST"
+                        : "👤"
+                }
+            </b>
+
+        `;
+
+        list.appendChild(div);
+
+    }
+);
+
+
+document
+    .getElementById(
+        "playerCount"
+    )
+    .textContent =
+    `${players.length} / 6 players`;
+
+}
+
+// ============================================
+// START
+// ============================================
+
+document
+.getElementById("startButton")
+.onclick = () => {
+
+    socket.emit(
+        "startGame",
+        {
+            roomCode
+        }
+    );
+
+};
+
+socket.on(
+"gameStarted",
+data => {
+
+    gameType =
+        data.game ||
+        gameType;
+
+    if (
+        gameType === "rank"
+    ) {
+
+        categoryIndex = 0;
+
+        screen("rankGame");
+
+        loadCategory();
+
+    }
+
+    else {
+
+        screen("auction");
+
+    }
+
+}
+
+);
+
+// ============================================
 // LOAD CATEGORY
-// ========================================
+// ============================================
 
 function loadCategory() {
 
-selectedOption = null;
+selectedChoice = null;
+
 
 const category =
-    categories[currentCategory];
+    categories[
+        categoryIndex
+    ];
 
 
-document.getElementById(
-    "categoryNumber"
-).textContent =
-    `${currentCategory + 1} / ${categories.length}`;
-
-
-document.getElementById(
-    "categoryTitle"
-).textContent =
+document
+    .getElementById(
+        "categoryName"
+    )
+    .textContent =
     category.name;
 
 
-const container =
-    document.getElementById(
-        "rankOptions"
-    );
+document
+    .getElementById(
+        "categoryNumber"
+    )
+    .textContent =
+    `${categoryIndex + 1} / ${categories.length}`;
 
 
-container.innerHTML = "";
+const grid =
+    document
+        .getElementById(
+            "characterGrid"
+        );
 
 
-const options =
-    category.clans ||
-    category.options;
+grid.innerHTML = "";
 
 
-options.forEach(
+category.options.forEach(
     option => {
 
         const div =
@@ -749,31 +752,50 @@ options.forEach(
 
 
         div.className =
-            "option";
+            "character";
 
 
         if (
-            category.clans
+            category.type ===
+            "clan"
         ) {
 
             div.classList.add(
-                "clan-option"
+                "clan"
             );
 
             div.textContent =
                 option;
 
-        } else {
+        }
+
+        else {
 
             div.innerHTML = `
+
                 <img
-                    src="${characters[option].image}"
-                    alt="${characters[option].name}"
+                    src="${
+                        characters[
+                            option
+                        ].image
+                    }"
+                    alt="${
+                        characters[
+                            option
+                        ].name
+                    }"
                 >
 
-                <div class="option-name">
-                    ${characters[option].name}
+                <div
+                    class="characterName"
+                >
+                    ${
+                        characters[
+                            option
+                        ].name
+                    }
                 </div>
+
             `;
 
         }
@@ -783,11 +805,11 @@ options.forEach(
 
             document
                 .querySelectorAll(
-                    ".option"
+                    ".character"
                 )
                 .forEach(
-                    item =>
-                        item.classList
+                    element =>
+                        element.classList
                             .remove(
                                 "selected"
                             )
@@ -799,105 +821,115 @@ options.forEach(
             );
 
 
-            selectedOption =
+            selectedChoice =
                 option;
 
         };
 
 
-        container.appendChild(div);
+        grid.appendChild(div);
 
     }
 );
 
 }
 
-// ========================================
-// SUBMIT RANK
-// ========================================
+// ============================================
+// CONFIRM
+// ============================================
 
-document.getElementById(
-"submitRank"
-).onclick = () => {
+document
+.getElementById(
+"confirmButton"
+)
+.onclick = () => {
 
-if (!selectedOption) {
+    if (!selectedChoice) {
 
-    alert(
-        "Select one option first."
+        alert(
+            "Select ONE choice."
+        );
+
+        return;
+
+    }
+
+
+    screen("waiting");
+
+
+    socket.emit(
+        "submitRank",
+        {
+            roomCode,
+            category:
+                categoryIndex,
+            option:
+                selectedChoice
+        }
     );
-
-    return;
-}
-
-
-show("waiting");
-
-
-socket.emit(
-    "submitRank",
-    {
-        roomCode: roomCode,
-        category: currentCategory,
-        option: selectedOption
-    }
-);
 
 };
 
-// ========================================
-// RANK PROGRESS
-// ========================================
+// ============================================
+// WAITING
+// ============================================
 
 socket.on(
 "rankProgress",
 data => {
 
-    document.getElementById(
-        "waitingMessage"
-    ).textContent =
-        `${data.submitted}/${data.total} players answered`;
+    document
+        .getElementById(
+            "waitingText"
+        )
+        .textContent =
+        `${data.submitted} / ${data.total} players answered`;
 
 }
 
 );
 
-// ========================================
-// RANK RESULT
-// ========================================
+// ============================================
+// RESULT
+// ============================================
 
 socket.on(
 "rankResult",
 data => {
 
-    show("categoryResult");
+    screen("result");
 
 
-    document.getElementById(
-        "categoryResultTitle"
-    ).textContent =
-        data.category;
+    document
+        .getElementById(
+            "resultTitle"
+        )
+        .textContent =
+        `🏆 ${data.category}`;
 
 
-    const container =
-        document.getElementById(
-            "categoryRanking"
-        );
+    const list =
+        document
+            .getElementById(
+                "resultList"
+            );
 
 
-    container.innerHTML = "";
+    list.innerHTML = "";
 
 
     data.players.forEach(
         (player, index) => {
 
-            const row =
+            const div =
                 document.createElement(
                     "div"
                 );
 
 
-            row.className =
-                "rank-result";
+            div.className =
+                "resultRow";
 
 
             let image = "";
@@ -910,41 +942,49 @@ data => {
             ) {
 
                 image = `
+
                     <img
-                        class="rank-character-image"
                         src="${
                             characters[
                                 player.option
                             ].image
                         }"
                     >
+
                 `;
 
             }
 
 
-            row.innerHTML = `
-                <div class="rank-number">
+            div.innerHTML = `
+
+                <div class="rank">
                     #${index + 1}
                 </div>
 
                 ${image}
 
-                <div class="rank-info">
+                <div
+                    class="resultInfo"
+                >
 
-                    <div class="rank-player">
+                    <b>
                         ${player.player}
-                    </div>
+                    </b>
 
-                    <div class="rank-choice">
+                    <div
+                        class="resultChoice"
+                    >
+                        Selected:
                         ${player.option}
                     </div>
 
                 </div>
+
             `;
 
 
-            container.appendChild(row);
+            list.appendChild(div);
 
         }
     );
@@ -953,20 +993,22 @@ data => {
 
 );
 
-// ========================================
+// ============================================
 // NEXT CATEGORY
-// ========================================
+// ============================================
 
-document.getElementById(
-"nextCategory"
-).onclick = () => {
+document
+.getElementById(
+"nextButton"
+)
+.onclick = () => {
 
-socket.emit(
-    "nextRankCategory",
-    {
-        roomCode: roomCode
-    }
-);
+    socket.emit(
+        "nextRankCategory",
+        {
+            roomCode
+        }
+    );
 
 };
 
@@ -974,11 +1016,10 @@ socket.on(
 "nextRankCategory",
 data => {
 
-    currentCategory =
+    categoryIndex =
         data.category;
 
-
-    show("rankGame");
+    screen("rankGame");
 
     loadCategory();
 
@@ -986,69 +1027,92 @@ data => {
 
 );
 
-// ========================================
+// ============================================
 // AUCTION
-// ========================================
+// ============================================
 
 socket.on(
 "auctionUpdate",
 data => {
 
-    show("auction");
+    screen("auction");
 
 
-    document.getElementById(
-        "auctionCharacter"
-    ).textContent =
+    if (
         characters[
             data.character
-        ].name;
+        ]
+    ) {
+
+        document
+            .getElementById(
+                "auctionName"
+            )
+            .textContent =
+            characters[
+                data.character
+            ].name;
 
 
-    document.getElementById(
-        "auctionImage"
-    ).src =
-        characters[
-            data.character
-        ].image;
+        document
+            .getElementById(
+                "auctionImage"
+            )
+            .src =
+            characters[
+                data.character
+            ].image;
+
+    }
 
 
-    document.getElementById(
-        "currentBid"
-    ).textContent =
+    document
+        .getElementById(
+            "auctionTimer"
+        )
+        .textContent =
+        data.time;
+
+
+    document
+        .getElementById(
+            "bidValue"
+        )
+        .textContent =
         data.currentBid;
 
 
-    document.getElementById(
-        "highestBidder"
-    ).textContent =
+    document
+        .getElementById(
+            "bidder"
+        )
+        .textContent =
         data.highestBidder
             ? `🔥 Highest bidder: ${data.highestBidder}`
             : "No bids yet";
 
 
-    document.getElementById(
-        "auctionTimer"
-    ).textContent =
-        data.time;
-
-
-    document.getElementById(
-        "balance"
-    ).textContent =
+    document
+        .getElementById(
+            "balance"
+        )
+        .textContent =
         data.myBalance;
 
 
-    document.getElementById(
-        "teamCount"
-    ).textContent =
-        `${data.myTeamCount} / 5`;
+    document
+        .getElementById(
+            "teamSize"
+        )
+        .textContent =
+        `${data.myTeamCount}/5`;
 
 
     const list =
-        document.getElementById(
-            "auctionPlayers"
-        );
+        document
+            .getElementById(
+                "auctionPlayers"
+            );
 
 
     list.innerHTML = "";
@@ -1057,41 +1121,32 @@ data => {
     data.players.forEach(
         player => {
 
-            const row =
+            const div =
                 document.createElement(
                     "div"
                 );
 
 
-            row.className =
-                "auction-player";
+            div.className =
+                "auctionPlayer";
 
 
-            row.innerHTML = `
+            div.innerHTML = `
+
                 <span>
                     ${player.name}
                 </span>
 
-                <strong>
+                <b>
                     💰 ${player.balance}
-                    • ${player.teamCount}/5
-                </strong>
+                    |
+                    ${player.teamCount}/5
+                </b>
+
             `;
 
 
-            list.appendChild(row);
-
-        }
-    );
-
-
-    document.querySelectorAll(
-        ".bid-buttons button"
-    ).forEach(
-        button => {
-
-            button.disabled =
-                data.myTeamCount >= 5;
+            list.appendChild(div);
 
         }
     );
@@ -1100,46 +1155,53 @@ data => {
 
 );
 
-// ========================================
-// BIDDING
-// ========================================
+// ============================================
+// BID
+// ============================================
 
-function bid(amount) {
+function makeBid(amount) {
 
 socket.emit(
     "bid",
     {
-        roomCode: roomCode,
-        amount: amount
+        roomCode,
+        amount
     }
 );
 
 }
 
-document.getElementById(
-"bid100"
-).onclick = () =>
-bid(100);
+document
+.getElementById("bid100")
+.onclick =
+() => makeBid(100);
 
-document.getElementById(
-"bid250"
-).onclick = () =>
-bid(250);
+document
+.getElementById("bid250")
+.onclick =
+() => makeBid(250);
 
-document.getElementById(
-"bid500"
-).onclick = () =>
-bid(500);
+document
+.getElementById("bid500")
+.onclick =
+() => makeBid(500);
 
-// ========================================
+// ============================================
 // AUCTION RESULT
-// ========================================
+// ============================================
 
 socket.on(
 "auctionResult",
 data => {
 
-    show("auctionResult");
+    screen("auctionResult");
+
+
+    const container =
+        document
+            .getElementById(
+                "auctionWinner"
+            );
 
 
     const character =
@@ -1148,13 +1210,14 @@ data => {
         ];
 
 
-    if (data.winner) {
+    if (
+        data.winner &&
+        character
+    ) {
 
-        document.getElementById(
-            "auctionWinner"
-        ).innerHTML = `
+        container.innerHTML = `
 
-            <div class="winner">
+            <div class="winnerBox">
 
                 <img
                     src="${character.image}"
@@ -1177,16 +1240,16 @@ data => {
 
         `;
 
-    } else {
+    }
 
-        document.getElementById(
-            "auctionWinner"
-        ).innerHTML = `
+    else {
 
-            <div class="winner">
+        container.innerHTML = `
+
+            <div class="winnerBox">
 
                 <h3>
-                    No one bought this character.
+                    No one won this auction.
                 </h3>
 
             </div>
@@ -1199,41 +1262,44 @@ data => {
 
 );
 
-// ========================================
+// ============================================
 // NEXT AUCTION
-// ========================================
+// ============================================
 
-document.getElementById(
-"continueAuction"
-).onclick = () => {
+document
+.getElementById(
+"nextAuctionButton"
+)
+.onclick = () => {
 
-socket.emit(
-    "nextAuction",
-    {
-        roomCode: roomCode
-    }
-);
+    socket.emit(
+        "nextAuction",
+        {
+            roomCode
+        }
+    );
 
 };
 
-// ========================================
-// FINAL RESULTS
-// ========================================
+// ============================================
+// FINAL
+// ============================================
 
 socket.on(
 "finalResults",
 data => {
 
-    show("final");
+    screen("final");
 
 
-    const container =
-        document.getElementById(
-            "finalResults"
-        );
+    const list =
+        document
+            .getElementById(
+                "finalList"
+            );
 
 
-    container.innerHTML = "";
+    list.innerHTML = "";
 
 
     data.players.forEach(
@@ -1246,23 +1312,15 @@ data => {
 
 
             div.className =
-                "final-player";
+                "finalPlayer";
 
 
             const team =
+                player.team &&
                 player.team.length
-                    ? player.team
-                        .map(
-                            character =>
-                                characters[
-                                    character
-                                ]
-                                    ? characters[
-                                        character
-                                      ].name
-                                    : character
-                        )
-                        .join(" • ")
+                    ? player.team.join(
+                        " • "
+                      )
                     : "No characters";
 
 
@@ -1274,11 +1332,11 @@ data => {
                 </h3>
 
                 <p>
-                    💰 Coins:
+                    💰 Balance:
                     ${player.balance}
                 </p>
 
-                <p class="final-team">
+                <p>
                     👥 Team:
                     ${team}
                 </p>
@@ -1286,7 +1344,7 @@ data => {
             `;
 
 
-            container.appendChild(div);
+            list.appendChild(div);
 
         }
     );
@@ -1295,14 +1353,16 @@ data => {
 
 );
 
-// ========================================
-// PLAY AGAIN
-// ========================================
+// ============================================
+// LEAVE
+// ============================================
 
-document.getElementById(
-"playAgain"
-).onclick = () => {
+document
+.getElementById(
+"leaveButton"
+)
+.onclick = () => {
 
-location.reload();
+    location.reload();
 
 };
