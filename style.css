@@ -11,27 +11,24 @@ body {
         radial-gradient(circle at top, #35145f, transparent 45%),
         linear-gradient(135deg, #090014, #160025, #050008);
     color: white;
-    padding: 20px;
+    padding: 15px;
 }
 
 .game {
     width: 100%;
-    max-width: 700px;
+    max-width: 750px;
     margin: auto;
 }
 
-/* HEADER */
-
 header {
     text-align: center;
-    margin-bottom: 25px;
+    margin: 15px 0 25px;
 }
 
 header h1 {
-    font-size: 32px;
+    font-size: 31px;
     font-weight: 900;
-    letter-spacing: 1px;
-    text-shadow: 0 0 15px #ff7b00;
+    text-shadow: 0 0 18px #ff7b00;
 }
 
 header p {
@@ -39,20 +36,115 @@ header p {
     color: #cfcfcf;
 }
 
-/* MAIN CARDS */
-
-.category-card,
-.ranking-section,
-.result-section {
-    background: rgba(20, 10, 35, 0.94);
-    border: 1px solid rgba(255, 120, 0, 0.35);
+.main-card {
+    background: rgba(20, 10, 35, 0.96);
+    border: 1px solid rgba(255, 120, 0, 0.4);
     border-radius: 20px;
     padding: 25px;
-    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 40px rgba(0,0,0,.55);
     margin-bottom: 20px;
 }
 
-/* PROGRESS */
+.main-card h2 {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.main-card h3 {
+    margin: 15px 0;
+}
+
+input {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 12px;
+    border: 1px solid #63308e;
+    background: #10091b;
+    color: white;
+    font-size: 16px;
+    outline: none;
+}
+
+input:focus {
+    border-color: #ff8500;
+}
+
+button {
+    width: 100%;
+    border: none;
+    border-radius: 13px;
+    padding: 15px;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: .2s;
+}
+
+button:active {
+    transform: scale(.97);
+}
+
+#createRoom,
+#joinRoom,
+#startMultiplayer,
+#startRanking,
+#confirmRanking,
+#nextCategory,
+#playAgain {
+    background: linear-gradient(90deg, #ff6500, #ffb000);
+    color: #180800;
+}
+
+.divider {
+    text-align: center;
+    margin: 12px;
+    color: #888;
+    font-weight: bold;
+}
+
+#connectionStatus {
+    text-align: center;
+    margin-top: 15px;
+    color: #aaa;
+}
+
+.room-code {
+    text-align: center;
+    padding: 20px;
+    background: #10091b;
+    border: 1px solid #6d328f;
+    border-radius: 15px;
+    margin-bottom: 20px;
+}
+
+.room-code span {
+    display: block;
+    color: #aaa;
+    font-size: 12px;
+}
+
+.room-code strong {
+    display: block;
+    margin-top: 8px;
+    font-size: 32px;
+    letter-spacing: 6px;
+    color: #ff9d00;
+}
+
+#playersList {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.player-item {
+    padding: 13px;
+    border-radius: 12px;
+    background: #120a1d;
+    border: 1px solid #4d2867;
+}
 
 .progress {
     text-align: center;
@@ -61,122 +153,58 @@ header p {
     margin-bottom: 15px;
 }
 
-/* CATEGORY */
-
-.category-card h2 {
-    text-align: center;
+#categoryName {
     font-size: 30px;
-    margin-bottom: 10px;
 }
 
 .instruction {
     text-align: center;
-    color: #bdbdbd;
-    margin-bottom: 20px;
+    color: #bbb;
+    margin: 10px 0 20px;
 }
-
-/* CHARACTER GRID */
 
 .character-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 15px;
-    margin-top: 15px;
 }
-
-/* CHARACTER CARD */
 
 .character-card {
     background: #160d22;
     border: 2px solid #4d2867;
     border-radius: 16px;
-    padding: 12px;
+    padding: 10px;
     text-align: center;
-    transition: 0.2s;
-}
-
-.character-card:hover {
-    transform: translateY(-4px);
-    border-color: #ff8500;
+    transition: .2s;
 }
 
 .character-card.selected {
     border-color: #ff8500;
-    box-shadow: 0 0 18px rgba(255, 133, 0, 0.5);
+    box-shadow: 0 0 18px rgba(255,133,0,.5);
 }
-
-/* CHARACTER IMAGE */
 
 .character-card img {
     width: 100%;
     height: 180px;
     object-fit: cover;
     border-radius: 12px;
-    margin-bottom: 10px;
     display: block;
 }
 
-/* CHARACTER NAME */
-
 .character-name {
     font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 8px;
+    margin: 10px 0;
 }
-
-/* BUTTONS */
-
-button {
-    width: 100%;
-    border: none;
-    border-radius: 13px;
-    padding: 15px;
-    margin-top: 12px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-button:active {
-    transform: scale(0.97);
-}
-
-/* SELECT BUTTON */
 
 .select-character {
     background: #35154f;
     color: white;
     border: 1px solid #7d3db0;
-    margin-top: 5px;
 }
 
 .character-card.selected .select-character {
     background: #ff8500;
     color: #180800;
-}
-
-/* START BUTTON */
-
-#startRanking,
-#confirmRanking,
-#nextCategory {
-    background: linear-gradient(90deg, #ff6500, #ffb000);
-    color: #180800;
-}
-
-/* RANKING */
-
-.ranking-section h2,
-.result-section h2 {
-    text-align: center;
-    margin-bottom: 10px;
-}
-
-.ranking-section > p {
-    text-align: center;
-    color: #bbb;
-    margin-bottom: 20px;
 }
 
 #rankingList {
@@ -185,13 +213,11 @@ button:active {
     gap: 10px;
 }
 
-/* RANK ITEM */
-
 .rank-item {
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 12px;
+    padding: 10px;
     background: #120a1d;
     border: 1px solid #4d2867;
     border-radius: 13px;
@@ -199,8 +225,8 @@ button:active {
     user-select: none;
 }
 
-.rank-item:active {
-    cursor: grabbing;
+.rank-item.dragging {
+    opacity: .5;
 }
 
 .rank-number {
@@ -215,13 +241,6 @@ button:active {
     font-weight: bold;
 }
 
-.rank-name {
-    font-size: 17px;
-    font-weight: bold;
-}
-
-/* RANK IMAGE */
-
 .rank-image {
     width: 55px;
     height: 55px;
@@ -229,70 +248,99 @@ button:active {
     border-radius: 10px;
 }
 
-/* DRAGGING */
-
-.rank-item.dragging {
-    opacity: 0.5;
+.rank-name {
+    font-size: 17px;
+    font-weight: bold;
 }
 
-/* RESULT */
+#resultList,
+#finalList {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
 
-.result-item {
+.result-player {
+    padding: 15px;
+    background: #120a1d;
+    border: 1px solid #4d2867;
+    border-radius: 14px;
+}
+
+.result-player h3 {
+    color: #ff9d00;
+    margin-bottom: 10px;
+}
+
+.result-character {
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 15px;
-    margin-bottom: 10px;
-    background: #120a1d;
-    border-radius: 13px;
-    border: 1px solid #4d2867;
+    gap: 10px;
+    padding: 8px;
 }
 
-.result-position {
-    font-size: 24px;
-    min-width: 45px;
+.result-character img {
+    width: 45px;
+    height: 45px;
+    object-fit: cover;
+    border-radius: 8px;
 }
 
-.result-name {
+.result-character span {
     font-weight: bold;
-    font-size: 18px;
 }
 
-/* HIDDEN */
+.final-player {
+    padding: 18px;
+    border-radius: 15px;
+    background: #120a1d;
+    border: 1px solid #63308e;
+}
+
+.final-player h3 {
+    color: #ff9d00;
+}
+
+.loader {
+    width: 45px;
+    height: 45px;
+    margin: 20px auto;
+    border: 4px solid #3a2348;
+    border-top-color: #ff8500;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
 
 .hidden {
     display: none !important;
 }
 
-/* MOBILE */
-
 @media (max-width: 600px) {
 
     body {
-        padding: 12px;
+        padding: 10px;
     }
 
     header h1 {
-        font-size: 25px;
+        font-size: 24px;
     }
 
-    .category-card,
-    .ranking-section,
-    .result-section {
+    .main-card {
         padding: 18px;
     }
 
-    .category-card h2 {
+    #categoryName {
         font-size: 25px;
     }
 
     .character-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-    }
-
-    .character-card {
-        padding: 8px;
+        gap: 9px;
     }
 
     .character-card img {
@@ -304,26 +352,11 @@ button:active {
     }
 
     .select-character {
-        font-size: 13px;
         padding: 11px;
+        font-size: 13px;
     }
 
-    .rank-image {
-        width: 50px;
-        height: 50px;
+    .room-code strong {
+        font-size: 26px;
     }
-}
-
-/* VERY SMALL PHONES */
-
-@media (max-width: 360px) {
-
-    .character-grid {
-        grid-template-columns: 1fr;
-    }
-
-    .character-card img {
-        height: 200px;
-    }
-
 }
