@@ -3,15 +3,27 @@
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
+  -webkit-tap-highlight-color: transparent;
   }
 
 body {
 min-height: 100vh;
 background:
-radial-gradient(circle at top, #35145f, transparent 45%),
-linear-gradient(135deg, #090014, #160025, #050008);
+radial-gradient(
+circle at top,
+#35145f,
+transparent 45%
+),
+linear-gradient(
+135deg,
+#090014,
+#160025,
+#050008
+);
+
 color: white;
 padding: 15px;
+
 }
 
 .game {
@@ -26,14 +38,14 @@ margin: 15px 0 25px;
 }
 
 header h1 {
-font-size: 31px;
+font-size: 30px;
 font-weight: 900;
 text-shadow: 0 0 18px #ff7b00;
 }
 
 header p {
 margin-top: 8px;
-color: #ccc;
+color: #bbb;
 }
 
 .main-card {
@@ -54,23 +66,35 @@ input {
 width: 100%;
 padding: 15px;
 margin-bottom: 12px;
+
 border-radius: 12px;
 border: 1px solid #63308e;
+
 background: #10091b;
 color: white;
+
 font-size: 16px;
 outline: none;
+
+}
+
+input:focus {
+border-color: #ff8500;
 }
 
 button {
 width: 100%;
 border: none;
 border-radius: 13px;
+
 padding: 15px;
 margin-top: 10px;
+
 font-size: 16px;
 font-weight: bold;
+
 cursor: pointer;
+
 }
 
 button:active {
@@ -80,12 +104,18 @@ transform: scale(.97);
 #createRoom,
 #joinRoom,
 #startMultiplayer,
-#startRanking,
-#confirmRanking,
+#submitCharacter,
 #nextCategory,
 #playAgain {
-background: linear-gradient(90deg, #ff6500, #ffb000);
+background:
+linear-gradient(
+90deg,
+#ff6500,
+#ffb000
+);
+
 color: #180800;
+
 }
 
 .divider {
@@ -103,11 +133,17 @@ color: #aaa;
 
 .room-code {
 text-align: center;
+
 padding: 20px;
+
 background: #10091b;
+
 border: 1px solid #6d328f;
+
 border-radius: 15px;
+
 margin-bottom: 20px;
+
 }
 
 .room-code span {
@@ -118,30 +154,55 @@ font-size: 12px;
 
 .room-code strong {
 display: block;
+
 margin-top: 8px;
+
 font-size: 32px;
+
 letter-spacing: 6px;
+
 color: #ff9d00;
+
 }
 
 #playersList {
 display: flex;
 flex-direction: column;
 gap: 8px;
+
+margin-top: 12px;
+
 }
 
 .player-item {
 padding: 13px;
+
 border-radius: 12px;
+
 background: #120a1d;
+
 border: 1px solid #4d2867;
+
+}
+
+#waitingText {
+text-align: center;
+
+color: #aaa;
+
+margin-top: 15px;
+
 }
 
 .progress {
 text-align: center;
+
 color: #ff9d00;
+
 font-weight: bold;
+
 margin-bottom: 15px;
+
 }
 
 #categoryName {
@@ -150,157 +211,278 @@ font-size: 30px;
 
 .instruction {
 text-align: center;
+
 color: #bbb;
+
 margin: 10px 0 20px;
+
 }
 
 .character-grid {
 display: grid;
-grid-template-columns: repeat(2, 1fr);
+
+grid-template-columns:
+    repeat(2, 1fr);
+
 gap: 15px;
+
 }
 
 .character-card {
 background: #160d22;
+
 border: 2px solid #4d2867;
+
 border-radius: 16px;
+
 padding: 10px;
+
 text-align: center;
+
+transition: .2s;
+
 }
 
 .character-card.selected {
 border-color: #ff8500;
-box-shadow: 0 0 18px rgba(255,133,0,.5);
+
+box-shadow:
+    0 0 20px
+    rgba(255,133,0,.55);
+
+transform: translateY(-3px);
+
 }
 
 .character-card img {
 width: 100%;
 height: 180px;
+
 object-fit: cover;
+
 border-radius: 12px;
+
 display: block;
+
 }
 
 .character-name {
 font-weight: bold;
+
 margin: 10px 0;
+
 }
 
 .select-character {
 background: #35154f;
+
 color: white;
+
 border: 1px solid #7d3db0;
+
 }
 
-.character-card.selected .select-character {
+.character-card.selected
+.select-character {
 background: #ff8500;
+
 color: #180800;
+
 }
 
-#rankingList {
-display: flex;
-flex-direction: column;
-gap: 10px;
-}
+#selectionProgress {
+text-align: center;
 
-.rank-item {
-display: flex;
-align-items: center;
-gap: 12px;
-padding: 10px;
-background: #120a1d;
-border: 1px solid #4d2867;
-border-radius: 13px;
-cursor: grab;
-user-select: none;
-}
+color: #bbb;
 
-.rank-item.dragging {
-opacity: .5;
-}
-
-.rank-number {
-min-width: 35px;
-height: 35px;
-display: flex;
-align-items: center;
-justify-content: center;
-border-radius: 50%;
-background: #ff8500;
-color: #160900;
-font-weight: bold;
-}
-
-.rank-image {
-width: 55px;
-height: 55px;
-object-fit: cover;
-border-radius: 10px;
-}
-
-.rank-name {
-font-size: 17px;
-font-weight: bold;
-}
-
-#resultList,
-#finalList {
-display: flex;
-flex-direction: column;
-gap: 10px;
-}
-
-.result-player {
-padding: 15px;
-background: #120a1d;
-border: 1px solid #4d2867;
-border-radius: 14px;
-}
-
-.result-player h3 {
-color: #ff9d00;
-margin-bottom: 10px;
-}
-
-.result-character {
-display: flex;
-align-items: center;
-gap: 10px;
-padding: 8px;
-}
-
-.result-character img {
-width: 45px;
-height: 45px;
-object-fit: cover;
-border-radius: 8px;
-}
-
-.final-player {
-padding: 18px;
-border-radius: 15px;
-background: #120a1d;
-border: 1px solid #63308e;
-}
-
-.final-player h3 {
-color: #ff9d00;
 }
 
 .loader {
 width: 45px;
 height: 45px;
+
 margin: 20px auto;
+
 border: 4px solid #3a2348;
+
 border-top-color: #ff8500;
+
 border-radius: 50%;
+
 animation: spin 1s linear infinite;
+
 }
 
 @keyframes spin {
+
 to {
-transform: rotate(360deg);
+    transform: rotate(360deg);
 }
+
+}
+
+#resultCategory {
+text-align: center;
+
+color: #ff9d00;
+
+margin-bottom: 20px;
+
+}
+
+#winnerBox {
+padding: 20px;
+
+text-align: center;
+
+background: #120a1d;
+
+border: 2px solid #ff8500;
+
+border-radius: 15px;
+
+margin-bottom: 20px;
+
+}
+
+.winner-title {
+font-size: 24px;
+
+color: #ffb000;
+
+margin-bottom: 8px;
+
+}
+
+.winner-votes {
+color: #bbb;
+}
+
+.chosen-title {
+margin: 20px 0 10px;
+}
+
+#resultList {
+display: flex;
+
+flex-direction: column;
+
+gap: 10px;
+
+}
+
+.result-player {
+display: flex;
+
+align-items: center;
+
+gap: 12px;
+
+padding: 12px;
+
+background: #120a1d;
+
+border: 1px solid #4d2867;
+
+border-radius: 13px;
+
+}
+
+.result-player img {
+width: 55px;
+height: 55px;
+
+object-fit: cover;
+
+border-radius: 10px;
+
+}
+
+.result-player-info {
+flex: 1;
+}
+
+.result-player-name {
+font-weight: bold;
+}
+
+.result-character-name {
+color: #ffb000;
+
+margin-top: 4px;
+
+font-size: 14px;
+
+}
+
+.result-rank {
+min-width: 40px;
+
+text-align: center;
+
+font-size: 20px;
+
+font-weight: bold;
+
+color: #ff8500;
+
+}
+
+.final-item {
+display: flex;
+
+align-items: center;
+
+gap: 12px;
+
+padding: 15px;
+
+background: #120a1d;
+
+border: 1px solid #4d2867;
+
+border-radius: 14px;
+
+margin-bottom: 10px;
+
+}
+
+.final-number {
+font-size: 25px;
+
+font-weight: bold;
+
+color: #ff9d00;
+
+min-width: 40px;
+
+}
+
+.final-image {
+width: 55px;
+height: 55px;
+
+object-fit: cover;
+
+border-radius: 10px;
+
+}
+
+.final-info {
+flex: 1;
+}
+
+.final-name {
+font-weight: bold;
+}
+
+.final-score {
+color: #aaa;
+
+margin-top: 4px;
+
+font-size: 13px;
+
 }
 
 .hidden {
