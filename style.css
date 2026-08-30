@@ -3,90 +3,77 @@
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
-  -webkit-tap-highlight-color: transparent;
   }
 
 body {
 min-height: 100vh;
+padding: 15px;
+
+```
 background:
-radial-gradient(
-circle at top,
-#35145f,
-transparent 45%
-),
-linear-gradient(
-135deg,
-#090014,
-#160025,
-#050008
-);
+    radial-gradient(
+        circle at top,
+        #35145f,
+        transparent 45%
+    ),
+    linear-gradient(
+        135deg,
+        #090014,
+        #160025,
+        #050008
+    );
 
 color: white;
-padding: 15px;
+```
 
 }
 
 .game {
 width: 100%;
-max-width: 750px;
+max-width: 760px;
 margin: auto;
 }
 
 header {
 text-align: center;
-margin: 15px 0 25px;
+margin: 20px 0 25px;
 }
 
 header h1 {
-font-size: 30px;
-font-weight: 900;
-text-shadow: 0 0 18px #ff7b00;
+font-size: 29px;
+text-shadow: 0 0 18px #ff7800;
 }
 
 header p {
+color: #aaa;
 margin-top: 8px;
-color: #bbb;
 }
 
-.main-card {
-background: rgba(20, 10, 35, 0.96);
-border: 1px solid rgba(255, 120, 0, 0.4);
+.card {
+background: rgba(18, 9, 30, .97);
+border: 1px solid #63317d;
 border-radius: 20px;
-padding: 25px;
-box-shadow: 0 10px 40px rgba(0,0,0,.55);
+padding: 22px;
 margin-bottom: 20px;
+
+```
+box-shadow:
+    0 10px 40px rgba(0,0,0,.5);
+```
+
 }
 
-.main-card h2 {
+.card h2 {
 text-align: center;
-margin-bottom: 18px;
-}
-
-input {
-width: 100%;
-padding: 15px;
-margin-bottom: 12px;
-
-border-radius: 12px;
-border: 1px solid #63308e;
-
-background: #10091b;
-color: white;
-
-font-size: 16px;
-outline: none;
-
-}
-
-input:focus {
-border-color: #ff8500;
+margin-bottom: 20px;
 }
 
 button {
 width: 100%;
-border: none;
+border: 0;
 border-radius: 13px;
 
+```
 padding: 15px;
 margin-top: 10px;
 
@@ -95,205 +82,224 @@ font-weight: bold;
 
 cursor: pointer;
 
+background:
+    linear-gradient(
+        90deg,
+        #ff6500,
+        #ffb000
+    );
+
+color: #180800;
+```
+
 }
 
 button:active {
 transform: scale(.97);
 }
 
-#createRoom,
-#joinRoom,
-#startMultiplayer,
-#submitCharacter,
-#nextCategory,
-#playAgain {
-background:
-linear-gradient(
-90deg,
-#ff6500,
-#ffb000
-);
+.secondary {
+background: #291535;
+color: white;
+border: 1px solid #6b3985;
+}
 
-color: #180800;
+input {
+width: 100%;
+
+```
+padding: 15px;
+
+margin-bottom: 10px;
+
+border-radius: 12px;
+
+border: 1px solid #63317d;
+
+background: #0e0716;
+
+color: white;
+
+font-size: 16px;
+
+outline: none;
+```
 
 }
 
-.divider {
-text-align: center;
-margin: 12px;
-color: #888;
-font-weight: bold;
+input:focus {
+border-color: #ff8500;
 }
 
-#connectionStatus {
+.or {
 text-align: center;
-margin-top: 15px;
+color: #777;
+margin: 10px;
+}
+
+#status {
+text-align: center;
 color: #aaa;
+margin: 15px 0;
 }
 
 .room-code {
 text-align: center;
 
-padding: 20px;
+```
+background: #0e0716;
 
-background: #10091b;
-
-border: 1px solid #6d328f;
+border: 1px solid #63317d;
 
 border-radius: 15px;
 
+padding: 18px;
+
 margin-bottom: 20px;
+```
 
 }
 
-.room-code span {
-display: block;
-color: #aaa;
-font-size: 12px;
+.room-code small {
+color: #888;
 }
 
 .room-code strong {
 display: block;
 
-margin-top: 8px;
-
+```
 font-size: 32px;
-
-letter-spacing: 6px;
 
 color: #ff9d00;
 
+letter-spacing: 6px;
+
+margin-top: 8px;
+```
+
 }
 
-#playersList {
+#players,
+#auctionPlayers {
 display: flex;
 flex-direction: column;
 gap: 8px;
 
+```
 margin-top: 12px;
+```
 
 }
 
-.player-item {
+.player-row {
 padding: 13px;
+
+```
+background: #130a1e;
+
+border: 1px solid #4c2863;
 
 border-radius: 12px;
 
-background: #120a1d;
-
-border: 1px solid #4d2867;
-
-}
-
-#waitingText {
-text-align: center;
-
-color: #aaa;
-
-margin-top: 15px;
+display: flex;
+justify-content: space-between;
+```
 
 }
 
-.progress {
-text-align: center;
+.category-top {
+display: flex;
+justify-content: space-between;
 
+```
 color: #ff9d00;
 
-font-weight: bold;
-
 margin-bottom: 15px;
+```
 
 }
 
-#categoryName {
+#categoryTitle {
 font-size: 30px;
 }
 
 .instruction {
 text-align: center;
-
-color: #bbb;
-
-margin: 10px 0 20px;
-
+color: #aaa;
+margin-bottom: 20px;
 }
 
-.character-grid {
+.options-grid {
 display: grid;
 
+```
 grid-template-columns:
     repeat(2, 1fr);
 
-gap: 15px;
+gap: 12px;
+```
 
 }
 
-.character-card {
+.option {
 background: #160d22;
 
+```
 border: 2px solid #4d2867;
 
-border-radius: 16px;
+border-radius: 15px;
 
 padding: 10px;
 
 text-align: center;
 
-transition: .2s;
+cursor: pointer;
+```
 
 }
 
-.character-card.selected {
+.option.selected {
 border-color: #ff8500;
 
+```
 box-shadow:
     0 0 20px
-    rgba(255,133,0,.55);
-
-transform: translateY(-3px);
+    rgba(255,133,0,.5);
+```
 
 }
 
-.character-card img {
+.option img {
 width: 100%;
-height: 180px;
+height: 150px;
 
+```
 object-fit: cover;
 
-border-radius: 12px;
-
-display: block;
+border-radius: 10px;
+```
 
 }
 
-.character-name {
+.option-name {
+margin-top: 8px;
+
+```
+font-weight: bold;
+```
+
+}
+
+.clan-option {
+padding: 25px 10px;
+
+```
+font-size: 20px;
+
 font-weight: bold;
 
-margin: 10px 0;
-
-}
-
-.select-character {
-background: #35154f;
-
-color: white;
-
-border: 1px solid #7d3db0;
-
-}
-
-.character-card.selected
-.select-character {
-background: #ff8500;
-
-color: #180800;
-
-}
-
-#selectionProgress {
-text-align: center;
-
-color: #bbb;
+color: #ffb000;
+```
 
 }
 
@@ -301,187 +307,337 @@ color: #bbb;
 width: 45px;
 height: 45px;
 
-margin: 20px auto;
+```
+margin: 15px auto;
 
-border: 4px solid #3a2348;
+border: 4px solid #382344;
 
 border-top-color: #ff8500;
 
 border-radius: 50%;
 
 animation: spin 1s linear infinite;
+```
 
 }
 
 @keyframes spin {
-
 to {
-    transform: rotate(360deg);
+transform: rotate(360deg);
+}
 }
 
-}
-
-#resultCategory {
+#waitingMessage {
 text-align: center;
+color: #aaa;
+}
 
+#categoryResultTitle {
 color: #ff9d00;
-
-margin-bottom: 20px;
-
 }
 
-#winnerBox {
-padding: 20px;
-
-text-align: center;
-
-background: #120a1d;
-
-border: 2px solid #ff8500;
-
-border-radius: 15px;
-
-margin-bottom: 20px;
-
-}
-
-.winner-title {
-font-size: 24px;
-
-color: #ffb000;
-
-margin-bottom: 8px;
-
-}
-
-.winner-votes {
-color: #bbb;
-}
-
-.chosen-title {
-margin: 20px 0 10px;
-}
-
-#resultList {
+.rank-result {
 display: flex;
 
-flex-direction: column;
-
-gap: 10px;
-
-}
-
-.result-player {
-display: flex;
-
+```
 align-items: center;
 
 gap: 12px;
 
-padding: 12px;
+padding: 13px;
 
-background: #120a1d;
+margin-bottom: 9px;
+
+background: #130a1e;
 
 border: 1px solid #4d2867;
 
 border-radius: 13px;
+```
 
 }
 
-.result-player img {
-width: 55px;
-height: 55px;
+.rank-number {
+width: 40px;
 
-object-fit: cover;
-
-border-radius: 10px;
-
-}
-
-.result-player-info {
-flex: 1;
-}
-
-.result-player-name {
-font-weight: bold;
-}
-
-.result-character-name {
-color: #ffb000;
-
-margin-top: 4px;
-
-font-size: 14px;
-
-}
-
-.result-rank {
-min-width: 40px;
-
-text-align: center;
-
-font-size: 20px;
-
-font-weight: bold;
-
-color: #ff8500;
-
-}
-
-.final-item {
-display: flex;
-
-align-items: center;
-
-gap: 12px;
-
-padding: 15px;
-
-background: #120a1d;
-
-border: 1px solid #4d2867;
-
-border-radius: 14px;
-
-margin-bottom: 10px;
-
-}
-
-.final-number {
-font-size: 25px;
+```
+font-size: 22px;
 
 font-weight: bold;
 
 color: #ff9d00;
-
-min-width: 40px;
+```
 
 }
 
-.final-image {
+.rank-character-image {
 width: 55px;
 height: 55px;
 
+```
 object-fit: cover;
 
 border-radius: 10px;
+```
 
 }
 
-.final-info {
+.rank-info {
 flex: 1;
 }
 
-.final-name {
+.rank-player {
 font-weight: bold;
 }
 
-.final-score {
-color: #aaa;
+.rank-choice {
+color: #ffb000;
+
+```
+font-size: 14px;
 
 margin-top: 4px;
+```
 
-font-size: 13px;
+}
+
+.auction-header {
+display: flex;
+
+```
+justify-content: space-between;
+
+align-items: center;
+```
+
+}
+
+.auction-header h2 {
+text-align: left;
+
+```
+margin: 5px 0;
+```
+
+}
+
+.timer {
+width: 60px;
+height: 60px;
+
+```
+display: flex;
+
+align-items: center;
+justify-content: center;
+
+border-radius: 50%;
+
+background: #25112f;
+
+border: 2px solid #ff8500;
+
+color: #ffb000;
+
+font-size: 25px;
+
+font-weight: bold;
+```
+
+}
+
+.auction-image {
+display: block;
+
+```
+width: 100%;
+max-width: 330px;
+
+height: 300px;
+
+object-fit: cover;
+
+border-radius: 18px;
+
+margin: 15px auto;
+```
+
+}
+
+.auction-price {
+text-align: center;
+
+```
+padding: 15px;
+
+background: #0e0716;
+
+border-radius: 14px;
+```
+
+}
+
+.auction-price span {
+display: block;
+
+```
+color: #aaa;
+```
+
+}
+
+.auction-price strong {
+display: block;
+
+```
+font-size: 28px;
+
+color: #ffb000;
+
+margin-top: 5px;
+```
+
+}
+
+#highestBidder {
+text-align: center;
+
+```
+color: #aaa;
+
+margin: 12px 0;
+```
+
+}
+
+.bid-buttons {
+display: grid;
+
+```
+grid-template-columns:
+    repeat(3, 1fr);
+
+gap: 8px;
+```
+
+}
+
+.bid-buttons button {
+margin: 0;
+}
+
+.auction-info {
+display: flex;
+
+```
+justify-content: space-around;
+
+padding: 15px;
+
+margin-top: 15px;
+
+background: #130a1e;
+
+border-radius: 13px;
+
+color: #aaa;
+```
+
+}
+
+.auction-info strong {
+color: #ffb000;
+}
+
+.auction-player {
+display: flex;
+
+```
+justify-content: space-between;
+
+padding: 12px;
+
+background: #130a1e;
+
+border: 1px solid #4d2867;
+
+border-radius: 12px;
+```
+
+}
+
+.auction-player strong {
+color: #ffb000;
+}
+
+.winner {
+text-align: center;
+
+```
+padding: 20px;
+
+background: #130a1e;
+
+border: 2px solid #ff8500;
+
+border-radius: 15px;
+```
+
+}
+
+.winner img {
+width: 120px;
+height: 120px;
+
+```
+object-fit: cover;
+
+border-radius: 15px;
+
+margin-bottom: 10px;
+```
+
+}
+
+.winner h3 {
+color: #ffb000;
+
+```
+margin-bottom: 7px;
+```
+
+}
+
+.final-player {
+padding: 18px;
+
+```
+background: #130a1e;
+
+border: 1px solid #4d2867;
+
+border-radius: 15px;
+
+margin-bottom: 12px;
+```
+
+}
+
+.final-player h3 {
+color: #ffb000;
+
+```
+margin-bottom: 10px;
+```
+
+}
+
+.final-team {
+color: #bbb;
+
+```
+line-height: 1.7;
+```
 
 }
 
@@ -491,41 +647,30 @@ display: none !important;
 
 @media (max-width: 600px) {
 
-body {
-    padding: 10px;
-}
-
+```
 header h1 {
-    font-size: 24px;
+    font-size: 23px;
 }
 
-.main-card {
-    padding: 18px;
+.card {
+    padding: 17px;
 }
 
-#categoryName {
+#categoryTitle {
     font-size: 25px;
 }
 
-.character-grid {
-    gap: 9px;
+.option img {
+    height: 130px;
 }
 
-.character-card img {
-    height: 140px;
+.auction-image {
+    height: 250px;
 }
 
-.character-name {
+.auction-info {
     font-size: 14px;
 }
-
-.select-character {
-    padding: 11px;
-    font-size: 13px;
-}
-
-.room-code strong {
-    font-size: 26px;
-}
+```
 
 }
