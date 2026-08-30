@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Naruto Character Rank</title>
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="game">
+
+        <header>
+            <h1>🍥 NARUTO CHARACTER RANK</h1>
+            <p>Build the ultimate Shinobi ranking</p>
+        </header>
+
+        <section class="category-card">
+
+            <div class="progress">
+                Category <span id="categoryNumber">1</span> / 16
+            </div>
+
+            <h2 id="categoryName">🧬 Talent</h2>
+
+            <p class="instruction">
+                Enter 2 or more Naruto characters to rank.
+            </p>
+
+            <div id="characterInputs"></div>
+
+            <button id="addCharacter">
+                + Add Character
+            </button>
+
+            <button id="startRanking">
+                START RANKING ⚔️
+            </button>
+
+        </section>
+
+        <section id="rankingSection" class="ranking-section hidden">
+
+            <h2>🏆 Rank the Characters</h2>
+
+            <p>
+                Arrange the characters from <b>Best → Worst</b>.
+            </p>
+
+            <div id="rankingList"></div>
+
+            <button id="confirmRanking">
+                CONFIRM RANKING ✅
+            </button>
+
+        </section>
+
+        <section id="resultSection" class="result-section hidden">
+
+            <h2>🔥 Category Result</h2>
+
+            <div id="resultList"></div>
+
+            <button id="nextCategory">
+                NEXT CATEGORY ➡️
+            </button>
+
+        </section>
+
+    </div>
+
+    <script src="game.js"></script>
+
+</body>
+</html>
