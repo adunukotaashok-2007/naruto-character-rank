@@ -1,187 +1,169 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Naruto Character Rank</title>
 
-    <title>Naruto Character Rank</title>
+<link rel="stylesheet" href="style.css">
 
-    <link rel="stylesheet" href="style.css">
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
 
-    <!-- Socket.IO -->
-    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
-</head>
+</head><body><div class="game"><header>
+    <h1>🍥 NARUTO CHARACTER RANK</h1>
+    <p>Multiplayer Character Ranking</p>
+</header>
 
-<body>
+<!-- LOBBY -->
 
-<div class="game">
+<section id="lobbySection" class="main-card">
 
-    <!-- HEADER -->
+    <h2>🎮 Multiplayer</h2>
 
-    <header>
-        <h1>🍥 NARUTO CHARACTER RANK</h1>
-        <p>Build your ultimate Shinobi ranking</p>
-    </header>
+    <input
+        id="playerName"
+        type="text"
+        placeholder="Enter your name"
+        maxlength="20"
+    >
 
+    <button id="createRoom">
+        🏠 CREATE ROOM
+    </button>
 
-    <!-- LOBBY -->
+    <div class="divider">OR</div>
 
-    <section id="lobbySection" class="main-card">
+    <input
+        id="roomCodeInput"
+        type="text"
+        placeholder="Enter room code"
+        maxlength="6"
+    >
 
-        <h2>🎮 Multiplayer</h2>
+    <button id="joinRoom">
+        🚪 JOIN ROOM
+    </button>
 
-        <input
-            id="playerName"
-            type="text"
-            placeholder="Enter your name"
-            maxlength="20"
-        >
+    <p id="connectionStatus">
+        Connecting to server...
+    </p>
 
-        <button id="createRoom">
-            🏠 CREATE ROOM
-        </button>
+</section>
 
-        <div class="divider">OR</div>
 
-        <input
-            id="roomCodeInput"
-            type="text"
-            placeholder="Enter room code"
-            maxlength="6"
-        >
+<!-- ROOM -->
 
-        <button id="joinRoom">
-            🚪 JOIN ROOM
-        </button>
+<section id="roomSection" class="main-card hidden">
 
-        <p id="connectionStatus">
-            Connecting to server...
-        </p>
+    <h2>🏠 ROOM</h2>
 
-    </section>
+    <div class="room-code">
+        <span>ROOM CODE</span>
+        <strong id="roomCode">------</strong>
+    </div>
 
+    <h3>👥 Players</h3>
 
-    <!-- ROOM -->
+    <div id="playersList"></div>
 
-    <section id="roomSection" class="main-card hidden">
+    <p id="waitingText">
+        Waiting for players...
+    </p>
 
-        <h2>🏠 ROOM</h2>
+    <button id="startMultiplayer">
+        ⚔️ START GAME
+    </button>
 
-        <div class="room-code">
-            <span>ROOM CODE</span>
-            <strong id="roomCode">------</strong>
-        </div>
+</section>
 
-        <h3>👥 Players</h3>
 
-        <div id="playersList"></div>
+<!-- CATEGORY -->
 
-        <p id="waitingText">
-            Waiting for players...
-        </p>
+<section id="categoryCard" class="main-card hidden">
 
-        <button id="startMultiplayer">
-            ⚔️ START GAME
-        </button>
+    <div class="progress">
+        CATEGORY
+        <span id="categoryNumber">1</span>
+        / 16
+    </div>
 
-    </section>
+    <h2 id="categoryName">🧬 Talent</h2>
 
+    <p class="instruction">
+        Select 2 or more characters.
+    </p>
 
-    <!-- CATEGORY -->
+    <div id="characterInputs"></div>
 
-    <section id="categoryCard" class="main-card hidden">
+    <button id="startRanking">
+        START RANKING ⚔️
+    </button>
 
-        <div class="progress">
-            CATEGORY
-            <span id="categoryNumber">1</span>
-            / 16
-        </div>
+</section>
 
-        <h2 id="categoryName">🧬 Talent</h2>
 
-        <p class="instruction">
-            Select 2 or more characters.
-        </p>
+<!-- RANKING -->
 
-        <div id="characterInputs"></div>
+<section id="rankingSection" class="main-card hidden">
 
-        <button id="startRanking">
-            START RANKING ⚔️
-        </button>
+    <h2>🏆 RANK THE CHARACTERS</h2>
 
-    </section>
+    <p class="instruction">
+        BEST → WORST
+    </p>
 
+    <div id="rankingList"></div>
 
-    <!-- RANKING -->
+    <button id="confirmRanking">
+        ✅ CONFIRM RANKING
+    </button>
 
-    <section id="rankingSection" class="main-card hidden">
+</section>
 
-        <h2>🏆 RANK THE CHARACTERS</h2>
 
-        <p class="instruction">
-            Drag them from <b>BEST → WORST</b>
-        </p>
+<!-- WAITING -->
 
-        <div id="rankingList"></div>
+<section id="waitingSection" class="main-card hidden">
 
-        <button id="confirmRanking">
-            ✅ CONFIRM RANKING
-        </button>
+    <h2>⏳ WAITING FOR PLAYERS</h2>
 
-    </section>
+    <div class="loader"></div>
 
+    <p id="rankingProgress">
+        Waiting for everyone to finish...
+    </p>
 
-    <!-- WAITING -->
+</section>
 
-    <section id="waitingSection" class="main-card hidden">
 
-        <h2>⏳ WAITING FOR PLAYERS</h2>
+<!-- RESULTS -->
 
-        <div class="loader"></div>
+<section id="resultSection" class="main-card hidden">
 
-        <p id="rankingProgress">
-            Waiting for everyone to finish...
-        </p>
+    <h2>🏆 ROUND RESULTS</h2>
 
-    </section>
+    <h3 id="resultCategory"></h3>
 
+    <div id="resultList"></div>
 
-    <!-- ROUND RESULTS -->
+    <button id="nextCategory">
+        NEXT CATEGORY ➡️
+    </button>
 
-    <section id="resultSection" class="main-card hidden">
+</section>
 
-        <h2>🏆 ROUND RESULTS</h2>
 
-        <h3 id="resultCategory"></h3>
+<!-- FINAL -->
 
-        <div id="resultList"></div>
+<section id="finalSection" class="main-card hidden">
 
-        <button id="nextCategory">
-            NEXT CATEGORY ➡️
-        </button>
+    <h2>👑 FINAL RESULTS</h2>
 
-    </section>
+    <div id="finalList"></div>
 
+    <button id="playAgain">
+        🔄 PLAY AGAIN
+    </button>
 
-    <!-- FINAL RESULTS -->
+</section>
 
-    <section id="finalSection" class="main-card hidden">
-
-        <h2>👑 FINAL RESULTS</h2>
-
-        <div id="finalList"></div>
-
-        <button id="playAgain">
-            🔄 PLAY AGAIN
-        </button>
-
-    </section>
-
-</div>
-
-
-<script src="game.js"></script>
-
-</body>
+</div><script src="game.js"></script></body>
 </html>
