@@ -1,5 +1,15 @@
 // ==========================================
-// NARUTO CHARACTER RANKING GAME
+// NARUTO CHARACTER RANK - MULTIPLAYER
+// ==========================================
+
+const SERVER_URL =
+    "https://naruto-character-rank.onrender.com";
+
+const socket = io(SERVER_URL);
+
+
+// ==========================================
+// CATEGORIES
 // ==========================================
 
 const categories = [
@@ -23,7 +33,7 @@ const categories = [
 
 
 // ==========================================
-// CHARACTER DATABASE
+// CHARACTERS
 // ==========================================
 
 const characters = {
@@ -131,58 +141,42 @@ const characters = {
 
 
 // ==========================================
-// CHARACTER POOLS FOR EACH CATEGORY
+// CATEGORY CHARACTER POOLS
 // ==========================================
 
 const categoryPools = [
 
-    // Talent
     ["Naruto", "Sasuke", "Itachi", "Minato", "Kakashi"],
 
-    // Body
     ["Guy", "Lee", "Madara", "Hashirama", "Naruto"],
 
-    // Mind / IQ
     ["Shikamaru", "Itachi", "Tobirama", "Minato", "Kakashi"],
 
-    // Clan
     ["Sasuke", "Itachi", "Madara", "Hashirama", "Neji"],
 
-    // Chakra
     ["Naruto", "Hashirama", "Madara", "Nagato", "Kisame"],
 
-    // Sensei
     ["Jiraiya", "Kakashi", "Guy", "Orochimaru", "Hiruzen"],
 
-    // Taijutsu
     ["Guy", "Lee", "Neji", "Naruto", "Sasuke"],
 
-    // Ninjutsu
     ["Naruto", "Sasuke", "Minato", "Tobirama", "Kakashi"],
 
-    // Kekkei Genkai
     ["Hashirama", "Sasuke", "Madara", "Gaara", "Naruto"],
 
-    // Speed
     ["Minato", "Naruto", "Sasuke", "Tobirama", "Guy"],
 
-    // Strength
     ["Guy", "Hashirama", "Madara", "Naruto", "Sakura"],
 
-    // Battle IQ
     ["Itachi", "Shikamaru", "Minato", "Kakashi", "Tobirama"],
 
-    // Genjutsu
     ["Itachi", "Sasuke", "Madara", "Obito", "Kakashi"],
 
-    // Chakra Nature
     ["Naruto", "Sasuke", "Kakashi", "Hashirama", "Gaara"],
 
-    // Tailed Beast
     ["Naruto", "Gaara", "Obito", "Madara", "Nagato"],
 
-    // Healing
-    ["Sakura", "Naruto", "Hashirama", "Orochimaru", "Tsunade"]
+    ["Sakura", "Naruto", "Hashirama", "Orochimaru", "Kakashi"]
 ];
 
 
@@ -190,16 +184,68 @@ const categoryPools = [
 // GAME STATE
 // ==========================================
 
+let playerName = "";
+
+let roomCode = "";
+
+let isHost = false;
+
 let currentCategory = 0;
 
 let selectedCharacters = [];
 
-let finalRankings = [];
+let currentRanking = [];
+
+let roundResults = [];
+
+let players = [];
 
 
 // ==========================================
-// HTML ELEMENTS
+// ELEMENTS
 // ==========================================
+
+const lobbySection =
+    document.getElementById("lobbySection");
+
+const roomSection =
+    document.getElementById("roomSection");
+
+const categoryCard =
+    document.getElementById("categoryCard");
+
+const rankingSection =
+    document.getElementById("rankingSection");
+
+const waitingSection =
+    document.getElementById("waitingSection");
+
+const resultSection =
+    document.getElementById("resultSection");
+
+const finalSection =
+    document.getElementById("finalSection");
+
+const playerNameInput =
+    document.getElementById("playerName");
+
+const roomCodeInput =
+    document.getElementById("roomCodeInput");
+
+const connectionStatus =
+    document.getElementById("connectionStatus");
+
+const roomCodeDisplay =
+    document.getElementById("roomCode");
+
+const playersList =
+    document.getElementById("playersList");
+
+const waitingText =
+    document.getElementById("waitingText");
+
+const startMultiplayer =
+    document.getElementById("startMultiplayer");
 
 const categoryNumber =
     document.getElementById("categoryNumber");
@@ -210,14 +256,8 @@ const categoryName =
 const characterInputs =
     document.getElementById("characterInputs");
 
-const addCharacter =
-    document.getElementById("addCharacter");
-
 const startRanking =
     document.getElementById("startRanking");
-
-const rankingSection =
-    document.getElementById("rankingSection");
 
 const rankingList =
     document.getElementById("rankingList");
@@ -225,14 +265,310 @@ const rankingList =
 const confirmRanking =
     document.getElementById("confirmRanking");
 
-const resultSection =
-    document.getElementById("resultSection");
+const rankingProgress =
+    document.getElementById("rankingProgress");
+
+const resultCategory =
+    document.getElementById("resultCategory");
 
 const resultList =
     document.getElementById("resultList");
 
 const nextCategory =
     document.getElementById("nextCategory");
+
+const finalList =
+    document.getElementById("finalList");
+
+const playAgain =
+    document.getElementById("playAgain");
+
+
+// ==========================================
+// SERVER CONNECTION
+// ==========================================
+
+socket.on("connect", () => {
+
+    connectionStatus.textContent =
+        "🟢 Server connected";
+
+});
+
+
+socket.on("disconnect", () => {
+
+    connectionStatus.textContent =
+        "🔴 Server disconnected";
+
+});
+
+
+socket.on("connect_error", () => {
+
+    connectionStatus.textContent =
+        "🔴 Cannot connect to multiplayer server";
+
+});
+
+
+// ==========================================
+// CREATE ROOM
+// ==========================================
+
+document
+    .getElementById("createRoom")
+    .onclick = () => {
+
+        playerName =
+            playerNameInput.value.trim();
+
+
+        if (!playerName) {
+
+            alert("Enter your name first!");
+
+            return;
+        }
+
+
+        socket.emit(
+            "createRoom",
+            {
+                playerName
+            }
+        );
+
+    };
+
+
+// ==========================================
+// ROOM CREATED
+// ==========================================
+
+socket.on(
+    "roomCreated",
+    data => {
+
+        roomCode =
+            data.roomCode;
+
+        players =
+            data.players;
+
+        isHost = true;
+
+        showRoom();
+
+    }
+);
+
+
+// ==========================================
+// JOIN ROOM
+// ==========================================
+
+document
+    .getElementById("joinRoom")
+    .onclick = () => {
+
+        playerName =
+            playerNameInput.value.trim();
+
+        const code =
+            roomCodeInput.value
+                .trim()
+                .toUpperCase();
+
+
+        if (!playerName) {
+
+            alert("Enter your name first!");
+
+            return;
+        }
+
+
+        if (code.length !== 6) {
+
+            alert("Enter a valid 6-character room code!");
+
+            return;
+        }
+
+
+        socket.emit(
+            "joinRoom",
+            {
+                roomCode: code,
+                playerName
+            }
+        );
+
+    };
+
+
+// ==========================================
+// ROOM JOINED
+// ==========================================
+
+socket.on(
+    "roomJoined",
+    data => {
+
+        roomCode =
+            data.roomCode;
+
+        players =
+            data.players;
+
+        isHost = false;
+
+        showRoom();
+
+    }
+);
+
+
+// ==========================================
+// ROOM ERROR
+// ==========================================
+
+socket.on(
+    "roomError",
+    message => {
+
+        alert(message);
+
+    }
+);
+
+
+// ==========================================
+// PLAYERS UPDATED
+// ==========================================
+
+socket.on(
+    "playersUpdated",
+    data => {
+
+        players =
+            data.players;
+
+        updatePlayers();
+
+    }
+);
+
+
+// ==========================================
+// SHOW ROOM
+// ==========================================
+
+function showRoom() {
+
+    lobbySection.classList.add("hidden");
+
+    roomSection.classList.remove("hidden");
+
+    roomCodeDisplay.textContent =
+        roomCode;
+
+    updatePlayers();
+
+}
+
+
+// ==========================================
+// UPDATE PLAYERS
+// ==========================================
+
+function updatePlayers() {
+
+    playersList.innerHTML = "";
+
+
+    players.forEach(
+        (player, index) => {
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "player-item";
+
+            item.textContent =
+                `${index + 1}. ${player.name}` +
+                (index === 0 ? " 👑 HOST" : "");
+
+
+            playersList.appendChild(item);
+
+        }
+    );
+
+
+    waitingText.textContent =
+        `${players.length}/6 players in room`;
+
+}
+
+
+// ==========================================
+// START MULTIPLAYER GAME
+// ==========================================
+
+startMultiplayer.onclick =
+    () => {
+
+        if (!isHost) {
+
+            alert(
+                "Only the host can start the game."
+            );
+
+            return;
+        }
+
+
+        if (players.length < 2) {
+
+            alert(
+                "At least 2 players are required."
+            );
+
+            return;
+        }
+
+
+        socket.emit(
+            "startGame",
+            {
+                roomCode
+            }
+        );
+
+
+        startGame();
+
+    };
+
+
+// ==========================================
+// START GAME
+// ==========================================
+
+function startGame() {
+
+    roomSection.classList.add("hidden");
+
+    categoryCard.classList.remove("hidden");
+
+    currentCategory = 0;
+
+    loadCategory();
+
+}
 
 
 // ==========================================
@@ -255,24 +591,12 @@ function loadCategory() {
 
 
 // ==========================================
-// CREATE CHARACTER CARDS
+// CHARACTER CARDS
 // ==========================================
 
 function createCharacterCards() {
 
     characterInputs.innerHTML = "";
-
-    const title =
-        document.createElement("h3");
-
-    title.textContent =
-        "Select 2 or more characters";
-
-    title.style.textAlign = "center";
-
-    title.style.marginBottom = "15px";
-
-    characterInputs.appendChild(title);
 
 
     const grid =
@@ -282,87 +606,74 @@ function createCharacterCards() {
         "character-grid";
 
 
-    const pool =
-        categoryPools[currentCategory];
+    categoryPools[currentCategory]
+        .forEach(key => {
+
+            const character =
+                characters[key];
 
 
-    pool.forEach(key => {
-
-        const character =
-            characters[key];
-
-        if (!character) return;
+            if (!character) return;
 
 
-        const card =
-            document.createElement("div");
+            const card =
+                document.createElement("div");
 
-        card.className =
-            "character-card";
-
-
-        const image =
-            document.createElement("img");
-
-        image.src =
-            character.image;
-
-        image.alt =
-            character.name;
+            card.className =
+                "character-card";
 
 
-        image.onerror =
-            function () {
+            const image =
+                document.createElement("img");
 
-                console.log(
-                    "Image failed:",
-                    character.image
-                );
+            image.src =
+                character.image;
 
-            };
-
-
-        const name =
-            document.createElement("div");
-
-        name.className =
-            "character-name";
-
-        name.textContent =
-            character.name;
+            image.alt =
+                character.name;
 
 
-        const button =
-            document.createElement("button");
+            const name =
+                document.createElement("div");
 
-        button.className =
-            "select-character";
+            name.className =
+                "character-name";
 
-        button.textContent =
-            "SELECT";
-
-
-        button.onclick =
-            function () {
-
-                selectCharacter(
-                    key,
-                    card,
-                    button
-                );
-
-            };
+            name.textContent =
+                character.name;
 
 
-        card.appendChild(image);
+            const button =
+                document.createElement("button");
 
-        card.appendChild(name);
+            button.className =
+                "select-character";
 
-        card.appendChild(button);
+            button.textContent =
+                "SELECT";
 
-        grid.appendChild(card);
 
-    });
+            button.onclick =
+                () => {
+
+                    selectCharacter(
+                        key,
+                        card,
+                        button
+                    );
+
+                };
+
+
+            card.appendChild(image);
+
+            card.appendChild(name);
+
+            card.appendChild(button);
+
+            grid.appendChild(card);
+
+        });
 
 
     characterInputs.appendChild(grid);
@@ -391,12 +702,9 @@ function selectCharacter(
                 item => item !== key
             );
 
-        card.classList.remove(
-            "selected"
-        );
+        card.classList.remove("selected");
 
-        button.textContent =
-            "SELECT";
+        button.textContent = "SELECT";
 
         return;
     }
@@ -404,9 +712,7 @@ function selectCharacter(
 
     selectedCharacters.push(key);
 
-    card.classList.add(
-        "selected"
-    );
+    card.classList.add("selected");
 
     button.textContent =
         "✓ SELECTED";
@@ -419,7 +725,7 @@ function selectCharacter(
 // ==========================================
 
 startRanking.onclick =
-    function () {
+    () => {
 
         if (
             selectedCharacters.length < 2
@@ -430,28 +736,23 @@ startRanking.onclick =
             );
 
             return;
-
         }
 
 
-        showRanking();
+        categoryCard.classList.add("hidden");
+
+        rankingSection.classList.remove("hidden");
+
+        createRanking();
 
     };
 
 
 // ==========================================
-// SHOW RANKING
+// CREATE RANKING
 // ==========================================
 
-function showRanking() {
-
-    document
-        .querySelector(".category-card")
-        .classList.add("hidden");
-
-    rankingSection
-        .classList.remove("hidden");
-
+function createRanking() {
 
     rankingList.innerHTML = "";
 
@@ -459,106 +760,84 @@ function showRanking() {
     selectedCharacters.forEach(
         (key, index) => {
 
-            createRankingItem(
-                key,
-                index
+            const character =
+                characters[key];
+
+
+            const item =
+                document.createElement("div");
+
+            item.className =
+                "rank-item";
+
+            item.draggable = true;
+
+            item.dataset.key = key;
+
+
+            const number =
+                document.createElement("div");
+
+            number.className =
+                "rank-number";
+
+            number.textContent =
+                index + 1;
+
+
+            const image =
+                document.createElement("img");
+
+            image.src =
+                character.image;
+
+            image.className =
+                "rank-image";
+
+
+            const name =
+                document.createElement("div");
+
+            name.className =
+                "rank-name";
+
+            name.textContent =
+                character.name;
+
+
+            item.appendChild(number);
+
+            item.appendChild(image);
+
+            item.appendChild(name);
+
+            rankingList.appendChild(item);
+
+
+            item.addEventListener(
+                "dragstart",
+                () => {
+
+                    item.classList.add(
+                        "dragging"
+                    );
+
+                }
             );
 
-        }
-    );
 
+            item.addEventListener(
+                "dragend",
+                () => {
 
-    updateNumbers();
+                    item.classList.remove(
+                        "dragging"
+                    );
 
-}
+                    updateNumbers();
 
-
-// ==========================================
-// CREATE RANK ITEM
-// ==========================================
-
-function createRankingItem(
-    key,
-    index
-) {
-
-    const character =
-        characters[key];
-
-
-    const item =
-        document.createElement("div");
-
-    item.className =
-        "rank-item";
-
-    item.draggable = true;
-
-    item.dataset.key =
-        key;
-
-
-    const number =
-        document.createElement("div");
-
-    number.className =
-        "rank-number";
-
-    number.textContent =
-        index + 1;
-
-
-    const image =
-        document.createElement("img");
-
-    image.src =
-        character.image;
-
-    image.className =
-        "rank-image";
-
-
-    const name =
-        document.createElement("div");
-
-    name.className =
-        "rank-name";
-
-    name.textContent =
-        character.name;
-
-
-    item.appendChild(number);
-
-    item.appendChild(image);
-
-    item.appendChild(name);
-
-
-    rankingList.appendChild(item);
-
-
-    item.addEventListener(
-        "dragstart",
-        function () {
-
-            item.classList.add(
-                "dragging"
+                }
             );
-
-        }
-    );
-
-
-    item.addEventListener(
-        "dragend",
-        function () {
-
-            item.classList.remove(
-                "dragging"
-            );
-
-            updateNumbers();
 
         }
     );
@@ -572,7 +851,7 @@ function createRankingItem(
 
 rankingList.addEventListener(
     "dragover",
-    function (event) {
+    event => {
 
         event.preventDefault();
 
@@ -594,7 +873,7 @@ rankingList.addEventListener(
             ];
 
 
-        const nextItem =
+        const next =
             items.find(item => {
 
                 const rect =
@@ -609,11 +888,11 @@ rankingList.addEventListener(
             });
 
 
-        if (nextItem) {
+        if (next) {
 
             rankingList.insertBefore(
                 dragging,
-                nextItem
+                next
             );
 
         } else {
@@ -661,7 +940,7 @@ function updateNumbers() {
 // ==========================================
 
 confirmRanking.onclick =
-    function () {
+    () => {
 
         const items =
             rankingList.querySelectorAll(
@@ -669,23 +948,22 @@ confirmRanking.onclick =
             );
 
 
-        const ranking = [];
+        currentRanking = [];
 
 
         items.forEach(
             (item, index) => {
 
-                ranking.push({
+                const key =
+                    item.dataset.key;
+
+                currentRanking.push({
 
                     character:
-                        characters[
-                            item.dataset.key
-                        ].name,
+                        characters[key].name,
 
                     image:
-                        characters[
-                            item.dataset.key
-                        ].image,
+                        characters[key].image,
 
                     rank:
                         index + 1
@@ -696,110 +974,128 @@ confirmRanking.onclick =
         );
 
 
-        finalRankings.push({
+        rankingSection.classList.add("hidden");
 
-            category:
-                categories[currentCategory],
-
-            ranking:
-                ranking
-
-        });
+        waitingSection.classList.remove("hidden");
 
 
-        showCategoryResult(
-            ranking
+        socket.emit(
+            "submitRanking",
+            {
+                roomCode,
+                category:
+                    categories[currentCategory],
+                ranking:
+                    currentRanking
+            }
         );
 
     };
 
 
 // ==========================================
-// SHOW CATEGORY RESULT
+// RANKING PROGRESS
 // ==========================================
 
-function showCategoryResult(
-    ranking
-) {
+socket.on(
+    "rankingProgress",
+    data => {
 
-    rankingSection
-        .classList.add("hidden");
+        rankingProgress.textContent =
+            `${data.submittedPlayers}/${data.totalPlayers} players finished`;
 
-    resultSection
-        .classList.remove("hidden");
+    }
+);
 
+
+// ==========================================
+// ROUND RESULTS
+// ==========================================
+
+socket.on(
+    "roundResults",
+    data => {
+
+        waitingSection.classList.add("hidden");
+
+        resultSection.classList.remove("hidden");
+
+        resultCategory.textContent =
+            data.category;
+
+        roundResults =
+            data.results;
+
+        showRoundResults();
+
+    }
+);
+
+
+// ==========================================
+// SHOW ROUND RESULTS
+// ==========================================
+
+function showRoundResults() {
 
     resultList.innerHTML = "";
 
 
-    ranking.forEach(
-        (item, index) => {
+    roundResults.forEach(
+        playerResult => {
 
-            const row =
+            const box =
                 document.createElement("div");
 
-            row.className =
-                "result-item";
+            box.className =
+                "result-player";
 
 
-            const position =
-                document.createElement("div");
+            const title =
+                document.createElement("h3");
 
-            position.className =
-                "result-position";
-
-
-            if (index === 0) {
-
-                position.textContent =
-                    "🥇";
-
-            } else if (index === 1) {
-
-                position.textContent =
-                    "🥈";
-
-            } else if (index === 2) {
-
-                position.textContent =
-                    "🥉";
-
-            } else {
-
-                position.textContent =
-                    `${index + 1}`;
-
-            }
+            title.textContent =
+                "👤 " + playerResult.player;
 
 
-            const image =
-                document.createElement("img");
-
-            image.src =
-                item.image;
-
-            image.className =
-                "rank-image";
+            box.appendChild(title);
 
 
-            const name =
-                document.createElement("div");
+            playerResult.ranking.forEach(
+                (item, index) => {
 
-            name.className =
-                "result-name";
+                    const row =
+                        document.createElement("div");
 
-            name.textContent =
-                item.character;
-
-
-            row.appendChild(position);
-
-            row.appendChild(image);
-
-            row.appendChild(name);
+                    row.className =
+                        "result-character";
 
 
-            resultList.appendChild(row);
+                    const image =
+                        document.createElement("img");
+
+                    image.src =
+                        item.image;
+
+
+                    const name =
+                        document.createElement("span");
+
+                    name.textContent =
+                        `${index + 1}. ${item.character}`;
+
+
+                    row.appendChild(image);
+
+                    row.appendChild(name);
+
+                    box.appendChild(row);
+
+                }
+            );
+
+
+            resultList.appendChild(box);
 
         }
     );
@@ -811,7 +1107,7 @@ function showCategoryResult(
     ) {
 
         nextCategory.textContent =
-            "🏆 SHOW ALL RESULTS";
+            "👑 FINAL RESULTS";
 
     } else {
 
@@ -828,7 +1124,7 @@ function showCategoryResult(
 // ==========================================
 
 nextCategory.onclick =
-    function () {
+    () => {
 
         currentCategory++;
 
@@ -845,14 +1141,9 @@ nextCategory.onclick =
         }
 
 
-        resultSection
-            .classList.add("hidden");
+        resultSection.classList.add("hidden");
 
-
-        document
-            .querySelector(".category-card")
-            .classList.remove("hidden");
-
+        categoryCard.classList.remove("hidden");
 
         loadCategory();
 
@@ -865,119 +1156,59 @@ nextCategory.onclick =
 
 function showFinalResults() {
 
-    document
-        .querySelector(".category-card")
-        .classList.add("hidden");
+    resultSection.classList.add("hidden");
 
-    rankingSection
-        .classList.add("hidden");
+    finalSection.classList.remove("hidden");
 
-    resultSection
-        .classList.remove("hidden");
-
-
-    resultList.innerHTML = "";
+    finalList.innerHTML = "";
 
 
     const title =
-        document.createElement("h2");
+        document.createElement("p");
 
     title.textContent =
-        "🏆 COMPLETE RANKINGS";
+        "All category rankings have been completed.";
 
-    resultList.appendChild(title);
+    title.style.textAlign =
+        "center";
 
-
-    finalRankings.forEach(
-        (result, categoryIndex) => {
-
-            const heading =
-                document.createElement("h3");
-
-            heading.textContent =
-                `${categoryIndex + 1}. ${result.category}`;
-
-            heading.style.margin =
-                "20px 0 10px";
+    title.style.marginBottom =
+        "15px";
 
 
-            resultList.appendChild(
-                heading
-            );
+    finalList.appendChild(title);
 
 
-            result.ranking.forEach(
-                (item, index) => {
+    const categoriesCompleted =
+        document.createElement("div");
 
-                    const row =
-                        document.createElement("div");
+    categoriesCompleted.className =
+        "final-player";
 
-                    row.className =
-                        "result-item";
-
-
-                    const position =
-                        document.createElement("div");
-
-                    position.className =
-                        "result-position";
-
-                    position.textContent =
-                        `${index + 1}.`;
+    categoriesCompleted.innerHTML =
+        `
+        <h3>✅ 16 / 16 Categories Completed</h3>
+        <p style="margin-top:10px;">
+            Every player has completed their
+            Naruto character rankings.
+        </p>
+        `;
 
 
-                    const image =
-                        document.createElement("img");
-
-                    image.src =
-                        item.image;
-
-                    image.className =
-                        "rank-image";
-
-
-                    const name =
-                        document.createElement("div");
-
-                    name.className =
-                        "result-name";
-
-                    name.textContent =
-                        item.character;
-
-
-                    row.appendChild(position);
-
-                    row.appendChild(image);
-
-                    row.appendChild(name);
-
-
-                    resultList.appendChild(row);
-
-                }
-            );
-
-        }
+    finalList.appendChild(
+        categoriesCompleted
     );
-
-
-    nextCategory.textContent =
-        "🔄 PLAY AGAIN";
-
-
-    nextCategory.onclick =
-        function () {
-
-            location.reload();
-
-        };
 
 }
 
 
 // ==========================================
-// START GAME
+// PLAY AGAIN
 // ==========================================
 
-loadCategory();
+playAgain.onclick =
+    () => {
+
+        location.reload();
+
+    };
