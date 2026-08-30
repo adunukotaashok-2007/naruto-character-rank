@@ -1,23 +1,61 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+
+<html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Naruto Character Rank</title>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+```
+<title>Naruto Character Games</title>
 
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
+```
 
-</head><body><div class="game"><header>
-    <h1>🍥 NARUTO CHARACTER RANK</h1>
-    <p>Multiplayer Character Ranking</p>
+</head>
+
+<body>
+
+<div class="game">
+
+```
+<header>
+    <h1>🍥 NARUTO CHARACTER GAMES</h1>
+    <p>Multiplayer • 2–6 Players</p>
 </header>
 
 
+<!-- ============================= -->
+<!-- HOME -->
+<!-- ============================= -->
+
+<section id="home" class="card">
+
+    <h2>🎮 SELECT GAME</h2>
+
+    <button id="rankGameBtn">
+        🏆 CHARACTER RANK
+    </button>
+
+    <button id="auctionGameBtn">
+        🔨 NARUTO AUCTION
+    </button>
+
+</section>
+
+
+<!-- ============================= -->
 <!-- LOBBY -->
+<!-- ============================= -->
 
-<section id="lobbySection" class="main-card">
+<section id="lobby" class="card hidden">
 
-    <h2>🎮 MULTIPLAYER</h2>
+    <h2 id="lobbyTitle">
+        MULTIPLAYER
+    </h2>
 
     <input
         id="playerName"
@@ -30,10 +68,10 @@
         🏠 CREATE ROOM
     </button>
 
-    <div class="divider">OR</div>
+    <div class="or">OR</div>
 
     <input
-        id="roomCodeInput"
+        id="roomInput"
         type="text"
         placeholder="Enter room code"
         maxlength="6"
@@ -43,96 +81,104 @@
         🚪 JOIN ROOM
     </button>
 
-    <p id="connectionStatus">
-        Connecting to server...
+    <p id="status">
+        Connecting...
     </p>
+
+    <button id="backHome" class="secondary">
+        ⬅️ BACK
+    </button>
 
 </section>
 
 
+<!-- ============================= -->
 <!-- ROOM -->
+<!-- ============================= -->
 
-<section id="roomSection" class="main-card hidden">
+<section id="room" class="card hidden">
 
-    <h2>🏠 ROOM</h2>
+    <h2>🏠 GAME ROOM</h2>
 
     <div class="room-code">
-        <span>ROOM CODE</span>
+        <small>ROOM CODE</small>
         <strong id="roomCode">------</strong>
     </div>
 
     <h3>👥 PLAYERS</h3>
 
-    <div id="playersList"></div>
+    <div id="players"></div>
 
-    <p id="waitingText">
-        Waiting for players...
-    </p>
+    <p id="playerCount"></p>
 
-    <button id="startMultiplayer">
+    <button id="startGame">
         ⚔️ START GAME
     </button>
 
-</section>
-
-
-<!-- CATEGORY -->
-
-<section id="categoryCard" class="main-card hidden">
-
-    <div class="progress">
-        CATEGORY
-        <span id="categoryNumber">1</span>
-        / 16
-    </div>
-
-    <h2 id="categoryName">
-        🧬 Talent
-    </h2>
-
-    <p class="instruction">
-        Select exactly ONE character.
-    </p>
-
-    <div id="characterInputs"></div>
-
-    <button id="submitCharacter">
-        ✅ CONFIRM CHARACTER
+    <button id="leaveRoom" class="secondary">
+        🚪 LEAVE ROOM
     </button>
 
 </section>
 
 
+<!-- ============================= -->
+<!-- CHARACTER RANK -->
+<!-- ============================= -->
+
+<section id="rankGame" class="card hidden">
+
+    <div class="category-top">
+        <span>CATEGORY</span>
+        <strong id="categoryNumber">1 / 16</strong>
+    </div>
+
+    <h2 id="categoryTitle"></h2>
+
+    <p class="instruction">
+        Select exactly ONE option.
+    </p>
+
+    <div id="rankOptions"
+        class="options-grid">
+    </div>
+
+    <button id="submitRank">
+        ✅ CONFIRM
+    </button>
+
+</section>
+
+
+<!-- ============================= -->
 <!-- WAITING -->
+<!-- ============================= -->
 
-<section id="waitingSection" class="main-card hidden">
-
-    <h2>⏳ WAITING FOR PLAYERS</h2>
+<section id="waiting" class="card hidden">
 
     <div class="loader"></div>
 
-    <p id="selectionProgress">
-        Waiting for everyone...
+    <h2>⏳ WAITING</h2>
+
+    <p id="waitingMessage">
+        Waiting for other players...
     </p>
 
 </section>
 
 
-<!-- RESULTS -->
+<!-- ============================= -->
+<!-- CATEGORY RESULT -->
+<!-- ============================= -->
 
-<section id="resultSection" class="main-card hidden">
+<section id="categoryResult"
+    class="card hidden">
 
-    <h2>🏆 CATEGORY RESULT</h2>
+    <h2 id="categoryResultTitle">
+        CATEGORY RESULT
+    </h2>
 
-    <h3 id="resultCategory"></h3>
-
-    <div id="winnerBox"></div>
-
-    <h3 class="chosen-title">
-        PLAYER SELECTIONS
-    </h3>
-
-    <div id="resultList"></div>
+    <div id="categoryRanking"></div>
 
     <button id="nextCategory">
         NEXT CATEGORY ➡️
@@ -141,19 +187,122 @@
 </section>
 
 
-<!-- FINAL -->
+<!-- ============================= -->
+<!-- AUCTION -->
+<!-- ============================= -->
 
-<section id="finalSection" class="main-card hidden">
+<section id="auction" class="card hidden">
+
+    <div class="auction-header">
+
+        <div>
+            <small>AUCTION</small>
+            <h2 id="auctionCharacter"></h2>
+        </div>
+
+        <div class="timer"
+            id="auctionTimer">
+            10
+        </div>
+
+    </div>
+
+    <img id="auctionImage"
+        class="auction-image">
+
+    <div class="auction-price">
+
+        <span>Current Bid</span>
+
+        <strong>
+            💰 <span id="currentBid">0</span>
+        </strong>
+
+    </div>
+
+    <p id="highestBidder">
+        No bids yet
+    </p>
+
+    <div class="bid-buttons">
+
+        <button id="bid100">
+            +100
+        </button>
+
+        <button id="bid250">
+            +250
+        </button>
+
+        <button id="bid500">
+            +500
+        </button>
+
+    </div>
+
+    <div class="auction-info">
+
+        <div>
+            💰 Balance:
+            <strong id="balance">
+                1000
+            </strong>
+        </div>
+
+        <div>
+            👥 Team:
+            <strong id="teamCount">
+                0 / 5
+            </strong>
+        </div>
+
+    </div>
+
+    <h3>👥 PLAYERS</h3>
+
+    <div id="auctionPlayers"></div>
+
+</section>
+
+
+<!-- ============================= -->
+<!-- AUCTION RESULT -->
+<!-- ============================= -->
+
+<section id="auctionResult"
+    class="card hidden">
+
+    <h2>🏆 AUCTION RESULT</h2>
+
+    <div id="auctionWinner"></div>
+
+    <button id="continueAuction">
+        NEXT CHARACTER ➡️
+    </button>
+
+</section>
+
+
+<!-- ============================= -->
+<!-- FINAL -->
+<!-- ============================= -->
+
+<section id="final" class="card hidden">
 
     <h2>👑 FINAL RESULTS</h2>
 
-    <div id="finalList"></div>
+    <div id="finalResults"></div>
 
     <button id="playAgain">
         🔄 PLAY AGAIN
     </button>
 
 </section>
+```
 
-</div><script src="game.js"></script></body>
+</div>
+
+<script src="game.js"></script>
+
+</body>
 </html>
