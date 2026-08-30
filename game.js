@@ -1,5 +1,5 @@
 // ==========================================
-// NARUTO CHARACTER RANK
+// NARUTO CHARACTER RANKING GAME
 // ==========================================
 
 const categories = [
@@ -26,36 +26,168 @@ const categories = [
 // CHARACTER DATABASE
 // ==========================================
 
-const characters = [
-    {
+const characters = {
+
+    Naruto: {
         name: "Naruto Uzumaki",
         image: "assets/characters/images%20%282%29.jpeg"
     },
 
-    {
+    Sasuke: {
         name: "Sasuke Uchiha",
         image: "assets/characters/images%20%283%29.jpeg"
     },
 
-    {
+    Itachi: {
         name: "Itachi Uchiha",
         image: "assets/characters/images%20%284%29.jpeg"
     },
 
-    {
+    Madara: {
         name: "Madara Uchiha",
         image: "assets/characters/images%20%285%29.jpeg"
     },
 
-    {
+    Minato: {
+        name: "Minato Namikaze",
+        image: "assets/characters/images%20%286%29.jpeg"
+    },
+
+    Tobirama: {
+        name: "Tobirama Senju",
+        image: "assets/characters/images%20%287%29.jpeg"
+    },
+
+    Hashirama: {
+        name: "Hashirama Senju",
+        image: "assets/characters/images%20%288%29.jpeg"
+    },
+
+    Jiraiya: {
+        name: "Jiraiya",
+        image: "assets/characters/images%20%289%29.jpeg"
+    },
+
+    Hiruzen: {
+        name: "Hiruzen Sarutobi",
+        image: "assets/characters/images%20%2810%29.jpeg"
+    },
+
+    Orochimaru: {
+        name: "Orochimaru",
+        image: "assets/characters/images%20%2811%29.jpeg"
+    },
+
+    Guy: {
+        name: "Might Guy",
+        image: "assets/characters/images%20%2812%29.jpeg"
+    },
+
+    Lee: {
+        name: "Rock Lee",
+        image: "assets/characters/images%20%2813%29.jpeg"
+    },
+
+    Shikamaru: {
+        name: "Shikamaru Nara",
+        image: "assets/characters/images%20%2814%29.jpeg"
+    },
+
+    Neji: {
+        name: "Neji Hyuga",
+        image: "assets/characters/images%20%2815%29.jpeg"
+    },
+
+    Gaara: {
+        name: "Gaara",
+        image: "assets/characters/images%20%2816%29.jpeg"
+    },
+
+    Kisame: {
+        name: "Kisame Hoshigaki",
+        image: "assets/characters/images%20%2817%29.jpeg"
+    },
+
+    Sakura: {
+        name: "Sakura Haruno",
+        image: "assets/characters/images%20%2818%29.jpeg"
+    },
+
+    Nagato: {
+        name: "Nagato / Pain",
+        image: "assets/characters/images%20%2819%29.jpeg"
+    },
+
+    Obito: {
+        name: "Obito Uchiha",
+        image: "assets/characters/images%20%2820%29.jpeg"
+    },
+
+    Kakashi: {
         name: "Kakashi Hatake",
         image: "assets/characters/why-do-people-believe-dms-kakashi-is-stronger-than-naruto-v0-6vyk8nfzaqre1.jpg"
     }
+};
+
+
+// ==========================================
+// CHARACTER POOLS FOR EACH CATEGORY
+// ==========================================
+
+const categoryPools = [
+
+    // Talent
+    ["Naruto", "Sasuke", "Itachi", "Minato", "Kakashi"],
+
+    // Body
+    ["Guy", "Lee", "Madara", "Hashirama", "Naruto"],
+
+    // Mind / IQ
+    ["Shikamaru", "Itachi", "Tobirama", "Minato", "Kakashi"],
+
+    // Clan
+    ["Sasuke", "Itachi", "Madara", "Hashirama", "Neji"],
+
+    // Chakra
+    ["Naruto", "Hashirama", "Madara", "Nagato", "Kisame"],
+
+    // Sensei
+    ["Jiraiya", "Kakashi", "Guy", "Orochimaru", "Hiruzen"],
+
+    // Taijutsu
+    ["Guy", "Lee", "Neji", "Naruto", "Sasuke"],
+
+    // Ninjutsu
+    ["Naruto", "Sasuke", "Minato", "Tobirama", "Kakashi"],
+
+    // Kekkei Genkai
+    ["Hashirama", "Sasuke", "Madara", "Gaara", "Naruto"],
+
+    // Speed
+    ["Minato", "Naruto", "Sasuke", "Tobirama", "Guy"],
+
+    // Strength
+    ["Guy", "Hashirama", "Madara", "Naruto", "Sakura"],
+
+    // Battle IQ
+    ["Itachi", "Shikamaru", "Minato", "Kakashi", "Tobirama"],
+
+    // Genjutsu
+    ["Itachi", "Sasuke", "Madara", "Obito", "Kakashi"],
+
+    // Chakra Nature
+    ["Naruto", "Sasuke", "Kakashi", "Hashirama", "Gaara"],
+
+    // Tailed Beast
+    ["Naruto", "Gaara", "Obito", "Madara", "Nagato"],
+
+    // Healing
+    ["Sakura", "Naruto", "Hashirama", "Orochimaru", "Tsunade"]
 ];
 
 
 // ==========================================
-// GAME VARIABLES
+// GAME STATE
 // ==========================================
 
 let currentCategory = 0;
@@ -104,7 +236,7 @@ const nextCategory =
 
 
 // ==========================================
-// START CATEGORY
+// LOAD CATEGORY
 // ==========================================
 
 function loadCategory() {
@@ -114,8 +246,6 @@ function loadCategory() {
 
     categoryName.textContent =
         categories[currentCategory];
-
-    characterInputs.innerHTML = "";
 
     selectedCharacters = [];
 
@@ -132,7 +262,8 @@ function createCharacterCards() {
 
     characterInputs.innerHTML = "";
 
-    const title = document.createElement("h3");
+    const title =
+        document.createElement("h3");
 
     title.textContent =
         "Select 2 or more characters";
@@ -144,69 +275,90 @@ function createCharacterCards() {
     characterInputs.appendChild(title);
 
 
-    const grid = document.createElement("div");
+    const grid =
+        document.createElement("div");
 
-    grid.className = "character-grid";
+    grid.className =
+        "character-grid";
 
 
-    characters.forEach((character, index) => {
+    const pool =
+        categoryPools[currentCategory];
+
+
+    pool.forEach(key => {
+
+        const character =
+            characters[key];
+
+        if (!character) return;
+
 
         const card =
             document.createElement("div");
 
-        card.className = "character-card";
+        card.className =
+            "character-card";
 
 
         const image =
             document.createElement("img");
 
-        image.src = character.image;
+        image.src =
+            character.image;
 
-        image.alt = character.name;
+        image.alt =
+            character.name;
 
 
-        image.onerror = function () {
+        image.onerror =
+            function () {
 
-            image.style.display = "none";
+                console.log(
+                    "Image failed:",
+                    character.image
+                );
 
-        };
+            };
 
 
         const name =
             document.createElement("div");
 
-        name.className = "character-name";
+        name.className =
+            "character-name";
 
         name.textContent =
             character.name;
 
 
-        const selectButton =
+        const button =
             document.createElement("button");
 
-        selectButton.className =
+        button.className =
             "select-character";
 
-        selectButton.textContent =
+        button.textContent =
             "SELECT";
 
 
-        selectButton.onclick = function () {
+        button.onclick =
+            function () {
 
-            selectCharacter(
-                character,
-                card,
-                selectButton
-            );
+                selectCharacter(
+                    key,
+                    card,
+                    button
+                );
 
-        };
+            };
 
 
         card.appendChild(image);
 
         card.appendChild(name);
 
-        card.appendChild(selectButton);
+        card.appendChild(button);
 
         grid.appendChild(card);
 
@@ -223,37 +375,41 @@ function createCharacterCards() {
 // ==========================================
 
 function selectCharacter(
-    character,
+    key,
     card,
     button
 ) {
 
-    const alreadySelected =
-        selectedCharacters.some(
-            item => item.name === character.name
-        );
+    const exists =
+        selectedCharacters.includes(key);
 
 
-    if (alreadySelected) {
+    if (exists) {
 
         selectedCharacters =
             selectedCharacters.filter(
-                item => item.name !== character.name
+                item => item !== key
             );
 
-        card.classList.remove("selected");
+        card.classList.remove(
+            "selected"
+        );
 
-        button.textContent = "SELECT";
+        button.textContent =
+            "SELECT";
 
         return;
     }
 
 
-    selectedCharacters.push(character);
+    selectedCharacters.push(key);
 
-    card.classList.add("selected");
+    card.classList.add(
+        "selected"
+    );
 
-    button.textContent = "✓ SELECTED";
+    button.textContent =
+        "✓ SELECTED";
 
 }
 
@@ -262,21 +418,25 @@ function selectCharacter(
 // START RANKING
 // ==========================================
 
-startRanking.onclick = function () {
+startRanking.onclick =
+    function () {
 
-    if (selectedCharacters.length < 2) {
+        if (
+            selectedCharacters.length < 2
+        ) {
 
-        alert(
-            "Please select at least 2 characters!"
-        );
+            alert(
+                "Select at least 2 characters!"
+            );
 
-        return;
-    }
+            return;
+
+        }
 
 
-    showRanking();
+        showRanking();
 
-};
+    };
 
 
 // ==========================================
@@ -297,10 +457,10 @@ function showRanking() {
 
 
     selectedCharacters.forEach(
-        (character, index) => {
+        (key, index) => {
 
             createRankingItem(
-                character,
+                key,
                 index
             );
 
@@ -314,13 +474,17 @@ function showRanking() {
 
 
 // ==========================================
-// CREATE RANKING ITEM
+// CREATE RANK ITEM
 // ==========================================
 
 function createRankingItem(
-    character,
+    key,
     index
 ) {
+
+    const character =
+        characters[key];
+
 
     const item =
         document.createElement("div");
@@ -330,8 +494,8 @@ function createRankingItem(
 
     item.draggable = true;
 
-    item.dataset.name =
-        character.name;
+    item.dataset.key =
+        key;
 
 
     const number =
@@ -373,8 +537,6 @@ function createRankingItem(
 
     rankingList.appendChild(item);
 
-
-    // Drag events
 
     item.addEventListener(
         "dragstart",
@@ -467,7 +629,7 @@ rankingList.addEventListener(
 
 
 // ==========================================
-// UPDATE NUMBERS
+// UPDATE RANK NUMBERS
 // ==========================================
 
 function updateNumbers() {
@@ -516,7 +678,14 @@ confirmRanking.onclick =
                 ranking.push({
 
                     character:
-                        item.dataset.name,
+                        characters[
+                            item.dataset.key
+                        ].name,
+
+                    image:
+                        characters[
+                            item.dataset.key
+                        ].image,
 
                     rank:
                         index + 1
@@ -546,7 +715,7 @@ confirmRanking.onclick =
 
 
 // ==========================================
-// CATEGORY RESULT
+// SHOW CATEGORY RESULT
 // ==========================================
 
 function showCategoryResult(
@@ -582,15 +751,18 @@ function showCategoryResult(
 
             if (index === 0) {
 
-                position.textContent = "🥇";
+                position.textContent =
+                    "🥇";
 
             } else if (index === 1) {
 
-                position.textContent = "🥈";
+                position.textContent =
+                    "🥈";
 
             } else if (index === 2) {
 
-                position.textContent = "🥉";
+                position.textContent =
+                    "🥉";
 
             } else {
 
@@ -598,6 +770,16 @@ function showCategoryResult(
                     `${index + 1}`;
 
             }
+
+
+            const image =
+                document.createElement("img");
+
+            image.src =
+                item.image;
+
+            image.className =
+                "rank-image";
 
 
             const name =
@@ -612,7 +794,10 @@ function showCategoryResult(
 
             row.appendChild(position);
 
+            row.appendChild(image);
+
             row.appendChild(name);
+
 
             resultList.appendChild(row);
 
@@ -684,10 +869,8 @@ function showFinalResults() {
         .querySelector(".category-card")
         .classList.add("hidden");
 
-
     rankingSection
         .classList.add("hidden");
-
 
     resultSection
         .classList.remove("hidden");
@@ -700,10 +883,7 @@ function showFinalResults() {
         document.createElement("h2");
 
     title.textContent =
-        "🏆 YOUR COMPLETE RANKINGS";
-
-    title.style.marginBottom =
-        "20px";
+        "🏆 COMPLETE RANKINGS";
 
     resultList.appendChild(title);
 
@@ -711,26 +891,23 @@ function showFinalResults() {
     finalRankings.forEach(
         (result, categoryIndex) => {
 
-            const categoryTitle =
+            const heading =
                 document.createElement("h3");
 
-            categoryTitle.textContent =
+            heading.textContent =
                 `${categoryIndex + 1}. ${result.category}`;
 
-            categoryTitle.style.marginTop =
-                "20px";
-
-            categoryTitle.style.marginBottom =
-                "10px";
+            heading.style.margin =
+                "20px 0 10px";
 
 
             resultList.appendChild(
-                categoryTitle
+                heading
             );
 
 
             result.ranking.forEach(
-                (item, rank) => {
+                (item, index) => {
 
                     const row =
                         document.createElement("div");
@@ -746,7 +923,17 @@ function showFinalResults() {
                         "result-position";
 
                     position.textContent =
-                        `${rank + 1}.`;
+                        `${index + 1}.`;
+
+
+                    const image =
+                        document.createElement("img");
+
+                    image.src =
+                        item.image;
+
+                    image.className =
+                        "rank-image";
 
 
                     const name =
@@ -759,18 +946,14 @@ function showFinalResults() {
                         item.character;
 
 
-                    row.appendChild(
-                        position
-                    );
+                    row.appendChild(position);
 
-                    row.appendChild(
-                        name
-                    );
+                    row.appendChild(image);
+
+                    row.appendChild(name);
 
 
-                    resultList.appendChild(
-                        row
-                    );
+                    resultList.appendChild(row);
 
                 }
             );
