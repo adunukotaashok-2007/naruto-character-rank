@@ -1,36 +1,18 @@
-<!DOCTYPE html>
-
-<html lang="en">
-
+<!DOCTYPE html><html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-        content="width=device-width, initial-scale=1.0">
-
-```
-<title>Naruto Character Games</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"><title>Naruto Character Games</title>
 
 <link rel="stylesheet" href="style.css">
 
 <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
-```
 
-</head>
-
-<body>
-
-<div class="game">
-
-```
-<header>
+</head><body><div class="game"><header>
     <h1>🍥 NARUTO CHARACTER GAMES</h1>
     <p>Multiplayer • 2–6 Players</p>
 </header>
 
-
-<!-- ============================= -->
 <!-- HOME -->
-<!-- ============================= -->
 
 <section id="home" class="card">
 
@@ -47,15 +29,11 @@
 </section>
 
 
-<!-- ============================= -->
 <!-- LOBBY -->
-<!-- ============================= -->
 
 <section id="lobby" class="card hidden">
 
-    <h2 id="lobbyTitle">
-        MULTIPLAYER
-    </h2>
+    <h2 id="lobbyTitle">MULTIPLAYER</h2>
 
     <input
         id="playerName"
@@ -81,9 +59,7 @@
         🚪 JOIN ROOM
     </button>
 
-    <p id="status">
-        Connecting...
-    </p>
+    <p id="status">Connecting...</p>
 
     <button id="backHome" class="secondary">
         ⬅️ BACK
@@ -92,17 +68,20 @@
 </section>
 
 
-<!-- ============================= -->
 <!-- ROOM -->
-<!-- ============================= -->
 
 <section id="room" class="card hidden">
 
     <h2>🏠 GAME ROOM</h2>
 
     <div class="room-code">
+
         <small>ROOM CODE</small>
-        <strong id="roomCode">------</strong>
+
+        <strong id="roomCode">
+            ------
+        </strong>
+
     </div>
 
     <h3>👥 PLAYERS</h3>
@@ -122,25 +101,30 @@
 </section>
 
 
-<!-- ============================= -->
 <!-- CHARACTER RANK -->
-<!-- ============================= -->
 
 <section id="rankGame" class="card hidden">
 
     <div class="category-top">
+
         <span>CATEGORY</span>
-        <strong id="categoryNumber">1 / 16</strong>
+
+        <strong id="categoryNumber">
+            1 / 16
+        </strong>
+
     </div>
 
-    <h2 id="categoryTitle"></h2>
+    <h2 id="categoryTitle">
+        Talent
+    </h2>
 
     <p class="instruction">
         Select exactly ONE option.
     </p>
 
     <div id="rankOptions"
-        class="options-grid">
+         class="options-grid">
     </div>
 
     <button id="submitRank">
@@ -150,9 +134,7 @@
 </section>
 
 
-<!-- ============================= -->
 <!-- WAITING -->
-<!-- ============================= -->
 
 <section id="waiting" class="card hidden">
 
@@ -167,12 +149,10 @@
 </section>
 
 
-<!-- ============================= -->
 <!-- CATEGORY RESULT -->
-<!-- ============================= -->
 
 <section id="categoryResult"
-    class="card hidden">
+         class="card hidden">
 
     <h2 id="categoryResultTitle">
         CATEGORY RESULT
@@ -187,42 +167,57 @@
 </section>
 
 
-<!-- ============================= -->
 <!-- AUCTION -->
-<!-- ============================= -->
 
-<section id="auction" class="card hidden">
+<section id="auction"
+         class="card hidden">
 
     <div class="auction-header">
 
         <div>
+
             <small>AUCTION</small>
-            <h2 id="auctionCharacter"></h2>
+
+            <h2 id="auctionCharacter">
+                Naruto
+            </h2>
+
         </div>
 
         <div class="timer"
-            id="auctionTimer">
+             id="auctionTimer">
             10
         </div>
 
     </div>
 
-    <img id="auctionImage"
-        class="auction-image">
+
+    <img
+        id="auctionImage"
+        class="auction-image"
+        src=""
+        alt="Character"
+    >
+
 
     <div class="auction-price">
 
         <span>Current Bid</span>
 
         <strong>
-            💰 <span id="currentBid">0</span>
+            💰
+            <span id="currentBid">
+                0
+            </span>
         </strong>
 
     </div>
 
+
     <p id="highestBidder">
         No bids yet
     </p>
+
 
     <div class="bid-buttons">
 
@@ -239,6 +234,7 @@
         </button>
 
     </div>
+
 
     <div class="auction-info">
 
@@ -258,6 +254,7 @@
 
     </div>
 
+
     <h3>👥 PLAYERS</h3>
 
     <div id="auctionPlayers"></div>
@@ -265,12 +262,10 @@
 </section>
 
 
-<!-- ============================= -->
 <!-- AUCTION RESULT -->
-<!-- ============================= -->
 
 <section id="auctionResult"
-    class="card hidden">
+         class="card hidden">
 
     <h2>🏆 AUCTION RESULT</h2>
 
@@ -283,11 +278,10 @@
 </section>
 
 
-<!-- ============================= -->
 <!-- FINAL -->
-<!-- ============================= -->
 
-<section id="final" class="card hidden">
+<section id="final"
+         class="card hidden">
 
     <h2>👑 FINAL RESULTS</h2>
 
@@ -298,11 +292,6 @@
     </button>
 
 </section>
-```
 
-</div>
-
-<script src="game.js"></script>
-
-</body>
+</div><script src="game.js"></script></body>
 </html>
