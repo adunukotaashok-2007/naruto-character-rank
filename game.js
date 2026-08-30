@@ -1,16 +1,14 @@
 const SERVER_URL =
 "https://naruto-character-rank.onrender.com";
 
-const socket =
-io(SERVER_URL);
+const socket = io(SERVER_URL);
 
-// ============================================
-// CHARACTERS
-// ============================================
+// ========================================
+// CHARACTER DATA
+// ========================================
 
 const characters = {
 
-```
 Naruto: {
     name: "Naruto Uzumaki",
     image: "assets/characters/images%20%282%29.jpeg"
@@ -110,101 +108,65 @@ Obito: {
     name: "Obito Uchiha",
     image: "assets/characters/images%20%2820%29.jpeg"
 }
-```
 
 };
 
-// ============================================
-// AUCTION CHARACTERS
-// ============================================
-
-const auctionCharacters = [
-"Naruto",
-"Sasuke",
-"Itachi",
-"Madara",
-"Kakashi",
-"Minato",
-"Tobirama",
-"Hashirama",
-"Jiraiya",
-"Hiruzen",
-"Orochimaru",
-"Guy",
-"Lee",
-"Shikamaru",
-"Neji",
-"Gaara",
-"Kisame",
-"Sakura",
-"Nagato",
-"Obito"
-];
-
-// ============================================
+// ========================================
 // STATE
-// ============================================
+// ========================================
 
 let playerName = "";
-
 let roomCode = "";
-
 let selectedGame = "";
-
 let isHost = false;
 
 let selectedOption = null;
-
 let currentCategory = 0;
 
-let myBalance = 1000;
-
-let myTeam = [];
-
-// ============================================
+// ========================================
 // ELEMENTS
-// ============================================
+// ========================================
 
-const home =
-document.getElementById("home");
+const sections = [
+"home",
+"lobby",
+"room",
+"rankGame",
+"waiting",
+"categoryResult",
+"auction",
+"auctionResult",
+"final"
+];
 
-const lobby =
-document.getElementById("lobby");
+// ========================================
+// SHOW SECTION
+// ========================================
 
-const room =
-document.getElementById("room");
+function show(id) {
 
-const rankGame =
-document.getElementById("rankGame");
+sections.forEach(section => {
 
-const waiting =
-document.getElementById("waiting");
+    document
+        .getElementById(section)
+        .classList.add("hidden");
 
-const categoryResult =
-document.getElementById(
-"categoryResult"
-);
+});
 
-const auction =
-document.getElementById("auction");
+document
+    .getElementById(id)
+    .classList.remove("hidden");
 
-const auctionResult =
-document.getElementById(
-"auctionResult"
-);
+}
 
-const final =
-document.getElementById("final");
-
-// ============================================
-// NAVIGATION
-// ============================================
+// ========================================
+// HOME BUTTONS
+// ========================================
 
 document.getElementById(
 "rankGameBtn"
 ).onclick = () => {
 
-```
 selectedGame = "rank";
 
 document.getElementById(
@@ -212,8 +174,7 @@ document.getElementById(
 ).textContent =
     "🏆 CHARACTER RANK";
 
-show(lobby);
-```
+show("lobby");
 
 };
 
@@ -221,7 +182,6 @@ document.getElementById(
 "auctionGameBtn"
 ).onclick = () => {
 
-```
 selectedGame = "auction";
 
 document.getElementById(
@@ -229,96 +189,66 @@ document.getElementById(
 ).textContent =
     "🔨 NARUTO AUCTION";
 
-show(lobby);
-```
+show("lobby");
 
 };
+
+// ========================================
+// BACK
+// ========================================
 
 document.getElementById(
 "backHome"
 ).onclick = () => {
 
-```
-show(home);
-```
+show("home");
 
 };
 
-document.getElementById(
-"leaveRoom"
-).onclick = () => {
-
-```
-location.reload();
-```
-
-};
-
-function show(element) {
-
-```
-[
-    home,
-    lobby,
-    room,
-    rankGame,
-    waiting,
-    categoryResult,
-    auction,
-    auctionResult,
-    final
-].forEach(
-    section => {
-
-        section.classList.add(
-            "hidden"
-        );
-
-    }
-);
-
-element.classList.remove(
-    "hidden"
-);
-```
-
-}
-
-// ============================================
+// ========================================
 // CONNECTION
-// ============================================
+// ========================================
 
 socket.on("connect", () => {
 
-```
 document.getElementById(
     "status"
 ).textContent =
     "🟢 Server connected";
-```
+
+});
+
+socket.on("connect_error", error => {
+
+document.getElementById(
+    "status"
+).textContent =
+    "🔴 Server connection failed";
+
+console.error(
+    "Socket connection error:",
+    error
+);
 
 });
 
 socket.on("disconnect", () => {
 
-```
 document.getElementById(
     "status"
 ).textContent =
     "🔴 Server disconnected";
-```
 
 });
 
-// ============================================
+// ========================================
 // CREATE ROOM
-// ============================================
+// ========================================
 
 document.getElementById(
 "createRoom"
 ).onclick = () => {
 
-```
 playerName =
     document.getElementById(
         "playerName"
@@ -328,7 +258,7 @@ playerName =
 if (!playerName) {
 
     alert(
-        "Enter your name!"
+        "Please enter your name."
     );
 
     return;
@@ -338,23 +268,21 @@ if (!playerName) {
 socket.emit(
     "createRoom",
     {
-        playerName,
+        playerName: playerName,
         game: selectedGame
     }
 );
-```
 
 };
 
-// ============================================
+// ========================================
 // JOIN ROOM
-// ============================================
+// ========================================
 
 document.getElementById(
 "joinRoom"
 ).onclick = () => {
 
-```
 playerName =
     document.getElementById(
         "playerName"
@@ -364,15 +292,13 @@ playerName =
 roomCode =
     document.getElementById(
         "roomInput"
-    ).value
-    .trim()
-    .toUpperCase();
+    ).value.trim().toUpperCase();
 
 
 if (!playerName) {
 
     alert(
-        "Enter your name!"
+        "Please enter your name."
     );
 
     return;
@@ -382,7 +308,7 @@ if (!playerName) {
 if (roomCode.length !== 6) {
 
     alert(
-        "Enter a 6-character room code!"
+        "Room code must be 6 characters."
     );
 
     return;
@@ -392,24 +318,22 @@ if (roomCode.length !== 6) {
 socket.emit(
     "joinRoom",
     {
-        roomCode,
-        playerName,
+        roomCode: roomCode,
+        playerName: playerName,
         game: selectedGame
     }
 );
-```
 
 };
 
-// ============================================
+// ========================================
 // ROOM CREATED
-// ============================================
+// ========================================
 
 socket.on(
 "roomCreated",
 data => {
 
-```
     roomCode =
         data.roomCode;
 
@@ -419,22 +343,20 @@ data => {
         data.players
     );
 
-    show(room);
+    show("room");
 
 }
-```
 
 );
 
-// ============================================
+// ========================================
 // ROOM JOINED
-// ============================================
+// ========================================
 
 socket.on(
 "roomJoined",
 data => {
 
-```
     roomCode =
         data.roomCode;
 
@@ -444,54 +366,48 @@ data => {
         data.players
     );
 
-    show(room);
+    show("room");
 
 }
-```
 
 );
 
-// ============================================
+// ========================================
 // ROOM ERROR
-// ============================================
+// ========================================
 
 socket.on(
 "roomError",
 message => {
 
-```
     alert(message);
 
 }
-```
 
 );
 
-// ============================================
+// ========================================
 // PLAYERS UPDATED
-// ============================================
+// ========================================
 
 socket.on(
 "playersUpdated",
 data => {
 
-```
     updateRoom(
         data.players
     );
 
 }
-```
 
 );
 
-// ============================================
+// ========================================
 // UPDATE ROOM
-// ============================================
+// ========================================
 
 function updateRoom(players) {
 
-```
 document.getElementById(
     "roomCode"
 ).textContent =
@@ -515,12 +431,12 @@ players.forEach(
                 "div"
             );
 
+
         row.className =
             "player-row";
 
 
-        row.innerHTML =
-            `
+        row.innerHTML = `
             <span>
                 ${index + 1}. ${player.name}
             </span>
@@ -532,7 +448,7 @@ players.forEach(
                         : "👤"
                 }
             </strong>
-            `;
+        `;
 
 
         list.appendChild(row);
@@ -553,71 +469,60 @@ document.getElementById(
     isHost
         ? "block"
         : "none";
-```
 
 }
 
-// ============================================
+// ========================================
 // START GAME
-// ============================================
+// ========================================
 
 document.getElementById(
 "startGame"
 ).onclick = () => {
 
-```
 socket.emit(
     "startGame",
     {
-        roomCode
+        roomCode: roomCode
     }
 );
-```
 
 };
 
-// ============================================
+// ========================================
 // GAME STARTED
-// ============================================
+// ========================================
 
 socket.on(
 "gameStarted",
 data => {
 
-```
     if (
         selectedGame === "rank"
     ) {
 
-        currentCategory =
-            0;
+        currentCategory = 0;
 
-        show(rankGame);
+        show("rankGame");
 
-        loadRankCategory();
+        loadCategory();
 
     } else {
 
-        show(auction);
-
-        updateAuction(
-            data.auction
-        );
+        show("auction");
 
     }
 
 }
-```
 
 );
 
-// ============================================
-// RANKING CATEGORIES
-// ============================================
+// ========================================
+// CATEGORIES
+// ========================================
 
-const rankCategories = [
+const categories = [
 
-```
 {
     name: "🧬 Talent",
     options: [
@@ -793,30 +698,25 @@ const rankCategories = [
         "Kakashi"
     ]
 }
-```
 
 ];
 
-// ============================================
-// LOAD RANK CATEGORY
-// ============================================
+// ========================================
+// LOAD CATEGORY
+// ========================================
 
-function loadRankCategory() {
+function loadCategory() {
 
-```
 selectedOption = null;
 
-
 const category =
-    rankCategories[
-        currentCategory
-    ];
+    categories[currentCategory];
 
 
 document.getElementById(
     "categoryNumber"
 ).textContent =
-    `${currentCategory + 1} / 16`;
+    `${currentCategory + 1} / ${categories.length}`;
 
 
 document.getElementById(
@@ -834,12 +734,12 @@ const container =
 container.innerHTML = "";
 
 
-const choices =
+const options =
     category.clans ||
     category.options;
 
 
-choices.forEach(
+options.forEach(
     option => {
 
         const div =
@@ -849,30 +749,32 @@ choices.forEach(
 
 
         div.className =
-            category.clans
-                ? "option clan-option"
-                : "option";
+            "option";
 
 
         if (
-            characters[option]
+            category.clans
         ) {
 
-            div.innerHTML =
-                `
+            div.classList.add(
+                "clan-option"
+            );
+
+            div.textContent =
+                option;
+
+        } else {
+
+            div.innerHTML = `
                 <img
                     src="${characters[option].image}"
+                    alt="${characters[option].name}"
                 >
 
                 <div class="option-name">
                     ${characters[option].name}
                 </div>
-                `;
-
-        } else {
-
-            div.textContent =
-                option;
+            `;
 
         }
 
@@ -907,75 +809,67 @@ choices.forEach(
 
     }
 );
-```
 
 }
 
-// ============================================
-// SUBMIT RANK ANSWER
-// ============================================
+// ========================================
+// SUBMIT RANK
+// ========================================
 
 document.getElementById(
 "submitRank"
 ).onclick = () => {
 
-```
 if (!selectedOption) {
 
     alert(
-        "Select exactly ONE option!"
+        "Select one option first."
     );
 
     return;
 }
 
 
-show(waiting);
+show("waiting");
 
 
 socket.emit(
     "submitRank",
     {
-        roomCode,
-        category:
-            currentCategory,
-        option:
-            selectedOption
+        roomCode: roomCode,
+        category: currentCategory,
+        option: selectedOption
     }
 );
-```
 
 };
 
-// ============================================
+// ========================================
 // RANK PROGRESS
-// ============================================
+// ========================================
 
 socket.on(
 "rankProgress",
 data => {
 
-```
     document.getElementById(
         "waitingMessage"
     ).textContent =
         `${data.submitted}/${data.total} players answered`;
 
 }
-```
 
 );
 
-// ============================================
-// CATEGORY RESULT
-// ============================================
+// ========================================
+// RANK RESULT
+// ========================================
 
 socket.on(
 "rankResult",
 data => {
 
-```
-    show(categoryResult);
+    show("categoryResult");
 
 
     document.getElementById(
@@ -996,12 +890,6 @@ data => {
     data.players.forEach(
         (player, index) => {
 
-            const character =
-                characters[
-                    player.option
-                ];
-
-
             const row =
                 document.createElement(
                     "div"
@@ -1015,21 +903,27 @@ data => {
             let image = "";
 
 
-            if (character) {
+            if (
+                characters[
+                    player.option
+                ]
+            ) {
 
-                image =
-                    `
+                image = `
                     <img
                         class="rank-character-image"
-                        src="${character.image}"
+                        src="${
+                            characters[
+                                player.option
+                            ].image
+                        }"
                     >
-                    `;
+                `;
 
             }
 
 
-            row.innerHTML =
-                `
+            row.innerHTML = `
                 <div class="rank-number">
                     #${index + 1}
                 </div>
@@ -1047,37 +941,32 @@ data => {
                     </div>
 
                 </div>
-                `;
+            `;
 
 
-            container.appendChild(
-                row
-            );
+            container.appendChild(row);
 
         }
     );
 
 }
-```
 
 );
 
-// ============================================
+// ========================================
 // NEXT CATEGORY
-// ============================================
+// ========================================
 
 document.getElementById(
 "nextCategory"
 ).onclick = () => {
 
-```
 socket.emit(
     "nextRankCategory",
     {
-        roomCode
+        roomCode: roomCode
     }
 );
-```
 
 };
 
@@ -1085,222 +974,186 @@ socket.on(
 "nextRankCategory",
 data => {
 
-```
     currentCategory =
         data.category;
 
 
-    if (
-        currentCategory >= 16
-    ) {
+    show("rankGame");
 
-        showFinal();
-
-        return;
-    }
-
-
-    show(rankGame);
-
-    loadRankCategory();
+    loadCategory();
 
 }
-```
 
 );
 
-// ============================================
-// AUCTION UPDATE
-// ============================================
+// ========================================
+// AUCTION
+// ========================================
 
 socket.on(
 "auctionUpdate",
 data => {
 
-```
-    show(auction);
-
-    updateAuction(
-        data
-    );
-
-}
-```
-
-);
-
-function updateAuction(data) {
-
-```
-document.getElementById(
-    "auctionCharacter"
-).textContent =
-    characters[
-        data.character
-    ].name;
+    show("auction");
 
 
-document.getElementById(
-    "auctionImage"
-).src =
-    characters[
-        data.character
-    ].image;
-
-
-document.getElementById(
-    "currentBid"
-).textContent =
-    data.currentBid;
-
-
-document.getElementById(
-    "highestBidder"
-).textContent =
-    data.highestBidder
-        ? `🔥 Highest bidder: ${data.highestBidder}`
-        : "No bids yet";
-
-
-document.getElementById(
-    "balance"
-).textContent =
-    data.myBalance;
-
-
-document.getElementById(
-    "teamCount"
-).textContent =
-    `${data.myTeamCount} / 5`;
-
-
-document.getElementById(
-    "auctionTimer"
-).textContent =
-    data.time;
-
-
-const players =
     document.getElementById(
-        "auctionPlayers"
-    );
+        "auctionCharacter"
+    ).textContent =
+        characters[
+            data.character
+        ].name;
 
 
-players.innerHTML = "";
+    document.getElementById(
+        "auctionImage"
+    ).src =
+        characters[
+            data.character
+        ].image;
 
 
-data.players.forEach(
-    player => {
-
-        const row =
-            document.createElement(
-                "div"
-            );
-
-        row.className =
-            "auction-player";
+    document.getElementById(
+        "currentBid"
+    ).textContent =
+        data.currentBid;
 
 
-        row.innerHTML =
-            `
-            <span>
-                ${player.name}
-            </span>
+    document.getElementById(
+        "highestBidder"
+    ).textContent =
+        data.highestBidder
+            ? `🔥 Highest bidder: ${data.highestBidder}`
+            : "No bids yet";
 
-            <strong>
-                💰 ${player.balance}
-                • ${player.teamCount}/5
-            </strong>
+
+    document.getElementById(
+        "auctionTimer"
+    ).textContent =
+        data.time;
+
+
+    document.getElementById(
+        "balance"
+    ).textContent =
+        data.myBalance;
+
+
+    document.getElementById(
+        "teamCount"
+    ).textContent =
+        `${data.myTeamCount} / 5`;
+
+
+    const list =
+        document.getElementById(
+            "auctionPlayers"
+        );
+
+
+    list.innerHTML = "";
+
+
+    data.players.forEach(
+        player => {
+
+            const row =
+                document.createElement(
+                    "div"
+                );
+
+
+            row.className =
+                "auction-player";
+
+
+            row.innerHTML = `
+                <span>
+                    ${player.name}
+                </span>
+
+                <strong>
+                    💰 ${player.balance}
+                    • ${player.teamCount}/5
+                </strong>
             `;
 
 
-        players.appendChild(
-            row
-        );
+            list.appendChild(row);
 
-    }
-);
-
-
-const buttons =
-    document.querySelectorAll(
-        ".bid-buttons button"
+        }
     );
 
 
-buttons.forEach(
-    button => {
+    document.querySelectorAll(
+        ".bid-buttons button"
+    ).forEach(
+        button => {
 
-        button.disabled =
-            data.myTeamCount >= 5;
+            button.disabled =
+                data.myTeamCount >= 5;
 
-    }
-);
-```
+        }
+    );
 
 }
 
-// ============================================
-// BID
-// ============================================
+);
 
-function makeBid(amount) {
+// ========================================
+// BIDDING
+// ========================================
 
-```
+function bid(amount) {
+
 socket.emit(
     "bid",
     {
-        roomCode,
-        amount
+        roomCode: roomCode,
+        amount: amount
     }
 );
-```
 
 }
 
 document.getElementById(
 "bid100"
 ).onclick = () =>
-makeBid(100);
+bid(100);
 
 document.getElementById(
 "bid250"
 ).onclick = () =>
-makeBid(250);
+bid(250);
 
 document.getElementById(
 "bid500"
 ).onclick = () =>
-makeBid(500);
+bid(500);
 
-// ============================================
+// ========================================
 // AUCTION RESULT
-// ============================================
+// ========================================
 
 socket.on(
 "auctionResult",
 data => {
 
-```
-    show(auctionResult);
+    show("auctionResult");
 
 
-    const winner =
-        document.getElementById(
-            "auctionWinner"
-        );
+    const character =
+        characters[
+            data.character
+        ];
 
 
     if (data.winner) {
 
-        const character =
-            characters[
-                data.character
-            ];
+        document.getElementById(
+            "auctionWinner"
+        ).innerHTML = `
 
-
-        winner.innerHTML =
-            `
             <div class="winner">
 
                 <img
@@ -1321,79 +1174,57 @@ data => {
                 </p>
 
             </div>
-            `;
+
+        `;
 
     } else {
 
-        winner.innerHTML =
-            `
+        document.getElementById(
+            "auctionWinner"
+        ).innerHTML = `
+
             <div class="winner">
+
                 <h3>
-                    No one bought this character
+                    No one bought this character.
                 </h3>
+
             </div>
-            `;
+
+        `;
 
     }
 
 }
-```
 
 );
 
-// ============================================
-// CONTINUE AUCTION
-// ============================================
+// ========================================
+// NEXT AUCTION
+// ========================================
 
 document.getElementById(
 "continueAuction"
 ).onclick = () => {
 
-```
 socket.emit(
     "nextAuction",
     {
-        roomCode
+        roomCode: roomCode
     }
 );
-```
 
 };
 
-socket.on(
-"nextAuction",
-data => {
-
-```
-    if (data.finished) {
-
-        showFinal();
-
-        return;
-    }
-
-
-    show(auction);
-
-    updateAuction(
-        data
-    );
-
-}
-```
-
-);
-
-// ============================================
-// FINAL
-// ============================================
+// ========================================
+// FINAL RESULTS
+// ========================================
 
 socket.on(
 "finalResults",
 data => {
 
-```
-    show(final);
+    show("final");
 
 
     const container =
@@ -1418,8 +1249,25 @@ data => {
                 "final-player";
 
 
-            div.innerHTML =
-                `
+            const team =
+                player.team.length
+                    ? player.team
+                        .map(
+                            character =>
+                                characters[
+                                    character
+                                ]
+                                    ? characters[
+                                        character
+                                      ].name
+                                    : character
+                        )
+                        .join(" • ")
+                    : "No characters";
+
+
+            div.innerHTML = `
+
                 <h3>
                     #${index + 1}
                     ${player.name}
@@ -1432,44 +1280,29 @@ data => {
 
                 <p class="final-team">
                     👥 Team:
-                    ${
-                        player.team.length
-                            ? player.team
-                                .map(
-                                    c =>
-                                        characters[c]
-                                            ? characters[c].name
-                                            : c
-                                )
-                                .join(" • ")
-                            : "No characters"
-                    }
+                    ${team}
                 </p>
-                `;
+
+            `;
 
 
-            container.appendChild(
-                div
-            );
+            container.appendChild(div);
 
         }
     );
 
 }
-```
 
 );
 
-// ============================================
+// ========================================
 // PLAY AGAIN
-// ============================================
+// ========================================
 
 document.getElementById(
 "playAgain"
 ).onclick = () => {
 
-```
 location.reload();
-```
 
 };
