@@ -1,7 +1,7 @@
 {
 "name": "naruto-character-rank-server",
 "version": "1.0.0",
-"description": "Multiplayer server for Naruto Character Games",
+"description": "Naruto Character Rank Multiplayer Server",
 "main": "server/server.js",
 "scripts": {
 "start": "node server/server.js"
