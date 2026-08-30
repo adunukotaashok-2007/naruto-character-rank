@@ -1,13 +1,13 @@
 {
-"name": "naruto-character-rank-server",
-"version": "1.0.0",
-"description": "Multiplayer server for Naruto Character Rank",
-"main": "server/server.js",
-"scripts": {
-"start": "node server/server.js"
-},
-"dependencies": {
-"express": "^4.21.2",
-"socket.io": "^4.8.1"
-}
+  "name": "naruto-character-rank-server",
+  "version": "1.0.0",
+  "description": "Multiplayer server for Naruto Character Rank",
+  "main": "server/server.js",
+  "scripts": {
+    "start": "node server/server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2",
+    "socket.io": "^4.8.1"
+  }
 }
