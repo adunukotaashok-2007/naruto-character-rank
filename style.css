@@ -9,7 +9,6 @@ body {
 min-height: 100vh;
 padding: 15px;
 
-```
 background:
     radial-gradient(
         circle at top,
@@ -24,7 +23,6 @@ background:
     );
 
 color: white;
-```
 
 }
 
@@ -36,11 +34,11 @@ margin: auto;
 
 header {
 text-align: center;
-margin: 20px 0 25px;
+padding: 20px 0;
 }
 
 header h1 {
-font-size: 29px;
+font-size: 28px;
 text-shadow: 0 0 18px #ff7800;
 }
 
@@ -50,16 +48,18 @@ margin-top: 8px;
 }
 
 .card {
-background: rgba(18, 9, 30, .97);
+background: rgba(18, 9, 30, 0.97);
+
 border: 1px solid #63317d;
+
 border-radius: 20px;
+
 padding: 22px;
+
 margin-bottom: 20px;
 
-```
 box-shadow:
-    0 10px 40px rgba(0,0,0,.5);
-```
+    0 10px 40px rgba(0, 0, 0, .5);
 
 }
 
@@ -70,14 +70,17 @@ margin-bottom: 20px;
 
 button {
 width: 100%;
-border: 0;
+
+border: none;
+
 border-radius: 13px;
 
-```
 padding: 15px;
+
 margin-top: 10px;
 
 font-size: 16px;
+
 font-weight: bold;
 
 cursor: pointer;
@@ -90,7 +93,6 @@ background:
     );
 
 color: #180800;
-```
 
 }
 
@@ -98,16 +100,23 @@ button:active {
 transform: scale(.97);
 }
 
+button:disabled {
+opacity: .4;
+cursor: not-allowed;
+}
+
 .secondary {
 background: #291535;
+
 color: white;
+
 border: 1px solid #6b3985;
+
 }
 
 input {
 width: 100%;
 
-```
 padding: 15px;
 
 margin-bottom: 10px;
@@ -123,7 +132,6 @@ color: white;
 font-size: 16px;
 
 outline: none;
-```
 
 }
 
@@ -133,20 +141,25 @@ border-color: #ff8500;
 
 .or {
 text-align: center;
+
 color: #777;
+
 margin: 10px;
+
 }
 
 #status {
 text-align: center;
+
 color: #aaa;
+
 margin: 15px 0;
+
 }
 
 .room-code {
 text-align: center;
 
-```
 background: #0e0716;
 
 border: 1px solid #63317d;
@@ -156,7 +169,6 @@ border-radius: 15px;
 padding: 18px;
 
 margin-bottom: 20px;
-```
 
 }
 
@@ -167,7 +179,6 @@ color: #888;
 .room-code strong {
 display: block;
 
-```
 font-size: 32px;
 
 color: #ff9d00;
@@ -175,26 +186,24 @@ color: #ff9d00;
 letter-spacing: 6px;
 
 margin-top: 8px;
-```
 
 }
 
 #players,
 #auctionPlayers {
 display: flex;
+
 flex-direction: column;
+
 gap: 8px;
 
-```
 margin-top: 12px;
-```
 
 }
 
 .player-row {
 padding: 13px;
 
-```
 background: #130a1e;
 
 border: 1px solid #4c2863;
@@ -202,20 +211,19 @@ border: 1px solid #4c2863;
 border-radius: 12px;
 
 display: flex;
+
 justify-content: space-between;
-```
 
 }
 
 .category-top {
 display: flex;
+
 justify-content: space-between;
 
-```
 color: #ff9d00;
 
 margin-bottom: 15px;
-```
 
 }
 
@@ -225,26 +233,26 @@ font-size: 30px;
 
 .instruction {
 text-align: center;
+
 color: #aaa;
+
 margin-bottom: 20px;
+
 }
 
 .options-grid {
 display: grid;
 
-```
 grid-template-columns:
     repeat(2, 1fr);
 
 gap: 12px;
-```
 
 }
 
 .option {
 background: #160d22;
 
-```
 border: 2px solid #4d2867;
 
 border-radius: 15px;
@@ -254,60 +262,52 @@ padding: 10px;
 text-align: center;
 
 cursor: pointer;
-```
 
 }
 
 .option.selected {
 border-color: #ff8500;
 
-```
 box-shadow:
     0 0 20px
-    rgba(255,133,0,.5);
-```
+    rgba(255, 133, 0, .5);
 
 }
 
 .option img {
 width: 100%;
+
 height: 150px;
 
-```
 object-fit: cover;
 
 border-radius: 10px;
-```
 
 }
 
 .option-name {
 margin-top: 8px;
 
-```
 font-weight: bold;
-```
 
 }
 
 .clan-option {
 padding: 25px 10px;
 
-```
 font-size: 20px;
 
 font-weight: bold;
 
 color: #ffb000;
-```
 
 }
 
 .loader {
 width: 45px;
+
 height: 45px;
 
-```
 margin: 15px auto;
 
 border: 4px solid #382344;
@@ -317,29 +317,27 @@ border-top-color: #ff8500;
 border-radius: 50%;
 
 animation: spin 1s linear infinite;
-```
 
 }
 
 @keyframes spin {
+
 to {
-transform: rotate(360deg);
+    transform: rotate(360deg);
 }
+
 }
 
 #waitingMessage {
 text-align: center;
-color: #aaa;
-}
 
-#categoryResultTitle {
-color: #ff9d00;
+color: #aaa;
+
 }
 
 .rank-result {
 display: flex;
 
-```
 align-items: center;
 
 gap: 12px;
@@ -353,32 +351,28 @@ background: #130a1e;
 border: 1px solid #4d2867;
 
 border-radius: 13px;
-```
 
 }
 
 .rank-number {
 width: 40px;
 
-```
 font-size: 22px;
 
 font-weight: bold;
 
 color: #ff9d00;
-```
 
 }
 
 .rank-character-image {
 width: 55px;
+
 height: 55px;
 
-```
 object-fit: cover;
 
 border-radius: 10px;
-```
 
 }
 
@@ -393,42 +387,37 @@ font-weight: bold;
 .rank-choice {
 color: #ffb000;
 
-```
 font-size: 14px;
 
 margin-top: 4px;
-```
 
 }
 
 .auction-header {
 display: flex;
 
-```
 justify-content: space-between;
 
 align-items: center;
-```
 
 }
 
 .auction-header h2 {
 text-align: left;
 
-```
 margin: 5px 0;
-```
 
 }
 
 .timer {
 width: 60px;
+
 height: 60px;
 
-```
 display: flex;
 
 align-items: center;
+
 justify-content: center;
 
 border-radius: 50%;
@@ -442,15 +431,14 @@ color: #ffb000;
 font-size: 25px;
 
 font-weight: bold;
-```
 
 }
 
 .auction-image {
 display: block;
 
-```
 width: 100%;
+
 max-width: 330px;
 
 height: 300px;
@@ -460,65 +448,54 @@ object-fit: cover;
 border-radius: 18px;
 
 margin: 15px auto;
-```
 
 }
 
 .auction-price {
 text-align: center;
 
-```
 padding: 15px;
 
 background: #0e0716;
 
 border-radius: 14px;
-```
 
 }
 
 .auction-price span {
 display: block;
 
-```
 color: #aaa;
-```
 
 }
 
 .auction-price strong {
 display: block;
 
-```
 font-size: 28px;
 
 color: #ffb000;
 
 margin-top: 5px;
-```
 
 }
 
 #highestBidder {
 text-align: center;
 
-```
 color: #aaa;
 
 margin: 12px 0;
-```
 
 }
 
 .bid-buttons {
 display: grid;
 
-```
 grid-template-columns:
     repeat(3, 1fr);
 
 gap: 8px;
-```
 
 }
 
@@ -529,7 +506,6 @@ margin: 0;
 .auction-info {
 display: flex;
 
-```
 justify-content: space-around;
 
 padding: 15px;
@@ -541,7 +517,6 @@ background: #130a1e;
 border-radius: 13px;
 
 color: #aaa;
-```
 
 }
 
@@ -552,7 +527,6 @@ color: #ffb000;
 .auction-player {
 display: flex;
 
-```
 justify-content: space-between;
 
 padding: 12px;
@@ -562,7 +536,6 @@ background: #130a1e;
 border: 1px solid #4d2867;
 
 border-radius: 12px;
-```
 
 }
 
@@ -573,7 +546,6 @@ color: #ffb000;
 .winner {
 text-align: center;
 
-```
 padding: 20px;
 
 background: #130a1e;
@@ -581,37 +553,32 @@ background: #130a1e;
 border: 2px solid #ff8500;
 
 border-radius: 15px;
-```
 
 }
 
 .winner img {
 width: 120px;
+
 height: 120px;
 
-```
 object-fit: cover;
 
 border-radius: 15px;
 
 margin-bottom: 10px;
-```
 
 }
 
 .winner h3 {
 color: #ffb000;
 
-```
 margin-bottom: 7px;
-```
 
 }
 
 .final-player {
 padding: 18px;
 
-```
 background: #130a1e;
 
 border: 1px solid #4d2867;
@@ -619,25 +586,22 @@ border: 1px solid #4d2867;
 border-radius: 15px;
 
 margin-bottom: 12px;
-```
 
 }
 
 .final-player h3 {
 color: #ffb000;
 
-```
 margin-bottom: 10px;
-```
 
 }
 
 .final-team {
 color: #bbb;
 
-```
 line-height: 1.7;
-```
+
+margin-top: 8px;
 
 }
 
@@ -647,7 +611,6 @@ display: none !important;
 
 @media (max-width: 600px) {
 
-```
 header h1 {
     font-size: 23px;
 }
@@ -667,10 +630,5 @@ header h1 {
 .auction-image {
     height: 250px;
 }
-
-.auction-info {
-    font-size: 14px;
-}
-```
 
 }
