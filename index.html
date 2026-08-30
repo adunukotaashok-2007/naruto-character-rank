@@ -12,11 +12,12 @@
     <p>Multiplayer Character Ranking</p>
 </header>
 
+
 <!-- LOBBY -->
 
 <section id="lobbySection" class="main-card">
 
-    <h2>🎮 Multiplayer</h2>
+    <h2>🎮 MULTIPLAYER</h2>
 
     <input
         id="playerName"
@@ -60,7 +61,7 @@
         <strong id="roomCode">------</strong>
     </div>
 
-    <h3>👥 Players</h3>
+    <h3>👥 PLAYERS</h3>
 
     <div id="playersList"></div>
 
@@ -85,35 +86,18 @@
         / 16
     </div>
 
-    <h2 id="categoryName">🧬 Talent</h2>
+    <h2 id="categoryName">
+        🧬 Talent
+    </h2>
 
     <p class="instruction">
-        Select 2 or more characters.
+        Select exactly ONE character.
     </p>
 
     <div id="characterInputs"></div>
 
-    <button id="startRanking">
-        START RANKING ⚔️
-    </button>
-
-</section>
-
-
-<!-- RANKING -->
-
-<section id="rankingSection" class="main-card hidden">
-
-    <h2>🏆 RANK THE CHARACTERS</h2>
-
-    <p class="instruction">
-        BEST → WORST
-    </p>
-
-    <div id="rankingList"></div>
-
-    <button id="confirmRanking">
-        ✅ CONFIRM RANKING
+    <button id="submitCharacter">
+        ✅ CONFIRM CHARACTER
     </button>
 
 </section>
@@ -127,8 +111,8 @@
 
     <div class="loader"></div>
 
-    <p id="rankingProgress">
-        Waiting for everyone to finish...
+    <p id="selectionProgress">
+        Waiting for everyone...
     </p>
 
 </section>
@@ -138,9 +122,15 @@
 
 <section id="resultSection" class="main-card hidden">
 
-    <h2>🏆 ROUND RESULTS</h2>
+    <h2>🏆 CATEGORY RESULT</h2>
 
     <h3 id="resultCategory"></h3>
+
+    <div id="winnerBox"></div>
+
+    <h3 class="chosen-title">
+        PLAYER SELECTIONS
+    </h3>
 
     <div id="resultList"></div>
 
