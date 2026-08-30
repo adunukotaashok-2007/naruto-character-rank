@@ -1,3 +1,7 @@
+// ==========================================
+// NARUTO CHARACTER RANK
+// ==========================================
+
 const categories = [
     "🧬 Talent",
     "💪 Body",
@@ -17,123 +21,257 @@ const categories = [
     "❤️ Healing"
 ];
 
+
+// ==========================================
+// CHARACTER DATABASE
+// ==========================================
+
+const characters = [
+    {
+        name: "Naruto Uzumaki",
+        image: "assets/characters/images%20%282%29.jpeg"
+    },
+
+    {
+        name: "Sasuke Uchiha",
+        image: "assets/characters/images%20%283%29.jpeg"
+    },
+
+    {
+        name: "Itachi Uchiha",
+        image: "assets/characters/images%20%284%29.jpeg"
+    },
+
+    {
+        name: "Madara Uchiha",
+        image: "assets/characters/images%20%285%29.jpeg"
+    },
+
+    {
+        name: "Kakashi Hatake",
+        image: "assets/characters/why-do-people-believe-dms-kakashi-is-stronger-than-naruto-v0-6vyk8nfzaqre1.jpg"
+    }
+];
+
+
+// ==========================================
+// GAME VARIABLES
+// ==========================================
+
 let currentCategory = 0;
-let characters = [];
-let allResults = [];
 
-const categoryNumber = document.getElementById("categoryNumber");
-const categoryName = document.getElementById("categoryName");
+let selectedCharacters = [];
 
-const characterInputs = document.getElementById("characterInputs");
-const addCharacter = document.getElementById("addCharacter");
-const startRanking = document.getElementById("startRanking");
-
-const rankingSection = document.getElementById("rankingSection");
-const rankingList = document.getElementById("rankingList");
-const confirmRanking = document.getElementById("confirmRanking");
-
-const resultSection = document.getElementById("resultSection");
-const resultList = document.getElementById("resultList");
-const nextCategory = document.getElementById("nextCategory");
+let finalRankings = [];
 
 
-// --------------------------------------
-// INITIAL SETUP
-// --------------------------------------
+// ==========================================
+// HTML ELEMENTS
+// ==========================================
 
-function updateCategory() {
+const categoryNumber =
+    document.getElementById("categoryNumber");
 
-    categoryNumber.textContent = currentCategory + 1;
-    categoryName.textContent = categories[currentCategory];
+const categoryName =
+    document.getElementById("categoryName");
+
+const characterInputs =
+    document.getElementById("characterInputs");
+
+const addCharacter =
+    document.getElementById("addCharacter");
+
+const startRanking =
+    document.getElementById("startRanking");
+
+const rankingSection =
+    document.getElementById("rankingSection");
+
+const rankingList =
+    document.getElementById("rankingList");
+
+const confirmRanking =
+    document.getElementById("confirmRanking");
+
+const resultSection =
+    document.getElementById("resultSection");
+
+const resultList =
+    document.getElementById("resultList");
+
+const nextCategory =
+    document.getElementById("nextCategory");
+
+
+// ==========================================
+// START CATEGORY
+// ==========================================
+
+function loadCategory() {
+
+    categoryNumber.textContent =
+        currentCategory + 1;
+
+    categoryName.textContent =
+        categories[currentCategory];
 
     characterInputs.innerHTML = "";
 
-    characters = [];
+    selectedCharacters = [];
 
-    addInput();
-    addInput();
+    createCharacterCards();
+
 }
 
 
-// --------------------------------------
-// ADD CHARACTER INPUT
-// --------------------------------------
+// ==========================================
+// CREATE CHARACTER CARDS
+// ==========================================
 
-function addInput(value = "") {
+function createCharacterCards() {
 
-    const wrapper = document.createElement("div");
-    wrapper.className = "character-input";
+    characterInputs.innerHTML = "";
 
-    const input = document.createElement("input");
+    const title = document.createElement("h3");
 
-    input.type = "text";
-    input.placeholder = "Enter Naruto character...";
-    input.value = value;
+    title.textContent =
+        "Select 2 or more characters";
 
-    const remove = document.createElement("button");
+    title.style.textAlign = "center";
 
-    remove.className = "remove-character";
-    remove.textContent = "×";
+    title.style.marginBottom = "15px";
 
-    remove.onclick = () => {
-
-        if (characterInputs.children.length > 2) {
-            wrapper.remove();
-        }
-
-    };
-
-    wrapper.appendChild(input);
-    wrapper.appendChild(remove);
-
-    characterInputs.appendChild(wrapper);
-}
+    characterInputs.appendChild(title);
 
 
-// --------------------------------------
-// ADD BUTTON
-// --------------------------------------
+    const grid = document.createElement("div");
 
-addCharacter.onclick = () => {
-
-    addInput();
-
-};
+    grid.className = "character-grid";
 
 
-// --------------------------------------
-// START RANKING
-// --------------------------------------
+    characters.forEach((character, index) => {
 
-startRanking.onclick = () => {
+        const card =
+            document.createElement("div");
 
-    const inputs =
-        characterInputs.querySelectorAll("input");
+        card.className = "character-card";
 
-    characters = [];
 
-    inputs.forEach(input => {
+        const image =
+            document.createElement("img");
 
-        const name = input.value.trim();
+        image.src = character.image;
 
-        if (name !== "") {
-            characters.push(name);
-        }
+        image.alt = character.name;
+
+
+        image.onerror = function () {
+
+            image.style.display = "none";
+
+        };
+
+
+        const name =
+            document.createElement("div");
+
+        name.className = "character-name";
+
+        name.textContent =
+            character.name;
+
+
+        const selectButton =
+            document.createElement("button");
+
+        selectButton.className =
+            "select-character";
+
+        selectButton.textContent =
+            "SELECT";
+
+
+        selectButton.onclick = function () {
+
+            selectCharacter(
+                character,
+                card,
+                selectButton
+            );
+
+        };
+
+
+        card.appendChild(image);
+
+        card.appendChild(name);
+
+        card.appendChild(selectButton);
+
+        grid.appendChild(card);
 
     });
 
 
-    if (characters.length < 2) {
+    characterInputs.appendChild(grid);
 
-        alert("Please enter at least 2 characters!");
+}
+
+
+// ==========================================
+// SELECT CHARACTER
+// ==========================================
+
+function selectCharacter(
+    character,
+    card,
+    button
+) {
+
+    const alreadySelected =
+        selectedCharacters.some(
+            item => item.name === character.name
+        );
+
+
+    if (alreadySelected) {
+
+        selectedCharacters =
+            selectedCharacters.filter(
+                item => item.name !== character.name
+            );
+
+        card.classList.remove("selected");
+
+        button.textContent = "SELECT";
 
         return;
     }
 
 
-    // Remove duplicate characters
+    selectedCharacters.push(character);
 
-    characters = [...new Set(characters)];
+    card.classList.add("selected");
+
+    button.textContent = "✓ SELECTED";
+
+}
+
+
+// ==========================================
+// START RANKING
+// ==========================================
+
+startRanking.onclick = function () {
+
+    if (selectedCharacters.length < 2) {
+
+        alert(
+            "Please select at least 2 characters!"
+        );
+
+        return;
+    }
 
 
     showRanking();
@@ -141,9 +279,9 @@ startRanking.onclick = () => {
 };
 
 
-// --------------------------------------
+// ==========================================
 // SHOW RANKING
-// --------------------------------------
+// ==========================================
 
 function showRanking() {
 
@@ -151,323 +289,282 @@ function showRanking() {
         .querySelector(".category-card")
         .classList.add("hidden");
 
-    rankingSection.classList.remove("hidden");
+    rankingSection
+        .classList.remove("hidden");
+
 
     rankingList.innerHTML = "";
 
 
-    characters.forEach((character, index) => {
+    selectedCharacters.forEach(
+        (character, index) => {
 
-        createRankItem(character, index);
+            createRankingItem(
+                character,
+                index
+            );
 
-    });
+        }
+    );
+
+
+    updateNumbers();
 
 }
 
 
-// --------------------------------------
-// CREATE DRAG ITEM
-// --------------------------------------
+// ==========================================
+// CREATE RANKING ITEM
+// ==========================================
 
-function createRankItem(name, index) {
+function createRankingItem(
+    character,
+    index
+) {
 
-    const item = document.createElement("div");
+    const item =
+        document.createElement("div");
 
-    item.className = "rank-item";
+    item.className =
+        "rank-item";
 
     item.draggable = true;
 
-    item.dataset.name = name;
+    item.dataset.name =
+        character.name;
 
 
-    const number = document.createElement("div");
-
-    number.className = "rank-number";
-
-    number.textContent = index + 1;
-
-
-    const characterName =
+    const number =
         document.createElement("div");
 
-    characterName.className = "rank-name";
+    number.className =
+        "rank-number";
 
-    characterName.textContent = name;
+    number.textContent =
+        index + 1;
+
+
+    const image =
+        document.createElement("img");
+
+    image.src =
+        character.image;
+
+    image.className =
+        "rank-image";
+
+
+    const name =
+        document.createElement("div");
+
+    name.className =
+        "rank-name";
+
+    name.textContent =
+        character.name;
 
 
     item.appendChild(number);
 
-    item.appendChild(characterName);
+    item.appendChild(image);
+
+    item.appendChild(name);
+
 
     rankingList.appendChild(item);
 
 
-    item.addEventListener("dragstart", () => {
+    // Drag events
 
-        item.classList.add("dragging");
+    item.addEventListener(
+        "dragstart",
+        function () {
 
-    });
+            item.classList.add(
+                "dragging"
+            );
+
+        }
+    );
 
 
-    item.addEventListener("dragend", () => {
+    item.addEventListener(
+        "dragend",
+        function () {
 
-        item.classList.remove("dragging");
+            item.classList.remove(
+                "dragging"
+            );
 
-        updateNumbers();
+            updateNumbers();
 
-    });
+        }
+    );
 
 }
 
 
-// --------------------------------------
+// ==========================================
 // DRAG & DROP
-// --------------------------------------
+// ==========================================
 
-rankingList.addEventListener("dragover", event => {
+rankingList.addEventListener(
+    "dragover",
+    function (event) {
 
-    event.preventDefault();
-
-    const dragging =
-        document.querySelector(".dragging");
-
-    if (!dragging) return;
+        event.preventDefault();
 
 
-    const items =
-        [...rankingList.querySelectorAll(".rank-item:not(.dragging)")];
-
-    const nextItem =
-        items.find(item => {
-
-            const rect = item.getBoundingClientRect();
-
-            return event.clientY < rect.top + rect.height / 2;
-
-        });
+        const dragging =
+            document.querySelector(
+                ".dragging"
+            );
 
 
-    if (nextItem) {
+        if (!dragging) return;
 
-        rankingList.insertBefore(
-            dragging,
-            nextItem
-        );
 
-    } else {
+        const items =
+            [
+                ...rankingList.querySelectorAll(
+                    ".rank-item:not(.dragging)"
+                )
+            ];
 
-        rankingList.appendChild(dragging);
+
+        const nextItem =
+            items.find(item => {
+
+                const rect =
+                    item.getBoundingClientRect();
+
+                return (
+                    event.clientY <
+                    rect.top +
+                    rect.height / 2
+                );
+
+            });
+
+
+        if (nextItem) {
+
+            rankingList.insertBefore(
+                dragging,
+                nextItem
+            );
+
+        } else {
+
+            rankingList.appendChild(
+                dragging
+            );
+
+        }
 
     }
+);
 
-});
 
-
-// --------------------------------------
-// UPDATE RANK NUMBERS
-// --------------------------------------
+// ==========================================
+// UPDATE NUMBERS
+// ==========================================
 
 function updateNumbers() {
 
     const items =
-        rankingList.querySelectorAll(".rank-item");
+        rankingList.querySelectorAll(
+            ".rank-item"
+        );
 
-    items.forEach((item, index) => {
 
-        item
-            .querySelector(".rank-number")
-            .textContent = index + 1;
+    items.forEach(
+        (item, index) => {
 
-    });
+            item
+                .querySelector(
+                    ".rank-number"
+                )
+                .textContent =
+                index + 1;
+
+        }
+    );
 
 }
 
 
-// --------------------------------------
+// ==========================================
 // CONFIRM RANKING
-// --------------------------------------
+// ==========================================
 
-confirmRanking.onclick = () => {
+confirmRanking.onclick =
+    function () {
 
-    const items =
-        rankingList.querySelectorAll(".rank-item");
+        const items =
+            rankingList.querySelectorAll(
+                ".rank-item"
+            );
 
-    const ranking = [];
+
+        const ranking = [];
 
 
-    items.forEach((item, index) => {
+        items.forEach(
+            (item, index) => {
 
-        ranking.push({
+                ranking.push({
 
-            character: item.dataset.name,
+                    character:
+                        item.dataset.name,
 
-            rank: index + 1
+                    rank:
+                        index + 1
+
+                });
+
+            }
+        );
+
+
+        finalRankings.push({
+
+            category:
+                categories[currentCategory],
+
+            ranking:
+                ranking
 
         });
 
-    });
+
+        showCategoryResult(
+            ranking
+        );
+
+    };
 
 
-    allResults.push({
+// ==========================================
+// CATEGORY RESULT
+// ==========================================
 
-        category: categories[currentCategory],
+function showCategoryResult(
+    ranking
+) {
 
-        ranking: ranking
+    rankingSection
+        .classList.add("hidden");
 
-    });
-
-
-    showResult(ranking);
-
-};
-
-
-// --------------------------------------
-// SHOW RESULT
-// --------------------------------------
-
-function showResult(ranking) {
-
-    rankingSection.classList.add("hidden");
-
-    resultSection.classList.remove("hidden");
-
-    resultList.innerHTML = "";
-
-
-    ranking.forEach((item, index) => {
-
-        const result = document.createElement("div");
-
-        result.className = "result-item";
-
-
-        const position =
-            document.createElement("div");
-
-        position.className = "result-position";
-
-
-        if (index === 0) {
-
-            position.textContent = "🥇";
-
-        } else if (index === 1) {
-
-            position.textContent = "🥈";
-
-        } else if (index === 2) {
-
-            position.textContent = "🥉";
-
-        } else {
-
-            position.textContent =
-                `${index + 1}️⃣`;
-
-        }
-
-
-        const name =
-            document.createElement("div");
-
-        name.className = "result-name";
-
-        name.textContent = item.character;
-
-
-        result.appendChild(position);
-
-        result.appendChild(name);
-
-        resultList.appendChild(result);
-
-    });
-
-
-    if (currentCategory === categories.length - 1) {
-
-        nextCategory.textContent =
-            "🏆 SHOW FINAL RESULTS";
-
-    } else {
-
-        nextCategory.textContent =
-            "NEXT CATEGORY ➡️";
-
-    }
-
-}
-
-
-// --------------------------------------
-// NEXT CATEGORY
-// --------------------------------------
-
-nextCategory.onclick = () => {
-
-    currentCategory++;
-
-
-    if (currentCategory >= categories.length) {
-
-        showFinalResults();
-
-        return;
-
-    }
-
-
-    resultSection.classList.add("hidden");
-
-    document
-        .querySelector(".category-card")
+    resultSection
         .classList.remove("hidden");
 
 
-    updateCategory();
-
-};
-
-
-// --------------------------------------
-// FINAL RESULTS
-// --------------------------------------
-
-function showFinalResults() {
-
-    resultSection.classList.remove("hidden");
-
-    document
-        .querySelector(".category-card")
-        .classList.add("hidden");
-
-    rankingSection.classList.add("hidden");
-
-
-    categoryName.textContent =
-        "🏆 FINAL CHARACTER RANKINGS";
-
-
     resultList.innerHTML = "";
 
 
-    allResults.forEach((result, index) => {
-
-        const title =
-            document.createElement("h3");
-
-        title.style.margin =
-            "20px 0 10px";
-
-        title.textContent =
-            `${index + 1}. ${result.category}`;
-
-
-        resultList.appendChild(title);
-
-
-        result.ranking.forEach((item, rank) => {
+    ranking.forEach(
+        (item, index) => {
 
             const row =
                 document.createElement("div");
@@ -482,8 +579,25 @@ function showFinalResults() {
             position.className =
                 "result-position";
 
-            position.textContent =
-                `${rank + 1}.`;
+
+            if (index === 0) {
+
+                position.textContent = "🥇";
+
+            } else if (index === 1) {
+
+                position.textContent = "🥈";
+
+            } else if (index === 2) {
+
+                position.textContent = "🥉";
+
+            } else {
+
+                position.textContent =
+                    `${index + 1}`;
+
+            }
 
 
             const name =
@@ -502,26 +616,185 @@ function showFinalResults() {
 
             resultList.appendChild(row);
 
-        });
+        }
+    );
 
-    });
+
+    if (
+        currentCategory ===
+        categories.length - 1
+    ) {
+
+        nextCategory.textContent =
+            "🏆 SHOW ALL RESULTS";
+
+    } else {
+
+        nextCategory.textContent =
+            "NEXT CATEGORY ➡️";
+
+    }
+
+}
+
+
+// ==========================================
+// NEXT CATEGORY
+// ==========================================
+
+nextCategory.onclick =
+    function () {
+
+        currentCategory++;
+
+
+        if (
+            currentCategory >=
+            categories.length
+        ) {
+
+            showFinalResults();
+
+            return;
+
+        }
+
+
+        resultSection
+            .classList.add("hidden");
+
+
+        document
+            .querySelector(".category-card")
+            .classList.remove("hidden");
+
+
+        loadCategory();
+
+    };
+
+
+// ==========================================
+// FINAL RESULTS
+// ==========================================
+
+function showFinalResults() {
+
+    document
+        .querySelector(".category-card")
+        .classList.add("hidden");
+
+
+    rankingSection
+        .classList.add("hidden");
+
+
+    resultSection
+        .classList.remove("hidden");
+
+
+    resultList.innerHTML = "";
+
+
+    const title =
+        document.createElement("h2");
+
+    title.textContent =
+        "🏆 YOUR COMPLETE RANKINGS";
+
+    title.style.marginBottom =
+        "20px";
+
+    resultList.appendChild(title);
+
+
+    finalRankings.forEach(
+        (result, categoryIndex) => {
+
+            const categoryTitle =
+                document.createElement("h3");
+
+            categoryTitle.textContent =
+                `${categoryIndex + 1}. ${result.category}`;
+
+            categoryTitle.style.marginTop =
+                "20px";
+
+            categoryTitle.style.marginBottom =
+                "10px";
+
+
+            resultList.appendChild(
+                categoryTitle
+            );
+
+
+            result.ranking.forEach(
+                (item, rank) => {
+
+                    const row =
+                        document.createElement("div");
+
+                    row.className =
+                        "result-item";
+
+
+                    const position =
+                        document.createElement("div");
+
+                    position.className =
+                        "result-position";
+
+                    position.textContent =
+                        `${rank + 1}.`;
+
+
+                    const name =
+                        document.createElement("div");
+
+                    name.className =
+                        "result-name";
+
+                    name.textContent =
+                        item.character;
+
+
+                    row.appendChild(
+                        position
+                    );
+
+                    row.appendChild(
+                        name
+                    );
+
+
+                    resultList.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+        }
+    );
 
 
     nextCategory.textContent =
         "🔄 PLAY AGAIN";
 
 
-    nextCategory.onclick = () => {
+    nextCategory.onclick =
+        function () {
 
-        location.reload();
+            location.reload();
 
-    };
+        };
 
 }
 
 
-// --------------------------------------
+// ==========================================
 // START GAME
-// --------------------------------------
+// ==========================================
 
-updateCategory();
+loadCategory();
