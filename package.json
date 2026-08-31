@@ -1,13 +1,18 @@
+```json
 {
   "name": "naruto-character-rank-server",
   "version": "1.0.0",
-  "description": "Multiplayer Naruto Character Games",
+  "description": "Naruto Character Rank and Auction Multiplayer Game",
   "main": "server/server.js",
   "scripts": {
     "start": "node server/server.js"
+  },
+  "engines": {
+    "node": ">=20 <25"
   },
   "dependencies": {
     "express": "^5.1.0",
     "socket.io": "^4.8.1"
   }
 }
+```
