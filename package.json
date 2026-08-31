@@ -1,8 +1,7 @@
 {
-"name": "naruto-character-rank-server",
+"name": "naruto-character-rank",
 "version": "1.0.0",
-"description": "Naruto Character Rank and Auction multiplayer game",
-"main": "server/server.js",
+"private": true,
 "scripts": {
 "start": "node server/server.js"
 },
