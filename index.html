@@ -16,9 +16,8 @@
         href="style.css"
     >
 
-    <script
-        src="https://cdn.socket.io/4.8.1/socket.io.min.js">
-    </script>
+    <!-- Socket.IO -->
+    <script src="https://cdn.socket.io/4.8.1/socket.io.min.js"></script>
 </head>
 
 <body>
@@ -31,117 +30,217 @@
 
 
 <!-- =====================================================
-     HOME
-===================================================== -->
-
-<section id="home">
-
-    <div class="container">
-
-        <h1>
-            🍥 NARUTO CHARACTER GAMES
-        </h1>
-
-        <p class="subtitle">
-            Multiplayer • 2–6 Players
-        </p>
-
-        <h2>
-            🎮 SELECT GAME
-        </h2>
-
-        <button
-            class="game-button"
-            onclick="selectGame('rank')"
-        >
-            🏆 CHARACTER RANK
-        </button>
-
-        <button
-            class="game-button"
-            onclick="selectGame('auction')"
-        >
-            🔨 NARUTO AUCTION
-        </button>
-
-    </div>
-
-</section>
-
-
-<!-- =====================================================
-     GAME MENU
+     HOME SCREEN
 ===================================================== -->
 
 <section
-    id="gameMenu"
-    class="hidden"
+    id="homeScreen"
+    class="screen"
 >
 
     <div class="container">
 
-        <h1 id="selectedGameTitle">
-            SELECT GAME
+        <div class="naruto-logo">
+            🍥
+        </div>
+
+        <h1>
+            NARUTO CHARACTER GAMES
         </h1>
+
+        <p class="subtitle">
+            Multiplayer • Character Rank • Auction
+        </p>
+
+
+        <!-- PLAYER NAME -->
 
         <input
             id="playerName"
             type="text"
-            placeholder="Enter your player name"
+            placeholder="Enter your name"
             maxlength="20"
+            autocomplete="off"
         >
 
-        <button
-            class="main-button"
-            onclick="createRoom()"
-        >
-            ➕ CREATE ROOM
-        </button>
 
-        <div class="or">
-            OR
+        <!-- GAME MODE -->
+
+        <select
+            id="gameMode"
+            class="select-input"
+        >
+
+            <option value="rank">
+                🏆 Character Rank
+            </option>
+
+            <option value="auction">
+                🔨 Naruto Auction
+            </option>
+
+        </select>
+
+
+        <!-- =================================================
+             AUCTION SETTINGS
+             HOST CAN CHANGE BEFORE CREATING ROOM
+        ================================================= -->
+
+        <div
+            id="auctionSettingsHome"
+            class="settings-box hidden"
+        >
+
+            <h2>
+                🔨 Auction Settings
+            </h2>
+
+            <p class="settings-info">
+                Host decides the rules before the auction.
+            </p>
+
+
+            <label for="maxPlayers">
+                👥 Number of Players
+            </label>
+
+            <input
+                id="maxPlayers"
+                type="number"
+                min="2"
+                max="25"
+                value="6"
+            >
+
+
+            <label for="teamSize">
+                👤 Characters Per Team
+            </label>
+
+            <input
+                id="teamSize"
+                type="number"
+                min="1"
+                max="20"
+                value="5"
+            >
+
+
+            <label for="startingBalance">
+                💰 Starting Amount
+            </label>
+
+            <input
+                id="startingBalance"
+                type="number"
+                min="50"
+                value="1000"
+            >
+
+
+            <div class="fixed-setting">
+
+                <span>
+                    💵 Bid Increment
+                </span>
+
+                <strong>
+                    ₹50
+                </strong>
+
+            </div>
+
+
+            <div class="fixed-setting">
+
+                <span>
+                    ⏱️ Bidding Time
+                </span>
+
+                <strong>
+                    10 Seconds
+                </strong>
+
+            </div>
+
         </div>
 
+
+        <!-- CREATE -->
+
+        <button
+            class="game-button create-button"
+            onclick="createRoom()"
+        >
+            🎮 CREATE GAME
+        </button>
+
+
+        <div class="or">
+            <span></span>
+            OR
+            <span></span>
+        </div>
+
+
+        <!-- =================================================
+             JOIN GAME
+        ================================================= -->
+
         <input
-            id="roomCodeInput"
+            id="joinPlayerName"
+            type="text"
+            placeholder="Enter your name"
+            maxlength="20"
+            autocomplete="off"
+        >
+
+
+        <input
+            id="joinRoomCode"
             type="text"
             placeholder="Enter room code"
             maxlength="6"
+            autocomplete="off"
         >
 
+
         <button
-            class="main-button"
+            class="game-button join-button"
             onclick="joinRoom()"
         >
-            🚪 JOIN ROOM
+            🚪 JOIN GAME
         </button>
 
-        <button
-            class="back-button"
-            onclick="backHome()"
-        >
-            ← Back
-        </button>
+
+        <p class="home-info">
+            Up to 25 players can join a room.
+        </p>
 
     </div>
 
 </section>
 
 
+
 <!-- =====================================================
-     ROOM
+     LOBBY SCREEN
 ===================================================== -->
 
 <section
-    id="roomScreen"
-    class="hidden"
+    id="lobbyScreen"
+    class="screen hidden"
 >
 
     <div class="container">
 
-        <h1>
-            👥 GAME ROOM
-        </h1>
+        <div class="top-title">
+            🍥 GAME LOBBY
+        </div>
+
+
+        <!-- ROOM -->
 
         <div class="room-code">
 
@@ -153,37 +252,65 @@
                 ------
             </strong>
 
+            <p>
+                Share this code with other players
+            </p>
+
         </div>
 
-        <p id="playerCount">
-            0/6 Players
-        </p>
 
-        <p id="waitingText">
-            Waiting for another player...
-        </p>
+        <!-- HOST -->
+
+        <div
+            id="hostText"
+            class="host-text"
+        >
+            Waiting...
+        </div>
+
+
+        <!-- GAME TYPE -->
+
+        <div
+            id="lobbyGameMode"
+            class="lobby-mode"
+        >
+            Game
+        </div>
+
+
+        <!-- PLAYERS -->
+
+        <h2>
+            👥 Players
+        </h2>
+
 
         <div
             id="playersList"
-            style="margin-top:20px;"
-        ></div>
+            class="players-list"
+        >
+        </div>
 
 
-        <!-- HOST ONLY -->
+        <!-- WAITING -->
+
+        <p
+            id="waitingText"
+            class="waiting-text"
+        >
+            Waiting for another player...
+        </p>
+
+
+        <!-- START -->
 
         <button
-            id="hostStartButton"
-            class="start-button hidden"
-            onclick="startSelectedGame()"
+            id="startButton"
+            class="start-button"
+            onclick="startGame()"
         >
-            START GAME
-        </button>
-
-        <button
-            class="back-button"
-            onclick="backHome()"
-        >
-            ← Leave
+            🚀 START GAME
         </button>
 
     </div>
@@ -191,115 +318,218 @@
 </section>
 
 
+
 <!-- =====================================================
-     CHARACTER RANK
+     CHARACTER RANK SCREEN
 ===================================================== -->
 
 <section
     id="rankScreen"
-    class="hidden"
+    class="screen hidden"
 >
 
     <div class="container">
 
-        <h1>
+        <div class="top-title">
             🏆 CHARACTER RANK
-        </h1>
-
-        <p
-            id="categoryNumber"
-            class="subtitle"
-        >
-            Category 1 / 5
-        </p>
-
-        <div
-            id="categoryTitle"
-            class="category"
-        >
-            ⚡ SPEED
         </div>
 
-        <p
-            id="selectionProgress"
-            class="subtitle"
+
+        <div class="category-counter">
+
+            Category
+            <span id="categoryNumber">
+                1
+            </span>
+            /
+            <span id="categoryTotal">
+                16
+            </span>
+
+        </div>
+
+
+        <h1
+            id="categoryTitle"
+            class="category-title"
         >
-            Players selected: 0/0
+            Speed
+        </h1>
+
+
+        <p class="subtitle">
+            Choose the character you think is best
+            for this category.
         </p>
+
+
+        <!-- STATUS -->
+
+        <div
+            id="selectionStatus"
+            class="selection-status"
+        >
+            Waiting for selections...
+        </div>
+
+
+        <!-- CHARACTER GRID -->
 
         <div
             id="characterGrid"
             class="character-grid"
-        ></div>
+        >
+        </div>
+
+
+        <!-- NEXT CATEGORY -->
+
+        <button
+            id="nextCategoryButton"
+            class="next-button hidden"
+            onclick="nextCategory()"
+        >
+            ➡️ NEXT CATEGORY
+        </button>
 
     </div>
 
 </section>
 
 
+
 <!-- =====================================================
-     AUCTION
+     CHARACTER RANK RESULT
 ===================================================== -->
 
 <section
-    id="auctionScreen"
-    class="hidden"
+    id="rankResultScreen"
+    class="screen hidden"
 >
 
     <div class="container">
 
+        <div class="top-title">
+            🏆 RANKING COMPLETE
+        </div>
+
+
         <h1>
-            🔨 NARUTO AUCTION
+            Character Selections
         </h1>
 
 
-        <!-- TIMER -->
+        <p class="subtitle">
+            Every player has completed all categories.
+        </p>
+
+
+        <div
+            id="rankResults"
+            class="results-container"
+        >
+        </div>
+
+
+        <!-- AI -->
+
+        <div
+            id="rankAIResult"
+            class="ai-result"
+        >
+
+            <div class="ai-icon">
+                🤖
+            </div>
+
+            <h2>
+                AI OVERALL EVALUATION
+            </h2>
+
+            <p>
+                AI will analyze the characters selected
+                across all 16 categories and determine
+                the strongest overall selection.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================================
+     AUCTION SCREEN
+===================================================== -->
+
+<section
+    id="auctionScreen"
+    class="screen hidden"
+>
+
+    <div class="container">
+
+        <div class="top-title">
+            🔨 NARUTO AUCTION
+        </div>
+
+
+        <!-- AUCTION TIMER -->
 
         <div
             id="auctionTimer"
             class="timer"
         >
-            15
+            10
         </div>
 
 
-        <!-- CHARACTER CARD -->
+        <p class="timer-label">
+            SECONDS LEFT
+        </p>
+
+
+        <!-- =================================================
+             CHARACTER CARD
+        ================================================= -->
 
         <div class="auction-card">
 
-            <div
-                id="auctionCategory"
-                class="auction-category"
-            >
-                AUCTION
+
+            <!-- CHARACTER IMAGE -->
+
+            <div class="auction-image-wrapper">
+
+                <img
+                    id="auctionCharacterImage"
+                    class="auction-character-image"
+                    src=""
+                    alt="Auction Character"
+                >
+
             </div>
 
 
-            <img
-                id="auctionCharacterImage"
-                class="auction-character-image"
-                src=""
-                alt="Character"
-            >
-
+            <!-- NAME -->
 
             <div
                 id="auctionCharacterName"
                 class="auction-character-name"
             >
-                Naruto
+                Character
             </div>
 
 
-            <div
-                id="auctionCharacter"
-                class="hidden"
-            >
-                Naruto
+            <div class="auction-category">
+                🔥 CURRENT AUCTION
             </div>
 
 
-            <!-- CURRENT BID -->
+            <!-- =================================================
+                 BID
+            ================================================= -->
 
             <div class="current-bid-box">
 
@@ -307,82 +537,208 @@
                     CURRENT BID
                 </p>
 
+
                 <div id="currentBid">
                     ₹0
                 </div>
 
-                <p id="highestBidder">
+
+                <p
+                    id="highestBidder"
+                    class="highest-bidder"
+                >
                     No bids yet
                 </p>
 
             </div>
 
 
-            <!-- ONLY ONE BUTTON -->
+            <!-- BID -->
 
             <button
                 id="bidButton"
                 class="bid-button"
-                onclick="placeBid()"
+                onclick="bid()"
             >
                 💰 BID ₹50
             </button>
 
+
+            <!-- UNSOLD -->
+
+            <button
+                id="unsoldButton"
+                class="unsold-button"
+                onclick="unsold()"
+            >
+                ❌ UNSOLD
+            </button>
+
+
+            <p class="auction-help">
+                Each bid increases the price by ₹50.
+            </p>
+
         </div>
 
 
-        <!-- AUCTION PLAYERS -->
+        <!-- =================================================
+             TEAMS
+        ================================================= -->
 
-        <h2>
-            👥 Players
+        <h2 class="section-heading">
+            👥 TEAMS
         </h2>
 
+
         <div
-            id="auctionPlayersList"
-            class="scroll-area"
-        ></div>
+            id="auctionPlayers"
+            class="auction-players"
+        >
+        </div>
 
     </div>
 
 </section>
 
 
+
 <!-- =====================================================
-     FINAL RESULTS
+     AUCTION RESULT
 ===================================================== -->
 
 <section
-    id="finalScreen"
-    class="hidden"
+    id="auctionResultScreen"
+    class="screen hidden"
 >
 
     <div class="container">
 
+        <div class="top-title">
+            🏆 AUCTION COMPLETE
+        </div>
+
+
         <h1>
-            🏆 GAME FINISHED
+            Final Teams
         </h1>
 
-        <div
-            id="finalResults"
-        ></div>
 
-        <button
-            class="main-button"
-            onclick="backHome()"
+        <p class="subtitle">
+            The auction has finished.
+        </p>
+
+
+        <!-- TEAMS -->
+
+        <div
+            id="auctionResults"
+            class="results-container"
         >
-            🏠 HOME
-        </button>
+        </div>
+
+
+        <!-- =================================================
+             AI TEAM EVALUATION
+        ================================================= -->
+
+        <div
+            id="auctionAIResult"
+            class="ai-result"
+        >
+
+            <div class="ai-icon">
+                🤖
+            </div>
+
+            <h2>
+                AI BEST TEAM
+            </h2>
+
+            <p>
+                AI evaluates each team's attack,
+                defense, speed, Battle IQ, chakra,
+                versatility and overall balance.
+            </p>
+
+        </div>
 
     </div>
 
 </section>
 
 
+
 <!-- =====================================================
-     GAME JAVASCRIPT
+     JAVASCRIPT
 ===================================================== -->
 
 <script src="game.js"></script>
+
+
+<!-- =====================================================
+     HOME GAME MODE SWITCH
+===================================================== -->
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const mode =
+            document.getElementById(
+                "gameMode"
+            );
+
+        const settings =
+            document.getElementById(
+                "auctionSettingsHome"
+            );
+
+
+        function updateSettings() {
+
+            if (!mode || !settings)
+                return;
+
+
+            if (
+                mode.value === "auction"
+            ) {
+
+                settings.classList.remove(
+                    "hidden"
+                );
+
+            } else {
+
+                settings.classList.add(
+                    "hidden"
+                );
+
+            }
+
+        }
+
+
+        if (mode) {
+
+            mode.addEventListener(
+                "change",
+                updateSettings
+            );
+
+        }
+
+
+        updateSettings();
+
+    }
+);
+
+</script>
+
 
 </body>
 
