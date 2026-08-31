@@ -1,13 +1,38 @@
+```javascript
 /* =========================================================
-   🍥 NARUTO CHARACTER GAMES
+   NARUTO CHARACTER GAMES
    COMPLETE GAME.JS
+   ========================================================= */
+
+/* =========================================================
+   SOCKET.IO
    ========================================================= */
 
 const socket = io();
 
 /* =========================================================
-   CHARACTER DATABASE
-   YOUR EXACT IMAGE PATHS
+   GAME STATE
+   ========================================================= */
+
+let selectedGame = "";
+let roomCode = "";
+let playerName = "";
+let isHost = false;
+
+let currentCategoryIndex = 0;
+let currentCategory = null;
+
+let mySelection = null;
+
+let auctionCharacter = null;
+let currentBid = 0;
+let highestBidder = null;
+let auctionTime = 15;
+let auctionActive = false;
+
+
+/* =========================================================
+   CHARACTER IMAGES
    ========================================================= */
 
 const CHARACTERS = {
@@ -115,37 +140,35 @@ const CHARACTERS = {
 
 
 /* =========================================================
-   TOP 5 FOR EACH CATEGORY
+   RANK CATEGORIES
+   FIVE CHARACTERS EACH
    ========================================================= */
 
 const RANK_CATEGORIES = [
 
     {
-        id: "speed",
         title: "⚡ SPEED",
         characters: [
             "Minato",
             "Tobirama",
             "Naruto",
-            "Rock Lee",
+            "Lee",
             "Kakashi"
         ]
     },
 
     {
-        id: "strength",
         title: "💪 STRENGTH",
         characters: [
             "Madara",
             "Hashirama",
             "Naruto",
-            "Might Guy",
+            "Guy",
             "Sakura"
         ]
     },
 
     {
-        id: "intelligence",
         title: "🧠 INTELLIGENCE",
         characters: [
             "Shikamaru",
@@ -157,7 +180,6 @@ const RANK_CATEGORIES = [
     },
 
     {
-        id: "chakra",
         title: "🔵 CHAKRA",
         characters: [
             "Naruto",
@@ -169,7 +191,6 @@ const RANK_CATEGORIES = [
     },
 
     {
-        id: "battle",
         title: "⚔️ BATTLE SKILL",
         characters: [
             "Madara",
@@ -179,107 +200,17 @@ const RANK_CATEGORIES = [
             "Kakashi"
         ]
     }
-
 ];
 
 
 /* =========================================================
-   CLANS
-   ========================================================= */
-
-const CLANS = [
-    {
-        name: "Uzumaki",
-        members: [
-            "Naruto",
-            "Nagato"
-        ]
-    },
-
-    {
-        name: "Uchiha",
-        members: [
-            "Sasuke",
-            "Itachi",
-            "Madara",
-            "Obito"
-        ]
-    },
-
-    {
-        name: "Senju",
-        members: [
-            "Hashirama",
-            "Tobirama"
-        ]
-    },
-
-    {
-        name: "Hatake",
-        members: [
-            "Kakashi"
-        ]
-    },
-
-    {
-        name: "Nara",
-        members: [
-            "Shikamaru"
-        ]
-    },
-
-    {
-        name: "Hyuga",
-        members: [
-            "Neji"
-        ]
-    },
-
-    {
-        name: "Kazekage",
-        members: [
-            "Gaara"
-        ]
-    },
-
-    {
-        name: "Sannin",
-        members: [
-            "Jiraiya",
-            "Orochimaru"
-        ]
-    }
-];
-
-
-/* =========================================================
-   GAME STATE
-   ========================================================= */
-
-let roomCode = null;
-
-let playerName = null;
-
-let isHost = false;
-
-let players = [];
-
-let currentCategory = 0;
-
-let mySelection = null;
-
-let allSelections = {};
-
-let gameStarted = false;
-
-
-/* =========================================================
-   DOM HELPERS
+   HELPER
    ========================================================= */
 
 function $(id) {
     return document.getElementById(id);
 }
+
 
 function show(id) {
 
@@ -290,21 +221,13 @@ function show(id) {
     }
 }
 
+
 function hide(id) {
 
     const element = $(id);
 
     if (element) {
         element.classList.add("hidden");
-    }
-}
-
-function setText(id, text) {
-
-    const element = $(id);
-
-    if (element) {
-        element.textContent = text;
     }
 }
 
@@ -323,65 +246,63 @@ function message(text) {
     }
 
     box.textContent = text;
-
     box.style.display = "block";
 
-    clearTimeout(window.messageTimer);
+    setTimeout(() => {
 
-    window.messageTimer =
-        setTimeout(() => {
-            box.style.display = "none";
-        }, 2500);
+        box.style.display = "none";
+
+    }, 2500);
 }
 
 
 /* =========================================================
-   SCREEN SYSTEM
+   SELECT GAME
+   THIS FIXES THE TWO HOME BUTTONS
    ========================================================= */
 
-function showScreen(screenId) {
+function selectGame(game) {
 
-    const screens = document.querySelectorAll(
-        "section"
-    );
+    selectedGame = game;
 
-    screens.forEach(screen => {
-        screen.classList.add("hidden");
-    });
+    hide("home");
 
-    const target = $(screenId);
+    show("gameMenu");
 
-    if (target) {
-        target.classList.remove("hidden");
+    const title =
+        $("selectedGameTitle");
+
+    if (title) {
+
+        if (game === "rank") {
+
+            title.textContent =
+                "🏆 CHARACTER RANK";
+
+        } else {
+
+            title.textContent =
+                "🔨 NARUTO AUCTION";
+        }
     }
-
-    window.scrollTo(0, 0);
 }
 
 
 /* =========================================================
-   HOME
+   BACK TO HOME
    ========================================================= */
 
-function goHome() {
+function backHome() {
 
-    showScreen("home");
+    hide("gameMenu");
+    hide("roomScreen");
+    hide("rankScreen");
+    hide("auctionScreen");
+    hide("finalScreen");
 
-    roomCode = null;
+    show("home");
 
-    playerName = null;
-
-    isHost = false;
-
-    players = [];
-
-    currentCategory = 0;
-
-    mySelection = null;
-
-    allSelections = {};
-
-    gameStarted = false;
+    selectedGame = "";
 }
 
 
@@ -389,32 +310,46 @@ function goHome() {
    CREATE ROOM
    ========================================================= */
 
-function createRoom(gameType = "rank") {
+function createRoom() {
 
     const input =
-        $("playerName") ||
-        $("nameInput");
+        $("playerName");
 
     if (!input) {
-        message("Enter your name");
+
+        message(
+            "Player name box not found."
+        );
+
         return;
     }
 
-    const name =
+    playerName =
         input.value.trim();
 
-    if (!name) {
-        message("Enter your name first");
+    if (!playerName) {
+
+        message(
+            "Enter your player name."
+        );
+
         return;
     }
 
-    playerName = name;
+    if (!selectedGame) {
+
+        message(
+            "Select a game first."
+        );
+
+        return;
+    }
 
     socket.emit(
         "createRoom",
         {
-            playerName: name,
-            game: gameType
+            playerName,
+            game: selectedGame
         }
     );
 }
@@ -424,45 +359,55 @@ function createRoom(gameType = "rank") {
    JOIN ROOM
    ========================================================= */
 
-function joinRoom(gameType = "rank") {
+function joinRoom() {
 
     const nameInput =
-        $("playerName") ||
-        $("nameInput");
+        $("playerName");
 
     const roomInput =
-        $("roomCode") ||
-        $("joinRoomCode");
+        $("roomCodeInput");
 
-    if (!nameInput || !roomInput) {
-        message("Enter name and room code");
+    if (!nameInput ||
+        !roomInput) {
+
+        message(
+            "Room fields not found."
+        );
+
         return;
     }
 
-    const name =
+    playerName =
         nameInput.value.trim();
 
-    const code =
-        roomInput.value.trim().toUpperCase();
+    roomCode =
+        roomInput.value
+            .trim()
+            .toUpperCase();
 
-    if (!name) {
-        message("Enter your name");
+    if (!playerName) {
+
+        message(
+            "Enter your player name."
+        );
+
         return;
     }
 
-    if (!code) {
-        message("Enter room code");
+    if (!roomCode) {
+
+        message(
+            "Enter the room code."
+        );
+
         return;
     }
-
-    playerName = name;
 
     socket.emit(
         "joinRoom",
         {
-            playerName: name,
-            roomCode: code,
-            game: gameType
+            playerName,
+            roomCode
         }
     );
 }
@@ -481,21 +426,19 @@ socket.on(
 
         isHost = true;
 
-        players =
-            data.players || [];
+        hide("gameMenu");
+        show("roomScreen");
+
+        updateRoom(
+            data.players
+        );
 
         setText(
-            "roomCodeDisplay",
+            "roomCode",
             roomCode
         );
 
-        renderPlayers();
-
-        showScreen("room");
-
-        message(
-            "Room created!"
-        );
+        showHostButton();
     }
 );
 
@@ -512,199 +455,56 @@ socket.on(
             data.roomCode;
 
         isHost =
-            data.hostId === socket.id;
+            data.hostId ===
+            socket.id;
 
-        players =
-            data.players || [];
+        hide("gameMenu");
+        show("roomScreen");
+
+        updateRoom(
+            data.players
+        );
 
         setText(
-            "roomCodeDisplay",
+            "roomCode",
             roomCode
         );
 
-        renderPlayers();
+        if (isHost) {
 
-        showScreen("room");
+            showHostButton();
 
-        message(
-            "Joined room!"
-        );
+        } else {
+
+            hideHostButton();
+        }
     }
 );
 
 
 /* =========================================================
-   PLAYER UPDATES
+   PLAYERS UPDATED
    ========================================================= */
 
 socket.on(
     "playersUpdated",
     data => {
 
-        players =
-            data.players || [];
-
-        renderPlayers();
-
-        updateWaitingText();
+        updateRoom(
+            data.players
+        );
     }
 );
 
 
 /* =========================================================
-   RENDER PLAYERS
+   UPDATE ROOM
    ========================================================= */
 
-function renderPlayers() {
-
-    const lists = [
-        $("playersList"),
-        $("auctionPlayersList")
-    ];
-
-    lists.forEach(list => {
-
-        if (!list) return;
-
-        list.innerHTML = "";
-
-        players.forEach(
-            (player, index) => {
-
-                const div =
-                    document.createElement(
-                        "div"
-                    );
-
-                div.className =
-                    "player";
-
-                const hostText =
-                    player.id ===
-                    players[0]?.id
-                        ? " 👑 Host"
-                        : "";
-
-                div.innerHTML = `
-                    <span>
-                        ${escapeHtml(
-                            player.name
-                        )}
-                        ${hostText}
-                    </span>
-
-                    <span>
-                        ${index + 1}
-                    </span>
-                `;
-
-                list.appendChild(div);
-            }
-        );
-    });
-
-    const count =
-        $("playerCount");
-
-    if (count) {
-        count.textContent =
-            `${players.length}/6 Players`;
-    }
-}
-
-
-/* =========================================================
-   START RANK GAME
-   ========================================================= */
-
-function startRankGame() {
-
-    if (!roomCode) {
-        message("Create or join a room first");
-        return;
-    }
-
-    if (!isHost) {
-        message(
-            "Only the host can start the game"
-        );
-
-        return;
-    }
-
-    if (players.length < 2) {
-
-        message(
-            "At least 2 players are required"
-        );
-
-        return;
-    }
-
-    socket.emit(
-        "startRankGame",
-        {
-            roomCode
-        }
-    );
-}
-
-
-/* =========================================================
-   SERVER STARTED RANK GAME
-   ========================================================= */
-
-socket.on(
-    "rankGameStarted",
-    data => {
-
-        gameStarted = true;
-
-        currentCategory =
-            data.categoryIndex || 0;
-
-        allSelections = {};
-
-        mySelection = null;
-
-        showScreen("rankGame");
-
-        renderCategory();
-
-        updateWaitingText();
-    }
-);
-
-
-/* =========================================================
-   RENDER CATEGORY
-   ========================================================= */
-
-function renderCategory() {
-
-    const category =
-        RANK_CATEGORIES[
-            currentCategory
-        ];
-
-    if (!category) {
-        return;
-    }
-
-    mySelection = null;
-
-    setText(
-        "rankCategoryTitle",
-        category.title
-    );
-
-    setText(
-        "rankDescription",
-        "Choose ONE character"
-    );
+function updateRoom(players) {
 
     const list =
-        $("rankCharacterList");
+        $("playersList");
 
     if (!list) {
         return;
@@ -712,259 +512,7 @@ function renderCategory() {
 
     list.innerHTML = "";
 
-    category.characters.forEach(
-        (characterKey, index) => {
-
-            const character =
-                CHARACTERS[
-                    characterKey
-                ];
-
-            if (!character) {
-                return;
-            }
-
-            const card =
-                document.createElement(
-                    "button"
-                );
-
-            card.className =
-                "rank-character-card";
-
-            card.dataset.character =
-                characterKey;
-
-            card.innerHTML = `
-
-                <div class="rank-position">
-                    #${index + 1}
-                </div>
-
-                <img
-                    src="${character.image}"
-                    alt="${character.name}"
-                    onerror="this.onerror=null;this.src='';"
-                >
-
-                <div class="rank-character-name">
-                    ${character.name}
-                </div>
-
-            `;
-
-            card.addEventListener(
-                "click",
-                () => {
-
-                    if (mySelection) {
-                        return;
-                    }
-
-                    selectCharacter(
-                        characterKey
-                    );
-                }
-            );
-
-            list.appendChild(card);
-        }
-    );
-
-    updateWaitingText();
-}
-
-
-/* =========================================================
-   SELECT ONE CHARACTER
-   ========================================================= */
-
-function selectCharacter(
-    characterKey
-) {
-
-    if (mySelection) {
-
-        message(
-            "You already selected!"
-        );
-
-        return;
-    }
-
-    mySelection =
-        characterKey;
-
-    disableRankButtons();
-
-    socket.emit(
-        "selectRankCharacter",
-        {
-            roomCode,
-            character: characterKey
-        }
-    );
-
-    message(
-        `You selected ${CHARACTERS[characterKey].name}`
-    );
-
-    updateWaitingText();
-}
-
-
-/* =========================================================
-   DISABLE AFTER SELECTION
-   ========================================================= */
-
-function disableRankButtons() {
-
-    const buttons =
-        document.querySelectorAll(
-            ".rank-character-card"
-        );
-
-    buttons.forEach(button => {
-
-        button.disabled = true;
-
-        if (
-            button.dataset.character ===
-            mySelection
-        ) {
-            button.style.outline =
-                "4px solid #10ac84";
-        }
-    });
-}
-
-
-/* =========================================================
-   WAITING STATUS
-   ========================================================= */
-
-function updateWaitingText() {
-
-    const element =
-        $("rankWaiting");
-
-    if (!element) {
-        return;
-    }
-
-    if (mySelection) {
-
-        element.textContent =
-            "✅ You selected. Waiting for other players...";
-
-    } else {
-
-        element.textContent =
-            "Choose ONE character";
-    }
-}
-
-
-/* =========================================================
-   EVERYONE SELECTED
-   ========================================================= */
-
-socket.on(
-    "allPlayersSelected",
-    data => {
-
-        allSelections =
-            data.selections || {};
-
-        showSelectionSummary();
-
-        setTimeout(
-            () => {
-
-                currentCategory++;
-
-                if (
-                    currentCategory >=
-                    RANK_CATEGORIES.length
-                ) {
-
-                    socket.emit(
-                        "finishRankGame",
-                        {
-                            roomCode
-                        }
-                    );
-
-                    return;
-                }
-
-                mySelection = null;
-
-                renderCategory();
-
-            },
-            1800
-        );
-    }
-);
-
-
-/* =========================================================
-   SELECTION SUMMARY
-   ========================================================= */
-
-function showSelectionSummary() {
-
-    const element =
-        $("rankWaiting");
-
-    if (!element) {
-        return;
-    }
-
-    element.textContent =
-        "🎉 Everyone selected! Next category...";
-}
-
-
-/* =========================================================
-   FINAL RANKING
-   ========================================================= */
-
-socket.on(
-    "rankGameFinished",
-    data => {
-
-        showScreen(
-            "rankResults"
-        );
-
-        renderRankResults(
-            data
-        );
-    }
-);
-
-
-/* =========================================================
-   RESULTS
-   ========================================================= */
-
-function renderRankResults(data) {
-
-    const list =
-        $("rankResultsList");
-
-    if (!list) {
-        return;
-    }
-
-    list.innerHTML = "";
-
-    const ranking =
-        data.ranking || [];
-
-    ranking.forEach(
+    players.forEach(
         (player, index) => {
 
             const div =
@@ -973,100 +521,351 @@ function renderRankResults(data) {
                 );
 
             div.className =
-                "final-player";
-
-            const team =
-                player.team || [];
-
-            let charactersHtml = "";
-
-            team.forEach(
-                characterKey => {
-
-                    const character =
-                        CHARACTERS[
-                            characterKey
-                        ];
-
-                    if (!character) {
-                        return;
-                    }
-
-                    charactersHtml += `
-
-                        <span class="team-character">
-
-                            <img
-                                class="team-character-image"
-                                src="${character.image}"
-                                alt="${character.name}"
-                            >
-
-                            ${character.name}
-
-                        </span>
-
-                    `;
-                }
-            );
+                "player";
 
             div.innerHTML = `
-
-                <h3>
+                <span>
                     ${index + 1}.
-                    ${escapeHtml(
-                        player.name
-                    )}
-                </h3>
+                    ${escapeHTML(player.name)}
+                </span>
 
-                <p>
-                    Characters:
-                    ${team.length}
-                </p>
-
-                <div class="team-characters">
-                    ${charactersHtml}
-                </div>
-
+                <span>
+                    ${player.teamCount || 0}/5
+                </span>
             `;
 
             list.appendChild(div);
+        }
+    );
+
+    setText(
+        "playerCount",
+        `${players.length}/6 Players`
+    );
+}
+
+
+/* =========================================================
+   HOST BUTTON
+   ========================================================= */
+
+function showHostButton() {
+
+    const button =
+        $("hostStartButton");
+
+    if (!button) {
+        return;
+    }
+
+    button.classList.remove(
+        "hidden"
+    );
+
+    button.textContent =
+        selectedGame === "rank"
+            ? "🏆 START CHARACTER RANK"
+            : "🔨 START NARUTO AUCTION";
+}
+
+
+function hideHostButton() {
+
+    const button =
+        $("hostStartButton");
+
+    if (button) {
+
+        button.classList.add(
+            "hidden"
+        );
+    }
+}
+
+
+/* =========================================================
+   HOST START
+   ========================================================= */
+
+function startSelectedGame() {
+
+    if (!isHost) {
+
+        message(
+            "Only the host can start."
+        );
+
+        return;
+    }
+
+    if (selectedGame === "rank") {
+
+        socket.emit(
+            "startRankGame",
+            {
+                roomCode
+            }
+        );
+
+    } else {
+
+        socket.emit(
+            "startAuctionGame",
+            {
+                roomCode
+            }
+        );
+    }
+}
+
+
+/* =========================================================
+   RANK GAME STARTED
+   ========================================================= */
+
+socket.on(
+    "rankGameStarted",
+    data => {
+
+        currentCategoryIndex =
+            data.categoryIndex;
+
+        currentCategory =
+            data.category;
+
+        mySelection = null;
+
+        hide("roomScreen");
+        hide("gameMenu");
+
+        show("rankScreen");
+
+        renderRankCategory();
+    }
+);
+
+
+/* =========================================================
+   RENDER RANK CATEGORY
+   ========================================================= */
+
+function renderRankCategory() {
+
+    const category =
+        currentCategory ||
+        RANK_CATEGORIES[
+            currentCategoryIndex
+        ];
+
+    if (!category) {
+        return;
+    }
+
+    setText(
+        "categoryTitle",
+        category.title
+    );
+
+    setText(
+        "categoryNumber",
+        `Category ${
+            currentCategoryIndex + 1
+        } / ${
+            RANK_CATEGORIES.length
+        }`
+    );
+
+
+    const grid =
+        $("characterGrid");
+
+    if (!grid) {
+        return;
+    }
+
+    grid.innerHTML = "";
+
+
+    category.characters.forEach(
+        (character, index) => {
+
+            const data =
+                CHARACTERS[
+                    character
+                ];
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+            button.className =
+                "character-card";
+
+            button.innerHTML = `
+
+                <img
+                    src="${data?.image || ""}"
+                    alt="${data?.name || character}"
+                    onerror="this.style.display='none'"
+                >
+
+                <strong>
+                    ${index + 1}.
+                    ${data?.name || character}
+                </strong>
+            `;
+
+            button.onclick =
+                () => selectRankCharacter(
+                    character
+                );
+
+            grid.appendChild(
+                button
+            );
         }
     );
 }
 
 
 /* =========================================================
-   AUCTION GAME
+   SELECT RANK CHARACTER
    ========================================================= */
 
-function startAuctionGame() {
+function selectRankCharacter(
+    character
+) {
 
-    if (!roomCode) {
+    if (mySelection) {
 
         message(
-            "Create or join a room first"
+            "You already selected. Wait for the other players."
         );
 
         return;
     }
 
-    if (!isHost) {
+    mySelection =
+        character;
 
-        message(
-            "Only the host can start the game"
+
+    const buttons =
+        document.querySelectorAll(
+            ".character-card"
         );
 
-        return;
-    }
+    buttons.forEach(
+        button => {
 
-    socket.emit(
-        "startAuctionGame",
-        {
-            roomCode
+            button.disabled =
+                true;
         }
     );
+
+
+    socket.emit(
+        "selectRankCharacter",
+        {
+            roomCode,
+            character
+        }
+    );
+
+
+    message(
+        `You selected ${character}. Waiting for other players...`
+    );
 }
+
+
+/* =========================================================
+   SELECTION ACCEPTED
+   ========================================================= */
+
+socket.on(
+    "selectionAccepted",
+    data => {
+
+        mySelection =
+            data.character;
+
+        message(
+            `✅ ${data.character} selected`
+        );
+    }
+);
+
+
+/* =========================================================
+   SELECTION PROGRESS
+   ========================================================= */
+
+socket.on(
+    "selectionProgress",
+    data => {
+
+        setText(
+            "selectionProgress",
+            `Players selected: ${data.selected}/${data.total}`
+        );
+    }
+);
+
+
+/* =========================================================
+   ALL PLAYERS SELECTED
+   ========================================================= */
+
+socket.on(
+    "allPlayersSelected",
+    data => {
+
+        message(
+            "✅ Everyone selected! Next category coming..."
+        );
+    }
+);
+
+
+/* =========================================================
+   NEXT CATEGORY
+   ========================================================= */
+
+socket.on(
+    "rankNextCategory",
+    data => {
+
+        currentCategoryIndex =
+            data.categoryIndex;
+
+        currentCategory =
+            data.category;
+
+        mySelection = null;
+
+        renderRankCategory();
+    }
+);
+
+
+/* =========================================================
+   RANK FINISHED
+   ========================================================= */
+
+socket.on(
+    "rankGameFinished",
+    data => {
+
+        hide("rankScreen");
+
+        show("finalScreen");
+
+        renderFinalRanking(
+            data.ranking
+        );
+    }
+);
 
 
 /* =========================================================
@@ -1075,14 +874,15 @@ function startAuctionGame() {
 
 socket.on(
     "auctionStarted",
-    data => {
+    () => {
 
-        showScreen(
-            "auctionGame"
-        );
+        hide("roomScreen");
+        hide("gameMenu");
 
-        renderAuction(
-            data
+        show("auctionScreen");
+
+        message(
+            "🔨 Auction started!"
         );
     }
 );
@@ -1096,6 +896,22 @@ socket.on(
     "auctionUpdate",
     data => {
 
+        auctionCharacter =
+            data.character;
+
+        currentBid =
+            data.currentBid;
+
+        highestBidder =
+            data.highestBidder;
+
+        auctionTime =
+            data.timeLeft;
+
+        auctionActive =
+            data.auctionActive;
+
+
         renderAuction(
             data
         );
@@ -1104,50 +920,36 @@ socket.on(
 
 
 /* =========================================================
-   AUCTION RENDER
+   RENDER AUCTION
    ========================================================= */
 
 function renderAuction(data) {
-
-    if (!data) {
-        return;
-    }
 
     const character =
         CHARACTERS[
             data.character
         ];
 
-    if (!character) {
-        return;
-    }
-
-    const image =
-        $("auctionCharacterImage");
-
-    if (image) {
-
-        image.src =
-            character.image;
-
-        image.alt =
-            character.name;
-    }
 
     setText(
         "auctionCharacter",
-        character.name
+        character?.name ||
+        data.character
     );
+
 
     setText(
         "auctionCharacterName",
-        character.name
+        character?.name ||
+        data.character
     );
+
 
     setText(
         "currentBid",
-        `₹${data.currentBid || 0}`
+        `₹${data.currentBid}`
     );
+
 
     setText(
         "highestBidder",
@@ -1156,24 +958,36 @@ function renderAuction(data) {
             : "No bids yet"
     );
 
+
     setText(
         "auctionTimer",
-        data.timeLeft ?? 15
+        data.timeLeft
     );
 
-    renderPlayers();
 
-    updateBidButton(
-        data
-    );
-}
+    const image =
+        $("auctionCharacterImage");
+
+    if (
+        image &&
+        character?.image
+    ) {
+
+        image.src =
+            character.image;
+
+        image.alt =
+            character.name;
+
+        image.style.display =
+            "block";
+    }
 
 
-/* =========================================================
-   BID BUTTON
-   ========================================================= */
-
-function updateBidButton(data) {
+    /*
+     * ONLY ONE BID BUTTON:
+     * ₹50
+     */
 
     const button =
         $("bidButton");
@@ -1182,39 +996,77 @@ function updateBidButton(data) {
         return;
     }
 
+
     button.textContent =
         "💰 BID ₹50";
 
-    button.disabled =
-        !data.auctionActive ||
-        data.highestBidder ===
-        playerName;
+
+    /*
+     * HIGHEST BIDDER CANNOT
+     * CLICK AGAIN.
+     */
 
     if (
-        data.highestBidder ===
+        highestBidder ===
         playerName
     ) {
 
-        button.title =
-            "You are the highest bidder";
+        button.disabled =
+            true;
 
-    } else {
+        button.textContent =
+            "🔒 HIGHEST BIDDER";
 
-        button.title =
-            "Bid ₹50";
+        return;
     }
+
+
+    /*
+     * AUCTION ENDED
+     */
+
+    if (!data.auctionActive) {
+
+        button.disabled =
+            true;
+
+        return;
+    }
+
+
+    button.disabled =
+        false;
 }
 
 
 /* =========================================================
-   BID ₹50
+   BID BUTTON
    ========================================================= */
 
 function placeBid() {
 
-    if (!roomCode) {
+    if (!auctionActive) {
+
+        message(
+            "Auction is not active."
+        );
+
         return;
     }
+
+
+    if (
+        highestBidder ===
+        playerName
+    ) {
+
+        message(
+            "You are already the highest bidder."
+        );
+
+        return;
+    }
+
 
     socket.emit(
         "placeBid",
@@ -1236,13 +1088,13 @@ socket.on(
         if (data.sold) {
 
             message(
-                `🔨 ${data.character} sold to ${data.winner} for ₹${data.bid}`
+                `🔨 SOLD! ${data.character} → ${data.winner} for ₹${data.bid}`
             );
 
         } else {
 
             message(
-                `❌ ${data.character} went UNSOLD`
+                `❌ UNSOLD! ${data.character}`
             );
         }
     }
@@ -1257,34 +1109,34 @@ socket.on(
     "auctionFinished",
     data => {
 
-        showScreen(
-            "auctionResults"
-        );
+        hide("auctionScreen");
 
-        renderAuctionResults(
-            data
+        show("finalScreen");
+
+        renderFinalRanking(
+            data.ranking
         );
     }
 );
 
 
 /* =========================================================
-   AUCTION RESULTS
+   FINAL RESULTS
    ========================================================= */
 
-function renderAuctionResults(data) {
+function renderFinalRanking(
+    ranking
+) {
 
-    const list =
-        $("auctionResultsList");
+    const container =
+        $("finalResults");
 
-    if (!list) {
+    if (!container) {
         return;
     }
 
-    list.innerHTML = "";
+    container.innerHTML = "";
 
-    const ranking =
-        data.ranking || [];
 
     ranking.forEach(
         (player, index) => {
@@ -1297,74 +1149,81 @@ function renderAuctionResults(data) {
             div.className =
                 "final-player";
 
-            const team =
-                player.team || [];
 
-            let html = "";
+            let teamHTML = "";
 
-            team.forEach(
-                characterKey => {
+            if (
+                player.team &&
+                player.team.length
+            ) {
 
-                    const character =
-                        CHARACTERS[
-                            characterKey
-                        ];
+                teamHTML =
+                    player.team.map(
+                        character => {
 
-                    if (!character) {
-                        return;
-                    }
+                            const data =
+                                CHARACTERS[
+                                    character
+                                ];
 
-                    html += `
+                            return `
 
-                        <span class="team-character">
+                                <div class="team-character">
 
-                            <img
-                                class="team-character-image"
-                                src="${character.image}"
-                                alt="${character.name}"
-                            >
+                                    ${
+                                        data?.image
+                                        ? `
+                                            <img
+                                                class="team-character-image"
+                                                src="${data.image}"
+                                                alt="${data.name}"
+                                            >
+                                          `
+                                        : ""
+                                    }
 
-                            ${character.name}
+                                    ${data?.name || character}
 
-                        </span>
+                                </div>
+                            `;
+                        }
+                    ).join("");
+            }
 
-                    `;
-                }
-            );
 
             div.innerHTML = `
 
                 <h3>
                     ${index + 1}.
-                    ${escapeHtml(
-                        player.name
-                    )}
+                    ${escapeHTML(player.name)}
                 </h3>
 
                 <p>
-                    Team:
-                    ${team.length}/5
+                    💰 Balance:
+                    ₹${player.balance ?? 0}
                 </p>
 
                 <p>
-                    Balance:
-                    ₹${player.balance}
+                    👥 Characters:
+                    ${player.teamCount ?? player.team?.length ?? 0}/5
                 </p>
 
                 <div class="team-characters">
-                    ${html}
+                    ${teamHTML}
                 </div>
-
             `;
 
-            list.appendChild(div);
+
+            container.appendChild(
+                div
+            );
         }
     );
 }
 
 
 /* =========================================================
-   ROOM ERROR
+   ERROR MESSAGE
    ========================================================= */
 
 socket.on(
@@ -1373,14 +1232,14 @@ socket.on(
 
         message(
             data.message ||
-            "Something went wrong"
+            "Something went wrong."
         );
     }
 );
 
 
 /* =========================================================
-   CONNECTION
+   SOCKET CONNECTION
    ========================================================= */
 
 socket.on(
@@ -1388,62 +1247,53 @@ socket.on(
     () => {
 
         console.log(
-            "Connected:",
+            "Connected to server:",
             socket.id
         );
     }
 );
 
+
 socket.on(
     "disconnect",
     () => {
 
-        console.log(
-            "Disconnected"
-        );
-
         message(
-            "Connection lost. Trying to reconnect..."
+            "⚠️ Connection lost. Reconnecting..."
         );
     }
 );
 
 
 /* =========================================================
-   COPY ROOM CODE
+   TEXT HELPER
    ========================================================= */
 
-function copyRoomCode() {
+function setText(
+    id,
+    text
+) {
 
-    if (!roomCode) {
-        return;
+    const element =
+        $(id);
+
+    if (element) {
+
+        element.textContent =
+            text;
     }
-
-    navigator.clipboard
-        .writeText(roomCode)
-        .then(() => {
-
-            message(
-                "Room code copied!"
-            );
-
-        })
-        .catch(() => {
-
-            message(
-                `Room Code: ${roomCode}`
-            );
-        });
 }
 
 
 /* =========================================================
-   ESCAPE HTML
+   HTML SAFETY
    ========================================================= */
 
-function escapeHtml(value) {
+function escapeHTML(
+    text
+) {
 
-    return String(value)
+    return String(text)
         .replace(
             /&/g,
             "&amp;"
@@ -1468,8 +1318,11 @@ function escapeHtml(value) {
 
 
 /* =========================================================
-   GLOBAL BUTTON FUNCTIONS
+   MAKE FUNCTIONS AVAILABLE TO HTML
    ========================================================= */
+
+window.selectGame =
+    selectGame;
 
 window.createRoom =
     createRoom;
@@ -1477,66 +1330,15 @@ window.createRoom =
 window.joinRoom =
     joinRoom;
 
-window.startRankGame =
-    startRankGame;
+window.startSelectedGame =
+    startSelectedGame;
 
-window.startAuctionGame =
-    startAuctionGame;
+window.selectRankCharacter =
+    selectRankCharacter;
 
 window.placeBid =
     placeBid;
 
-window.copyRoomCode =
-    copyRoomCode;
-
-window.goHome =
-    goHome;
-
-
-/* =========================================================
-   INITIAL SCREEN
-   ========================================================= */
-
-document.addEventListener(
-    "DOMContentLoaded",
-    () => {
-
-        /*
-         * Do not automatically open the game.
-         * Home screen stays visible until
-         * the user chooses Character Rank
-         * or Naruto Auction.
-         */
-
-        const sections =
-            document.querySelectorAll(
-                "section"
-            );
-
-        sections.forEach(
-            (section, index) => {
-
-                if (index === 0) {
-                    section.classList.remove(
-                        "hidden"
-                    );
-                } else {
-                    section.classList.add(
-                        "hidden"
-                    );
-                }
-            }
-        );
-
-        const bidButton =
-            $("bidButton");
-
-        if (bidButton) {
-
-            bidButton.addEventListener(
-                "click",
-                placeBid
-            );
-        }
-    }
-);
+window.backHome =
+    backHome;
+```
