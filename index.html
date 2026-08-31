@@ -1,186 +1,115 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8">
+<!DOCTYPE html><html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🍥 Naruto Character Games</title>
+    <link rel="stylesheet" href="/style.css">
+</head><body><div id="message"></div><!-- MENU --><section id="gameMenu">
+    <div class="container">
+        <h1>🍥 NARUTO CHARACTER GAMES</h1>
+        <p class="subtitle">Multiplayer • 2–6 Players</p>    <h2>🎮 SELECT GAME</h2>
 
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
->
-
-<title>🍥 Naruto Character Games</title>
-
-<link
-    rel="stylesheet"
-    href="/style.css"
->
-
-</head><body><div id="message"></div><!-- MENU --><section id="gameMenu"><div class="container">
-
-    <h1>🍥 NARUTO CHARACTER GAMES</h1>
-
-    <p class="subtitle">
-        Multiplayer • 2–6 Players
-    </p>
-
-    <h2>🎮 SELECT GAME</h2>
-
-    <button
-        class="game-button"
-        onclick="selectGame('rank')"
-    >
+    <button class="game-button" onclick="selectGame('rank')">
         🏆 CHARACTER RANK
     </button>
 
-    <button
-        class="game-button"
-        onclick="selectGame('auction')"
-    >
+    <button class="game-button" onclick="selectGame('auction')">
         🔨 NARUTO AUCTION
     </button>
-
 </div>
 
-</section><!-- LOBBY --><section
-    id="lobby"
-    style="display:none"
-><div class="container">
-
-    <h1 id="selectedGameTitle">
-        🎮 GAME
-    </h1>
+</section><!-- LOBBY --><section id="lobby" style="display:none">
+    <div class="container">    <h1 id="selectedGameTitle">🎮 GAME</h1>
 
     <input
         id="playerName"
+        type="text"
         placeholder="Enter your name"
         maxlength="20"
     >
 
-    <button
-        class="main-button"
-        onclick="createRoom()"
-    >
+    <button class="main-button" onclick="createRoom()">
         🏠 CREATE ROOM
     </button>
 
-    <div class="or">
-        OR
-    </div>
+    <div class="or">OR</div>
 
     <input
         id="roomCode"
+        type="text"
         placeholder="Enter room code"
         maxlength="6"
     >
 
-    <button
-        class="main-button"
-        onclick="joinRoom()"
-    >
+    <button class="main-button" onclick="joinRoom()">
         🚪 JOIN ROOM
     </button>
 
-    <button
-        class="back-button"
-        onclick="backToMenu()"
-    >
+    <button class="back-button" onclick="backToMenu()">
         ← BACK
     </button>
 
 </div>
 
-</section><!-- ROOM --><section
-    id="room"
-    style="display:none"
-><div class="container">
-
-    <h1>🎮 ROOM</h1>
+</section><!-- ROOM --><section id="room" style="display:none">
+    <div class="container">    <h1>🎮 ROOM</h1>
 
     <div class="room-code">
-
-        <small>
-            ROOM CODE
-        </small>
-
-        <strong id="roomCodeDisplay">
-            ------
-        </strong>
-
+        <small>ROOM CODE</small>
+        <strong id="roomCodeDisplay">------</strong>
     </div>
 
     <h2>👥 PLAYERS</h2>
 
     <div id="playersList"></div>
 
-    <button
-        class="start-button"
-        onclick="startGame()"
-    >
+    <button class="start-button" onclick="startGame()">
         ▶ START GAME
     </button>
 
 </div>
 
-</section><!-- RANK --><section
-    id="rankGame"
-    style="display:none"
-><div class="container">
-
-    <h1>🏆 CHARACTER RANK</h1>
+</section><!-- RANK GAME --><section id="rankGame" style="display:none">
+    <div class="container">    <h1>🏆 CHARACTER RANK</h1>
 
     <div class="category">
-        <span id="rankCategory">
-            Talent
-        </span>
+        <span id="rankCategory">Talent</span>
     </div>
 
-    <p id="rankProgress">
-        Answers: 0/0
-    </p>
+    <p id="rankProgress">Answers: 0/0</p>
 
-    <div
-        id="characterButtons"
-        class="character-grid"
-    ></div>
+    <div id="characterButtons" class="character-grid"></div>
 
 </div>
 
-</section><!-- RANK RESULT --><section
-    id="rankResult"
-    style="display:none"
-><div class="container">
-
-    <h1 id="resultCategory">
-        🏆 RESULT
-    </h1>
+</section><!-- RANK RESULT --><section id="rankResult" style="display:none">
+    <div class="container">    <h1 id="resultCategory">🏆 RESULT</h1>
 
     <div id="rankResultsList"></div>
 
-    <button
-        class="start-button"
-        onclick="nextRankCategory()"
-    >
+    <button class="start-button" onclick="nextRankCategory()">
         ➡ NEXT CATEGORY
     </button>
 
 </div>
 
-</section><!-- AUCTION --><section
-    id="auctionGame"
-    style="display:none"
-><div class="container">
+</section><!-- AUCTION --><section id="auctionGame" style="display:none">
+    <div class="container">    <h1>🔨 NARUTO AUCTION</h1>
 
-    <h1>🔨 NARUTO AUCTION</h1>
-
-    <div
-        id="auctionTimer"
-        class="timer"
-    >
+    <div id="auctionTimer" class="timer">
         ⏱️ 15
     </div>
 
     <div class="auction-card">
 
-        <p>
-            CURRENT CHARACTER
-        </p>
+        <p>CURRENT CHARACTER</p>
+
+        <img
+            id="auctionCharacterImage"
+            class="auction-character-image"
+            src=""
+            alt="Character"
+        >
 
         <h2 id="auctionCharacter">
             Naruto
@@ -190,13 +119,9 @@
 
     <div class="current-bid-box">
 
-        <p>
-            CURRENT BID
-        </p>
+        <p>CURRENT BID</p>
 
-        <div id="currentBid">
-            ₹0
-        </div>
+        <div id="currentBid">₹0</div>
 
         <p id="highestBidder">
             No bids yet
@@ -216,8 +141,6 @@
 
     </div>
 
-    <!-- ONLY ONE BIDDING BUTTON -->
-
     <button
         id="bidButton"
         class="bid-button"
@@ -232,12 +155,8 @@
 
 </div>
 
-</section><!-- FINAL --><section
-    id="finalResults"
-    style="display:none"
-><div class="container">
-
-    <h1 id="finalResultsTitle">
+</section><!-- FINAL RESULTS --><section id="finalResults" style="display:none">
+    <div class="container">    <h1 id="finalResultsTitle">
         🏆 FINAL RESULTS
     </h1>
 
