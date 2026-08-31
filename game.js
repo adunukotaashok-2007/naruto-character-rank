@@ -1,4 +1,4 @@
-```javascript
+
 /* =========================================================
    NARUTO CHARACTER GAMES
    COMPLETE GAME.JS
@@ -1341,4 +1341,3 @@ window.placeBid =
 
 window.backHome =
     backHome;
-```
