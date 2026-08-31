@@ -1,4 +1,3 @@
-```json
 {
   "name": "naruto-character-rank-server",
   "version": "1.0.0",
@@ -15,4 +14,3 @@
     "socket.io": "^4.8.1"
   }
 }
-```
