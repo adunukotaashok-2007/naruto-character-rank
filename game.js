@@ -61,12 +61,17 @@ const characters = {
         image: "assets/characters/images%20(11).jpeg"
     },
 
-    Guy: {
+    "Might Guy": {
         name: "Might Guy",
         image: "assets/characters/images%20(12).jpeg"
     },
 
-    Lee: {
+    "Might Duy": {
+        name: "Might Duy",
+        image: "assets/characters/download%20(33).jpeg"
+    },
+
+    "Rock Lee": {
         name: "Rock Lee",
         image: "assets/characters/images%20(13).jpeg"
     },
@@ -111,7 +116,7 @@ const characters = {
         image: "assets/characters/download.jpeg"
     },
 
-    KillerB: {
+    "Killer B": {
         name: "Killer B",
         image: "assets/characters/download%20(1).jpeg"
     },
@@ -136,12 +141,12 @@ const characters = {
         image: "assets/characters/download%20(5).jpeg"
     },
 
-    ThirdRaikage: {
+    "Third Raikage": {
         name: "Third Raikage",
         image: "assets/characters/download%20(6).jpeg"
     },
 
-    FourthRaikage: {
+    "Fourth Raikage": {
         name: "Fourth Raikage",
         image: "assets/characters/download%20(7).jpeg"
     },
@@ -151,7 +156,7 @@ const characters = {
         image: "assets/characters/download%20(8).jpeg"
     },
 
-    Mei: {
+    "Mei Terumi": {
         name: "Mei Terumi",
         image: "assets/characters/download%20(9).jpeg"
     },
@@ -166,12 +171,12 @@ const characters = {
         image: "assets/characters/download%20(11).jpeg"
     },
 
-    Mu: {
+    "Mū": {
         name: "Mū",
         image: "assets/characters/download%20(12).jpeg"
     },
 
-    Gengetsu: {
+    "Gengetsu Hozuki": {
         name: "Gengetsu Hōzuki",
         image: "assets/characters/download%20(13).jpeg"
     },
@@ -271,11 +276,6 @@ const characters = {
         image: "assets/characters/download%20(32).jpeg"
     },
 
-    Duy: {
-        name: "Might Duy",
-        image: "assets/characters/download%20(33).jpeg"
-    },
-
     Shizune: {
         name: "Shizune",
         image: "assets/characters/download%20(34).jpeg"
@@ -352,7 +352,6 @@ const characters = {
     }
 };
 
-
 /* =========================================================
    16 CATEGORIES
 ========================================================= */
@@ -376,39 +375,36 @@ const categories = [
     "Overall Power"
 ];
 
-
 /* =========================================================
-   CATEGORY RANKINGS
-   IMPORTANT:
-   These use CHARACTER KEYS, not display names.
+   RANKINGS
 ========================================================= */
 
 const rankings = {
 
-    "Speed": [
+    Speed: [
         "Minato",
         "Naruto",
         "Tobirama",
-        "FourthRaikage",
+        "Fourth Raikage",
         "Sasuke",
-        "Kakashi",
         "Shisui",
-        "Guy",
-        "Lee",
+        "Kakashi",
+        "Might Guy",
+        "Rock Lee",
         "Obito"
     ],
 
-    "Strength": [
+    Strength: [
         "Madara",
         "Hashirama",
         "Naruto",
         "Sasuke",
-        "Guy",
+        "Might Guy",
         "Tsunade",
         "Minato",
         "Itachi",
         "Obito",
-        "KillerB"
+        "Killer B"
     ],
 
     "Battle IQ": [
@@ -424,33 +420,33 @@ const rankings = {
         "Obito"
     ],
 
-    "Durability": [
+    Durability: [
         "Hashirama",
         "Naruto",
         "Madara",
         "Kisame",
-        "KillerB",
+        "Killer B",
         "Tsunade",
         "Obito",
         "Sakura",
         "Gaara",
-        "ThirdRaikage"
+        "Third Raikage"
     ],
 
-    "Chakra": [
+    Chakra: [
         "Naruto",
         "Hashirama",
         "Madara",
         "Kisame",
         "Nagato",
-        "KillerB",
+        "Killer B",
         "Minato",
         "Tobirama",
         "Jiraiya",
         "Orochimaru"
     ],
 
-    "Ninjutsu": [
+    Ninjutsu: [
         "Madara",
         "Naruto",
         "Sasuke",
@@ -463,20 +459,21 @@ const rankings = {
         "Itachi"
     ],
 
-    "Taijutsu": [
-        "Guy",
-        "Duy",
-        "Lee",
+    Taijutsu: [
+        "Might Guy",
+        "Might Duy",
+        "Rock Lee",
         "Naruto",
         "Sasuke",
         "Neji",
-        "ThirdRaikage",
-        "FourthRaikage",
-        "KillerB",
+        "Third Raikage",
+        "Fourth Raikage",
+        "Killer B",
+        "Sakura",
         "Kakashi"
     ],
 
-    "Genjutsu": [
+    Genjutsu: [
         "Itachi",
         "Shisui",
         "Sasuke",
@@ -485,11 +482,11 @@ const rankings = {
         "Obito",
         "Orochimaru",
         "Kakashi",
-        "Sakura",
-        "Ino"
+        "Ino",
+        "Sakura"
     ],
 
-    "Defense": [
+    Defense: [
         "Gaara",
         "Hashirama",
         "Madara",
@@ -498,37 +495,37 @@ const rankings = {
         "Tsunade",
         "Sasuke",
         "Obito",
-        "ThirdRaikage",
+        "Third Raikage",
         "Kisame"
     ],
 
-    "Attack": [
+    Attack: [
         "Madara",
         "Naruto",
         "Sasuke",
         "Hashirama",
-        "Guy",
+        "Might Guy",
         "Minato",
         "Itachi",
-        "KillerB",
+        "Killer B",
         "Nagato",
         "Obito"
     ],
 
-    "Stamina": [
+    Stamina: [
         "Naruto",
         "Hashirama",
         "Kisame",
-        "KillerB",
+        "Killer B",
         "Madara",
         "Tsunade",
         "Sakura",
         "Jiraiya",
         "Orochimaru",
-        "ThirdRaikage"
+        "Third Raikage"
     ],
 
-    "Leadership": [
+    Leadership: [
         "Hashirama",
         "Naruto",
         "Minato",
@@ -541,7 +538,7 @@ const rankings = {
         "Itachi"
     ],
 
-    "Versatility": [
+    Versatility: [
         "Kakashi",
         "Naruto",
         "Sasuke",
@@ -554,7 +551,7 @@ const rankings = {
         "Obito"
     ],
 
-    "Experience": [
+    Experience: [
         "Hiruzen",
         "Madara",
         "Orochimaru",
@@ -567,7 +564,7 @@ const rankings = {
         "Tsunade"
     ],
 
-    "Teamwork": [
+    Teamwork: [
         "Naruto",
         "Kakashi",
         "Shikamaru",
@@ -589,11 +586,10 @@ const rankings = {
         "Itachi",
         "Obito",
         "Nagato",
-        "Guy",
+        "Might Guy",
         "Tobirama"
     ]
 };
-
 
 /* =========================================================
    GAME STATE
@@ -605,23 +601,21 @@ let isHost = false;
 let gameMode = "rank";
 
 let currentCategory = 0;
+let totalCategories = 16;
 
-let auctionTimer = null;
+let selectedCharacter = null;
+
+let auctionTimerInterval = null;
+let auctionSeconds = 0;
 let currentAuctionState = null;
 
-
 /* =========================================================
-   DOM HELPER
+   DOM
 ========================================================= */
 
 function $(id) {
     return document.getElementById(id);
 }
-
-
-/* =========================================================
-   SCREEN HELPER
-========================================================= */
 
 function showScreen(id) {
 
@@ -638,28 +632,31 @@ function showScreen(id) {
     }
 }
 
-
-/* =========================================================
-   MESSAGE
-========================================================= */
-
 function showMessage(text) {
 
-    const message = $("message");
+    const message =
+        $("message");
 
-    if (!message) {
-        console.log(text);
-        return;
-    }
+    if (!message) return;
 
-    message.textContent = text;
-    message.style.display = "block";
+    message.textContent =
+        text;
 
-    setTimeout(() => {
-        message.style.display = "none";
-    }, 2500);
+    message.style.display =
+        "block";
+
+    clearTimeout(
+        window.messageTimeout
+    );
+
+    window.messageTimeout =
+        setTimeout(() => {
+
+            message.style.display =
+                "none";
+
+        }, 2500);
 }
-
 
 /* =========================================================
    CREATE ROOM
@@ -668,57 +665,69 @@ function showMessage(text) {
 window.createRoom = function () {
 
     const name =
-        $("playerName")?.value.trim();
+        $("playerName")
+            ?.value
+            .trim();
 
     if (!name) {
-        showMessage("Enter your name.");
+        showMessage(
+            "Enter your name."
+        );
         return;
     }
 
     myName = name;
 
     const mode =
-        $("gameMode")?.value || "rank";
+        $("gameMode")
+            ?.value ||
+        "rank";
 
     let maxPlayers =
-        Number($("maxPlayers")?.value);
+        Number(
+            $("maxPlayers")
+                ?.value
+        );
 
-    if (!maxPlayers || maxPlayers < 2) {
+    if (
+        !maxPlayers ||
+        maxPlayers < 2
+    ) {
         maxPlayers = 6;
     }
 
-    let teamSize =
-        Number($("teamSize")?.value);
+    socket.emit(
+        "createRoom",
+        {
 
-    if (!teamSize || teamSize < 1) {
-        teamSize = 5;
-    }
+            name,
 
-    let startingBalance =
-        Number($("startingBalance")?.value);
+            gameMode: mode,
 
-    if (!startingBalance || startingBalance < 0) {
-        startingBalance = 1000;
-    }
+            maxPlayers,
 
-    socket.emit("createRoom", {
+            teamSize:
+                Number(
+                    $("teamSize")
+                        ?.value
+                ) || 5,
 
-        name,
+            startingBalance:
+                Number(
+                    $("startingBalance")
+                        ?.value
+                ) || 1000,
 
-        gameMode: mode,
+            bidAmount:
+                Number(
+                    $("bidAmount")
+                        ?.value
+                ) || 50,
 
-        maxPlayers,
-
-        teamSize,
-
-        startingBalance,
-
-        bidAmount: 50,
-
-        bidTime: 10
-    });
+            bidTime: 10
+        }
+    );
 };
-
 
 /* =========================================================
    JOIN ROOM
@@ -727,28 +736,35 @@ window.createRoom = function () {
 window.joinRoom = function () {
 
     const name =
-        $("joinPlayerName")?.value.trim();
+        $("joinPlayerName")
+            ?.value
+            .trim();
 
     const code =
         $("joinRoomCode")
-            ?.value.trim()
+            ?.value
+            .trim()
             .toUpperCase();
 
     if (!name || !code) {
+
         showMessage(
             "Enter your name and room code."
         );
+
         return;
     }
 
     myName = name;
 
-    socket.emit("joinRoom", {
-        name,
-        roomCode: code
-    });
+    socket.emit(
+        "joinRoom",
+        {
+            name,
+            roomCode: code
+        }
+    );
 };
-
 
 /* =========================================================
    START GAME
@@ -757,416 +773,361 @@ window.joinRoom = function () {
 window.startGame = function () {
 
     if (!isHost) {
+
         showMessage(
             "Only the host can start."
         );
+
         return;
     }
 
-    socket.emit("startGame");
+    socket.emit(
+        "startGame"
+    );
 };
-
 
 /* =========================================================
    ROOM CREATED
 ========================================================= */
 
-socket.on("roomCreated", data => {
+socket.on(
+    "roomCreated",
+    data => {
 
-    roomCode = data.roomCode;
-    isHost = true;
-    gameMode = data.gameMode;
+        roomCode =
+            data.roomCode;
 
-    showMessage(
-        `Room created: ${roomCode}`
-    );
+        isHost =
+            data.isHost;
 
-    updateRoomInformation(data);
+        gameMode =
+            data.gameMode;
 
-    showScreen("lobbyScreen");
-});
+        showMessage(
+            `Room created: ${roomCode}`
+        );
 
+        /*
+         * If your index has these IDs,
+         * display room information.
+         */
+
+        const room =
+            $("roomCodeDisplay");
+
+        if (room) {
+            room.textContent =
+                roomCode;
+        }
+    }
+);
 
 /* =========================================================
    ROOM JOINED
 ========================================================= */
 
-socket.on("roomJoined", data => {
+socket.on(
+    "roomJoined",
+    data => {
 
-    roomCode = data.roomCode;
-    isHost = false;
-    gameMode = data.gameMode;
+        roomCode =
+            data.roomCode;
 
-    updateRoomInformation(data);
+        isHost =
+            data.isHost;
 
-    showScreen("lobbyScreen");
+        gameMode =
+            data.gameMode;
 
-    showMessage(
-        `Joined room ${roomCode}`
-    );
-});
-
-
-/* =========================================================
-   ROOM INFORMATION
-========================================================= */
-
-function updateRoomInformation(data) {
-
-    const code =
-        $("roomCode");
-
-    if (code) {
-        code.textContent =
-            data.roomCode || roomCode;
+        showMessage(
+            `Joined room ${roomCode}`
+        );
     }
-
-    const mode =
-        $("roomGameMode");
-
-    if (mode) {
-        mode.textContent =
-            data.gameMode || gameMode;
-    }
-
-    if (data.settings) {
-
-        const team =
-            $("roomTeamSize");
-
-        if (team) {
-            team.textContent =
-                data.settings.teamSize;
-        }
-
-        const money =
-            $("roomStartingBalance");
-
-        if (money) {
-            money.textContent =
-                data.settings.startingBalance;
-        }
-    }
-}
-
-
-/* =========================================================
-   PLAYERS UPDATED
-========================================================= */
-
-socket.on("playersUpdated", data => {
-
-    const list =
-        $("playersList");
-
-    if (!list) return;
-
-    list.innerHTML = "";
-
-    data.players.forEach((player, index) => {
-
-        const div =
-            document.createElement("div");
-
-        div.className =
-            "player-item";
-
-        div.textContent =
-            `${index + 1}. ${player.name}`;
-
-        if (player.balance !== undefined) {
-
-            div.textContent +=
-                ` — ₹${player.balance}`;
-
-        }
-
-        list.appendChild(div);
-    });
-
-    const waiting =
-        $("waitingText");
-
-    if (waiting) {
-
-        if (data.players.length < 2) {
-
-            waiting.textContent =
-                "Waiting for another player...";
-
-        } else {
-
-            waiting.textContent =
-                "Ready! Host can start the game.";
-        }
-    }
-});
-
+);
 
 /* =========================================================
    HOST CHANGED
 ========================================================= */
 
-socket.on("hostChanged", data => {
+socket.on(
+    "hostChanged",
+    data => {
 
-    isHost =
-        data.host === socket.id;
+        isHost =
+            data.host ===
+            socket.id;
 
-    showMessage(
-        isHost
-            ? "You are now the host."
-            : "Host changed."
-    );
-});
-
+        if (isHost) {
+            showMessage(
+                "You are now the host."
+            );
+        }
+    }
+);
 
 /* =========================================================
-   BUILD CHARACTER RANK SCREEN
+   PLAYERS UPDATED
 ========================================================= */
 
-function buildRankScreen() {
+socket.on(
+    "playersUpdated",
+    data => {
+
+        const list =
+            $("playersList");
+
+        if (!list) return;
+
+        list.innerHTML = "";
+
+        data.players.forEach(
+            player => {
+
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+                div.className =
+                    "player-item";
+
+                div.innerHTML = `
+                    <strong>
+                        ${escapeHTML(player.name)}
+                    </strong>
+                    <span>
+                        ₹${Number(player.balance).toLocaleString()}
+                    </span>
+                `;
+
+                list.appendChild(
+                    div
+                );
+            }
+        );
+    }
+);
+
+/* =========================================================
+   RANK SCREEN
+========================================================= */
+
+function updateCategoryDisplay() {
+
+    const number =
+        currentCategory + 1;
 
     const title =
         $("categoryTitle");
 
-    const number =
+    if (title) {
+        title.textContent =
+            categories[
+                currentCategory
+            ];
+    }
+
+    const counter =
+        $("categoryCounter");
+
+    if (counter) {
+
+        counter.textContent =
+            `${number}/${totalCategories}`;
+    }
+
+    const categoryNumber =
         $("categoryNumber");
 
-    const total =
-        $("categoryTotal");
+    if (categoryNumber) {
 
-    const progress =
-        $("categoryProgress");
+        categoryNumber.textContent =
+            `${number} / ${totalCategories}`;
+    }
+}
 
+/* =========================================================
+   BUILD RANK SCREEN
+========================================================= */
 
-    /* -----------------------------------------
-       CATEGORY TITLE
-    ----------------------------------------- */
+function buildRankScreen() {
 
-    if (title) {
+    updateCategoryDisplay();
 
-        title.textContent =
-            categories[currentCategory];
+    selectedCharacter =
+        null;
+
+    const status =
+        $("selectionStatus");
+
+    if (status) {
+
+        status.textContent =
+            "Select one character.";
     }
 
-
-    /* -----------------------------------------
-       1 / 16
-    ----------------------------------------- */
-
-    if (number) {
-
-        number.textContent =
-            currentCategory + 1;
-    }
-
-
-    if (total) {
-
-        total.textContent =
-            categories.length;
-    }
-
-
-    /* -----------------------------------------
-       OPTIONAL SINGLE COUNTER
-       Example: 1 / 16
-    ----------------------------------------- */
-
-    if (progress) {
-
-        progress.textContent =
-            `${currentCategory + 1} / ${categories.length}`;
-    }
-
-
-    /* -----------------------------------------
-       CHARACTER GRID
-    ----------------------------------------- */
-
-    const list =
+    const grid =
         $("characterGrid");
 
-    if (!list) return;
+    if (!grid) return;
 
-    list.innerHTML = "";
-
+    grid.innerHTML = "";
 
     const category =
-        categories[currentCategory];
-
+        categories[
+            currentCategory
+        ];
 
     /*
-     * Start with the best characters for this
-     * category, then append every other character.
+     * Make a COPY.
+     *
+     * IMPORTANT:
+     * Do not modify the rankings array.
      */
 
     const ranked =
         [
-            ...(rankings[category] || [])
+            ...(rankings[
+                category
+            ] || [])
         ];
-
 
     const rankedSet =
         new Set(ranked);
 
+    /*
+     * Add all other characters.
+     */
 
-    Object.keys(characters)
-        .forEach(key => {
+    Object.keys(
+        characters
+    ).forEach(key => {
 
-            if (!rankedSet.has(key)) {
-                ranked.push(key);
-            }
-        });
+        if (
+            !rankedSet.has(key)
+        ) {
 
-
-    ranked.forEach((key, index) => {
-
-        const char =
-            characters[key];
-
-        if (!char) return;
-
-
-        const card =
-            document.createElement("button");
-
-        card.type = "button";
-
-        card.className =
-            "character-card";
-
-
-        card.innerHTML = `
-
-            <div class="rank-number">
-                #${index + 1}
-            </div>
-
-            <img
-                src="${char.image}"
-                alt="${char.name}"
-                loading="lazy"
-                onerror="
-                    this.style.display='none';
-                "
-            >
-
-            <strong>
-                ${char.name}
-            </strong>
-
-        `;
-
-
-        card.addEventListener(
-            "click",
-            () => {
-
-                selectRankCharacter(key);
-
-            }
-        );
-
-
-        list.appendChild(card);
+            ranked.push(key);
+        }
     });
-}
 
+    ranked.forEach(
+        (key, index) => {
+
+            const char =
+                characters[key];
+
+            if (!char) return;
+
+            const card =
+                document.createElement(
+                    "button"
+                );
+
+            card.type =
+                "button";
+
+            card.className =
+                "character-card";
+
+            card.innerHTML = `
+
+                <div class="rank-number">
+                    #${index + 1}
+                </div>
+
+                <img
+                    src="${char.image}"
+                    alt="${escapeHTML(char.name)}"
+                    onerror="this.style.display='none'"
+                >
+
+                <strong>
+                    ${escapeHTML(char.name)}
+                </strong>
+
+            `;
+
+            card.onclick =
+                () => {
+
+                    selectRankCharacter(
+                        key,
+                        card
+                    );
+
+                };
+
+            grid.appendChild(
+                card
+            );
+        }
+    );
+}
 
 /* =========================================================
    SELECT RANK CHARACTER
 ========================================================= */
 
-function selectRankCharacter(character) {
+function selectRankCharacter(
+    character,
+    card
+) {
 
-    if (!characters[character]) {
+    if (
+        selectedCharacter
+    ) {
+
+        showMessage(
+            "You already selected a character for this category."
+        );
+
         return;
     }
 
-    socket.emit("rankSelect", {
+    selectedCharacter =
+        character;
 
-        categoryIndex:
-            currentCategory,
+    socket.emit(
+        "rankSelect",
+        {
+            categoryIndex:
+                currentCategory,
 
-        character
-    });
+            character
+        }
+    );
+
+    document
+        .querySelectorAll(
+            ".character-card"
+        )
+        .forEach(
+            item => {
+                item.disabled =
+                    true;
+            }
+        );
+
+    if (card) {
+        card.classList.add(
+            "selected"
+        );
+    }
+
+    const status =
+        $("selectionStatus");
+
+    if (status) {
+
+        status.textContent =
+            `You selected ${characters[character].name}`;
+    }
 
     showMessage(
         `Selected ${characters[character].name}`
     );
 }
-
-
-/* =========================================================
-   RANK SELECTION MADE
-========================================================= */
-
-socket.on(
-    "rankSelectionMade",
-    data => {
-
-        const char =
-            characters[data.character];
-
-        const name =
-            char
-                ? char.name
-                : data.character;
-
-
-        const status =
-            $("selectionStatus");
-
-        if (status) {
-
-            status.textContent =
-                `${data.playerName} selected ${name}`;
-        }
-    }
-);
-
-
-/* =========================================================
-   RANK CATEGORY COMPLETE
-========================================================= */
-
-socket.on(
-    "rankCategoryComplete",
-    data => {
-
-        showMessage(
-            "Everyone selected!"
-        );
-    }
-);
-
-
-/* =========================================================
-   NEXT CATEGORY
-========================================================= */
-
-socket.on(
-    "rankNextCategory",
-    data => {
-
-        currentCategory =
-            Number(data.categoryIndex);
-
-
-        if (
-            currentCategory < 0 ||
-            currentCategory >= categories.length
-        ) {
-            currentCategory = 0;
-        }
-
-
-        buildRankScreen();
-
-    }
-);
-
 
 /* =========================================================
    RANK GAME STARTED
@@ -1181,17 +1142,110 @@ socket.on(
                 data.categoryIndex
             ) || 0;
 
+        totalCategories =
+            Number(
+                data.totalCategories
+            ) || 16;
 
         showScreen(
             "rankScreen"
         );
 
-
         buildRankScreen();
-
     }
 );
 
+/* =========================================================
+   PRIVATE RANK SELECTION ACCEPTED
+========================================================= */
+
+socket.on(
+    "rankSelectionAccepted",
+    data => {
+
+        /*
+         * This event is sent ONLY to
+         * the player who selected.
+         */
+
+        const char =
+            characters[
+                data.character
+            ];
+
+        if (char) {
+
+            showMessage(
+                `Your selection: ${char.name}`
+            );
+        }
+    }
+);
+
+/* =========================================================
+   RANK WAITING
+========================================================= */
+
+socket.on(
+    "rankWaiting",
+    data => {
+
+        /*
+         * Do NOT reveal the selected
+         * character of another player.
+         */
+
+        const status =
+            $("selectionStatus");
+
+        if (!status) return;
+
+        const mine =
+            selectedCharacter
+                ? "You have selected."
+                : "You haven't selected yet.";
+
+        status.textContent =
+            `${mine} Waiting for all players... ` +
+            `${data.selectedCount}/${data.totalPlayers}`;
+    }
+);
+
+/* =========================================================
+   CATEGORY COMPLETE
+========================================================= */
+
+socket.on(
+    "rankCategoryComplete",
+    data => {
+
+        showMessage(
+            "Everyone selected. Moving to the next category..."
+        );
+    }
+);
+
+/* =========================================================
+   NEXT CATEGORY
+========================================================= */
+
+socket.on(
+    "rankNextCategory",
+    data => {
+
+        currentCategory =
+            Number(
+                data.categoryIndex
+            );
+
+        totalCategories =
+            Number(
+                data.totalCategories
+            ) || 16;
+
+        buildRankScreen();
+    }
+);
 
 /* =========================================================
    RANK FINISHED
@@ -1205,223 +1259,75 @@ socket.on(
             "rankResultScreen"
         );
 
-
         const container =
             $("rankResults");
 
-        if (!container) return;
+        if (!container)
+            return;
 
         container.innerHTML = "";
 
+        data.results.forEach(
+            player => {
 
-        if (
-            !data.results ||
-            !data.results.length
-        ) {
+                const box =
+                    document.createElement(
+                        "div"
+                    );
 
-            container.innerHTML =
-                "<p>No results available.</p>";
+                box.className =
+                    "final-player";
 
-            return;
-        }
+                let html = `
+                    <h3>
+                        ${escapeHTML(player.playerName)}
+                    </h3>
+                `;
 
+                Object.entries(
+                    player.selections
+                ).forEach(
+                    ([index, key]) => {
 
-        data.results.forEach(player => {
+                        const char =
+                            characters[key];
 
-            const box =
-                document.createElement("div");
+                        const category =
+                            categories[
+                                Number(index)
+                            ];
 
-            box.className =
-                "final-player";
+                        html += `
 
+                            <div class="team-character">
 
-            let html = `
+                                <strong>
+                                    ${escapeHTML(category)}
+                                </strong>
 
-                <h3>
-                    ${escapeHTML(
-                        player.playerName
-                    )}
-                </h3>
+                                <span>
+                                    ${
+                                        char
+                                            ? escapeHTML(char.name)
+                                            : escapeHTML(key)
+                                    }
+                                </span>
 
-            `;
+                            </div>
+                        `;
+                    }
+                );
 
+                box.innerHTML =
+                    html;
 
-            Object.entries(
-                player.selections || {}
-            ).forEach(
-                ([categoryIndex, key]) => {
-
-                    const char =
-                        characters[key];
-
-
-                    html += `
-
-                        <div class="team-character">
-
-                            ${
-                                char
-                                    ? escapeHTML(
-                                        char.name
-                                      )
-                                    : escapeHTML(
-                                        key
-                                      )
-                            }
-
-                        </div>
-
-                    `;
-                }
-            );
-
-
-            box.innerHTML =
-                html;
-
-
-            container.appendChild(
-                box
-            );
-        });
-
-
-        buildOverallResult(
-            data.results
+                container.appendChild(
+                    box
+                );
+            }
         );
     }
 );
-
-
-/* =========================================================
-   OVERALL RESULT
-========================================================= */
-
-function buildOverallResult(results) {
-
-    const overall =
-        $("overallWinner");
-
-    if (!overall) return;
-
-
-    /*
-     * AI-style recommendation:
-     *
-     * This does NOT use points.
-     * It compares the characters selected in
-     * all 16 categories and identifies the
-     * strongest overall selection profile.
-     */
-
-
-    const playerProfiles =
-        results.map(player => {
-
-            const selected =
-                Object.values(
-                    player.selections || {}
-                );
-
-
-            let eliteCount = 0;
-
-
-            selected.forEach(
-                (key, index) => {
-
-                    const category =
-                        categories[index];
-
-
-                    const top =
-                        rankings[category] || [];
-
-
-                    const position =
-                        top.indexOf(key);
-
-
-                    if (
-                        position !== -1 &&
-                        position < 3
-                    ) {
-
-                        eliteCount++;
-                    }
-                }
-            );
-
-
-            return {
-
-                player,
-
-                eliteCount,
-
-                total:
-                    selected.length
-
-            };
-
-        });
-
-
-    playerProfiles.sort(
-        (a, b) => {
-
-            if (
-                b.eliteCount !==
-                a.eliteCount
-            ) {
-
-                return (
-                    b.eliteCount -
-                    a.eliteCount
-                );
-            }
-
-
-            return (
-                b.total -
-                a.total
-            );
-        }
-    );
-
-
-    const winner =
-        playerProfiles[0];
-
-
-    if (!winner) return;
-
-
-    overall.innerHTML = `
-
-        <div class="overall-winner-box">
-
-            <h2>
-                🏆 Best Overall Player
-            </h2>
-
-            <h3>
-                ${escapeHTML(
-                    winner.player.playerName
-                )}
-            </h3>
-
-            <p>
-                AI-style analysis considers
-                the player's selections across
-                all 16 categories.
-            </p>
-
-        </div>
-
-    `;
-}
-
 
 /* =========================================================
    AUCTION STARTED
@@ -1431,20 +1337,20 @@ socket.on(
     "auctionStarted",
     data => {
 
-        gameMode =
-            "auction";
-
         showScreen(
             "auctionScreen"
         );
 
-
         showMessage(
             "Auction started!"
         );
+
+        updateAuctionMoney(
+            data.settings
+                ?.startingBalance
+        );
     }
 );
-
 
 /* =========================================================
    AUCTION CHARACTER
@@ -1457,23 +1363,21 @@ socket.on(
         currentAuctionState =
             data;
 
+        stopAuctionTimer();
 
-        showScreen(
-            "auctionScreen"
-        );
-
-
-        renderAuction(
+        updateAuctionCharacter(
             data
         );
 
+        updateAuctionState(
+            data
+        );
 
-        startAuctionCountdown(
-            getAuctionTime(data)
+        startLocalAuctionTimer(
+            data.bidTime || 10
         );
     }
 );
-
 
 /* =========================================================
    AUCTION UPDATED
@@ -1486,225 +1390,145 @@ socket.on(
         currentAuctionState =
             data;
 
-
-        renderAuction(
+        updateAuctionState(
             data
         );
 
-
         /*
-         * If server sends a new time,
-         * synchronize the local countdown.
+         * Timer is reset by server after
+         * every bid.
          */
 
-        if (
-            data.timeLeft !== undefined ||
-            data.seconds !== undefined
-        ) {
-
-            startAuctionCountdown(
-                getAuctionTime(data)
-            );
-        }
+        startLocalAuctionTimer(
+            data.bidTime || 10
+        );
     }
 );
 
-
 /* =========================================================
-   AUCTION TIMER FROM SERVER
+   AUCTION TIMER
 ========================================================= */
 
 socket.on(
     "auctionTimer",
     data => {
 
-        startAuctionCountdown(
-            getAuctionTime(data)
+        auctionSeconds =
+            Number(
+                data.seconds
+            );
+
+        updateTimerDisplay(
+            auctionSeconds
         );
     }
 );
 
-
 /* =========================================================
-   GET AUCTION TIME
+   START LOCAL TIMER DISPLAY
 ========================================================= */
 
-function getAuctionTime(data) {
+function startLocalAuctionTimer(
+    seconds
+) {
 
-    if (!data) {
-        return 10;
-    }
+    stopAuctionTimer();
 
-    if (
-        data.timeLeft !== undefined
-    ) {
+    auctionSeconds =
+        Number(seconds) || 10;
 
-        return Number(
-            data.timeLeft
-        );
-    }
-
-    if (
-        data.seconds !== undefined
-    ) {
-
-        return Number(
-            data.seconds
-        );
-    }
-
-    if (
-        data.bidTime !== undefined
-    ) {
-
-        return Number(
-            data.bidTime
-        );
-    }
-
-
-    if (
-        data.settings &&
-        data.settings.bidTime !== undefined
-    ) {
-
-        return Number(
-            data.settings.bidTime
-        );
-    }
-
-
-    return 10;
-}
-
-
-/* =========================================================
-   AUCTION COUNTDOWN
-========================================================= */
-
-function startAuctionCountdown(seconds) {
-
-    clearInterval(
-        auctionTimer
+    updateTimerDisplay(
+        auctionSeconds
     );
 
+    auctionTimerInterval =
+        setInterval(() => {
 
-    let remaining =
-        Math.max(
-            0,
-            Number(seconds) || 10
-        );
+            auctionSeconds--;
 
+            if (
+                auctionSeconds < 0
+            ) {
 
-    updateAuctionTimer(
-        remaining
-    );
+                auctionSeconds =
+                    0;
+            }
 
+            updateTimerDisplay(
+                auctionSeconds
+            );
 
-    auctionTimer =
-        setInterval(
-            () => {
-
-                remaining--;
-
-
-                if (
-                    remaining <= 0
-                ) {
-
-                    remaining = 0;
-
-                    updateAuctionTimer(
-                        remaining
-                    );
-
-
-                    clearInterval(
-                        auctionTimer
-                    );
-
-                    auctionTimer =
-                        null;
-
-                    return;
-                }
-
-
-                updateAuctionTimer(
-                    remaining
-                );
-
-            },
-            1000
-        );
+        }, 1000);
 }
 
-
 /* =========================================================
-   UPDATE TIMER DISPLAY
+   STOP TIMER
 ========================================================= */
 
-function updateAuctionTimer(seconds) {
+function stopAuctionTimer() {
+
+    if (
+        auctionTimerInterval
+    ) {
+
+        clearInterval(
+            auctionTimerInterval
+        );
+
+        auctionTimerInterval =
+            null;
+    }
+}
+
+/* =========================================================
+   TIMER DISPLAY
+========================================================= */
+
+function updateTimerDisplay(
+    seconds
+) {
 
     const timer =
         $("auctionTimer");
 
-    if (!timer) return;
+    if (timer) {
 
+        timer.textContent =
+            `${seconds}s`;
+    }
 
-    timer.textContent =
-        String(seconds);
+    const timer2 =
+        $("timer");
 
+    if (timer2) {
 
-    timer.setAttribute(
-        "data-time",
-        String(seconds)
-    );
+        timer2.textContent =
+            `${seconds}s`;
+    }
 
+    const countdown =
+        $("countdown");
 
-    if (
-        seconds <= 3
-    ) {
+    if (countdown) {
 
-        timer.classList.add(
-            "danger"
-        );
-
-    } else {
-
-        timer.classList.remove(
-            "danger"
-        );
+        countdown.textContent =
+            `${seconds}`;
     }
 }
 
-
 /* =========================================================
-   RENDER AUCTION
+   AUCTION CHARACTER DISPLAY
 ========================================================= */
 
-function renderAuction(data) {
-
-    if (!data) return;
-
-
-    const characterKey =
-        data.character;
-
-
-    const char =
-        characters[characterKey];
-
+function updateAuctionCharacter(
+    data
+) {
 
     const name =
-        char
-            ? char.name
-            : characterKey;
+        data.character;
 
-
-    /* -----------------------------------------
-       CHARACTER NAME
-    ----------------------------------------- */
+    const char =
+        characters[name];
 
     const title =
         $("auctionCharacterName");
@@ -1712,41 +1536,35 @@ function renderAuction(data) {
     if (title) {
 
         title.textContent =
-            name;
+            char
+                ? char.name
+                : name;
     }
-
-
-    /* -----------------------------------------
-       CHARACTER IMAGE
-    ----------------------------------------- */
 
     const image =
         $("auctionCharacterImage");
 
     if (image) {
 
-        if (char) {
+        image.src =
+            char
+                ? char.image
+                : "";
 
-            image.src =
-                char.image;
-
-            image.alt =
-                char.name;
-
-            image.style.display =
-                "block";
-
-        } else {
-
-            image.style.display =
-                "none";
-        }
+        image.alt =
+            char
+                ? char.name
+                : name;
     }
+}
 
+/* =========================================================
+   AUCTION STATE
+========================================================= */
 
-    /* -----------------------------------------
-       CURRENT BID
-    ----------------------------------------- */
+function updateAuctionState(
+    data
+) {
 
     const bid =
         $("currentBid");
@@ -1754,157 +1572,140 @@ function renderAuction(data) {
     if (bid) {
 
         bid.textContent =
-            data.currentBid ?? 0;
+            `₹${Number(
+                data.currentBid || 0
+            ).toLocaleString()}`;
     }
 
-
-    /* -----------------------------------------
-       HIGHEST BIDDER
-    ----------------------------------------- */
-
-    const bidder =
+    const highest =
         $("highestBidder");
 
+    if (highest) {
 
-    if (bidder) {
-
-        let bidderName =
-            data.highestBidderName;
-
-
-        /*
-         * Some server versions send:
-         * bidderName
-         */
-
-        if (
-            !bidderName &&
-            data.bidderName
-        ) {
-
-            bidderName =
-                data.bidderName;
-        }
-
-
-        /*
-         * Some versions send bidder object.
-         */
-
-        if (
-            !bidderName &&
-            data.highestBidder &&
-            typeof data.highestBidder === "object"
-        ) {
-
-            bidderName =
-                data.highestBidder.name;
-        }
-
-
-        bidder.textContent =
-            bidderName ||
-            "No bids yet";
+        highest.textContent =
+            data.highestBidderName
+                ? `Highest: ${data.highestBidderName}`
+                : "No bids yet";
     }
 
+    /*
+     * Remaining money for EVERY player.
+     */
 
-    /* -----------------------------------------
-       AUCTION STATUS
-    ----------------------------------------- */
+    const money =
+        $("auctionPlayers");
 
-    const status =
-        $("auctionStatus");
+    if (money) {
 
-    if (status) {
+        money.innerHTML = "";
 
-        if (
-            data.highestBidderName ||
-            data.bidderName
-        ) {
+        data.players.forEach(
+            player => {
 
-            status.textContent =
-                `Highest bidder: ${
-                    data.highestBidderName ||
-                    data.bidderName
-                }`;
+                const div =
+                    document.createElement(
+                        "div"
+                    );
+
+                div.className =
+                    "auction-player";
+
+                div.innerHTML = `
+
+                    <strong>
+                        ${escapeHTML(player.name)}
+                    </strong>
+
+                    <span>
+                        ₹${Number(
+                            player.balance
+                        ).toLocaleString()}
+                    </span>
+
+                    <small>
+                        Team:
+                        ${player.team?.length || 0}
+                    </small>
+                `;
+
+                money.appendChild(
+                    div
+                );
+            }
+        );
+    }
+
+    /*
+     * Update Give Up button.
+     */
+
+    const giveUp =
+        $("auctionGiveUpButton");
+
+    if (giveUp) {
+
+        const passed =
+            data.passedPlayers
+                ?.includes(
+                    socket.id
+                );
+
+        const highestMe =
+            data.highestBidder ===
+            socket.id;
+
+        if (passed) {
+
+            giveUp.textContent =
+                "GAVE UP";
+
+            giveUp.disabled =
+                true;
+
+        } else if (highestMe) {
+
+            giveUp.textContent =
+                "HIGHEST BIDDER";
+
+            giveUp.disabled =
+                true;
 
         } else {
 
-            status.textContent =
-                "Waiting for bids...";
+            giveUp.textContent =
+                "GIVE UP";
+
+            giveUp.disabled =
+                false;
         }
     }
 
+    /*
+     * Also support old Unsold button ID.
+     */
 
-    /* -----------------------------------------
-       TEAM INFORMATION
-    ----------------------------------------- */
+    const unsold =
+        $("auctionUnsoldButton");
 
-    renderAuctionPlayers(
-        data.players
-    );
-}
+    if (unsold) {
 
+        const hasBid =
+            Boolean(
+                data.highestBidder
+            );
 
-/* =========================================================
-   RENDER AUCTION PLAYERS
-========================================================= */
+        unsold.textContent =
+            hasBid
+                ? "GIVE UP"
+                : "GIVE UP";
 
-function renderAuctionPlayers(players) {
-
-    const container =
-        $("auctionPlayers");
-
-    if (!container || !Array.isArray(players)) {
-        return;
+        unsold.disabled =
+            data.highestBidder ===
+            socket.id ||
+            data.passedPlayers
+                ?.includes(socket.id);
     }
-
-
-    container.innerHTML = "";
-
-
-    players.forEach(player => {
-
-        const box =
-            document.createElement("div");
-
-        box.className =
-            "auction-player";
-
-
-        const teamCount =
-            Array.isArray(player.team)
-                ? player.team.length
-                : 0;
-
-
-        box.innerHTML = `
-
-            <strong>
-                ${escapeHTML(
-                    player.name || "Player"
-                )}
-            </strong>
-
-            <span>
-                Balance:
-                ${player.balance ?? 0}
-            </span>
-
-            <span>
-                Team:
-                ${teamCount}
-            </span>
-
-        `;
-
-
-        container.appendChild(
-            box
-        );
-    });
 }
-
 
 /* =========================================================
    BID BUTTON
@@ -1912,240 +1713,152 @@ function renderAuctionPlayers(players) {
 
 window.placeBid = function () {
 
-    if (!currentAuctionState) {
+    if (
+        !currentAuctionState
+    ) {
+        return;
+    }
+
+    const passed =
+        currentAuctionState
+            .passedPlayers
+            ?.includes(
+                socket.id
+            );
+
+    if (passed) {
 
         showMessage(
-            "Auction has not started."
+            "You gave up on this character."
         );
 
         return;
     }
-
 
     socket.emit(
         "auctionBid"
     );
 };
 
-
 /* =========================================================
-   SUPPORT COMMON BID BUTTON NAMES
+   GIVE UP BUTTON
 ========================================================= */
 
-window.bid = window.placeBid;
-window.auctionBid = window.placeBid;
+window.giveUpBid = function () {
 
-
-/* =========================================================
-   UNSOLD BUTTON
-========================================================= */
-
-window.markUnsold = function () {
+    if (
+        !currentAuctionState
+    ) {
+        return;
+    }
 
     socket.emit(
-        "auctionUnsold"
+        "auctionGiveUp"
     );
 };
 
+/*
+ * Support an HTML button that
+ * already calls auctionUnsold().
+ */
 
-window.unsold = window.markUnsold;
-window.auctionUnsold =
-    window.markUnsold;
+window.auctionUnsold = function () {
 
+    giveUpBid();
+};
 
 /* =========================================================
-   AUCTION SOLD EVENT
+   PLAYER PASSED
+========================================================= */
+
+socket.on(
+    "auctionPlayerPassed",
+    data => {
+
+        showMessage(
+            `You gave up on ${data.character}`
+        );
+    }
+);
+
+/* =========================================================
+   AUCTION SOLD / UNSOLD
 ========================================================= */
 
 socket.on(
     "auctionSold",
     data => {
 
-        clearInterval(
-            auctionTimer
-        );
+        stopAuctionTimer();
 
+        if (
+            data.sold
+        ) {
 
-        const character =
-            data.character;
+            showMessage(
+                `${data.character} SOLD TO ${data.winnerName} for ₹${data.price}`
+            );
 
+            const result =
+                $("auctionResult");
 
-        const char =
-            characters[character];
+            if (result) {
 
+                result.textContent =
+                    `${data.character} SOLD TO ${data.winnerName} — ₹${data.price}`;
+            }
 
-        const characterName =
-            char
-                ? char.name
-                : character;
+        } else {
 
+            showMessage(
+                `${data.character} is UNSOLD`
+            );
 
-        /*
-         * IMPORTANT:
-         * Never display undefined.
-         */
+            const result =
+                $("auctionResult");
 
-        const winner =
-            data.winnerName ||
-            data.bidderName ||
-            data.highestBidderName ||
-            data.playerName ||
-            "Player";
+            if (result) {
 
+                result.textContent =
+                    `${data.character} — UNSOLD`;
+            }
+        }
 
-        showAuctionResult(
-            `${characterName} sold to ${winner}`
-        );
+        if (
+            data.winnerId ===
+            socket.id
+        ) {
+
+            updateAuctionMoney(
+                data.remainingMoney
+            );
+        }
     }
 );
 
-
 /* =========================================================
-   AUCTION UNSOLD EVENT
-========================================================= */
-
-socket.on(
-    "auctionUnsold",
-    data => {
-
-        clearInterval(
-            auctionTimer
-        );
-
-
-        const character =
-            data?.character ||
-            currentAuctionState?.character;
-
-
-        const char =
-            characters[character];
-
-
-        const name =
-            char
-                ? char.name
-                : character || "Character";
-
-
-        showAuctionResult(
-            `${name} — UNSOLD`
-        );
-    }
-);
-
-
-/* =========================================================
-   GENERIC AUCTION FINISHED
+   AUCTION FINISHED
 ========================================================= */
 
 socket.on(
     "auctionFinished",
     data => {
 
-        clearInterval(
-            auctionTimer
+        stopAuctionTimer();
+
+        showScreen(
+            "auctionResultScreen"
         );
 
+        const container =
+            $("auctionResults");
 
-        showAuctionFinalResult(
-            data
-        );
-    }
-);
+        if (!container)
+            return;
 
+        container.innerHTML = "";
 
-/* =========================================================
-   AUCTION CHARACTER SOLD / FINISHED
-========================================================= */
-
-socket.on(
-    "auctionCharacterSold",
-    data => {
-
-        clearInterval(
-            auctionTimer
-        );
-
-
-        const char =
-            characters[data.character];
-
-
-        const name =
-            char
-                ? char.name
-                : data.character;
-
-
-        const winner =
-            data.winnerName ||
-            data.bidderName ||
-            data.highestBidderName ||
-            data.playerName ||
-            "Player";
-
-
-        showAuctionResult(
-            `${name} sold to ${winner}`
-        );
-    }
-);
-
-
-/* =========================================================
-   AUCTION RESULT MESSAGE
-========================================================= */
-
-function showAuctionResult(text) {
-
-    const result =
-        $("auctionResult");
-
-
-    if (result) {
-
-        result.textContent =
-            text;
-
-        result.style.display =
-            "block";
-    }
-
-
-    showMessage(
-        text
-    );
-}
-
-
-/* =========================================================
-   AUCTION FINAL RESULT
-========================================================= */
-
-function showAuctionFinalResult(data) {
-
-    showScreen(
-        "auctionResultScreen"
-    );
-
-
-    const container =
-        $("auctionResults");
-
-
-    if (!container) return;
-
-
-    container.innerHTML = "";
-
-
-    if (
-        data &&
-        Array.isArray(data.players)
-    ) {
-
-        data.players.forEach(
+        data.teams.forEach(
             player => {
 
                 const box =
@@ -2153,37 +1866,36 @@ function showAuctionFinalResult(data) {
                         "div"
                     );
 
-
                 box.className =
-                    "final-player";
+                    "final-team";
 
-
-                box.innerHTML = `
-
+                let html = `
                     <h3>
-                        ${escapeHTML(
-                            player.name
-                        )}
+                        ${escapeHTML(player.playerName)}
                     </h3>
 
                     <p>
-                        Balance:
-                        ${player.balance ?? 0}
+                        Money left:
+                        ₹${Number(
+                            player.balance
+                        ).toLocaleString()}
                     </p>
-
-                    <p>
-                        Team:
-                        ${
-                            Array.isArray(
-                                player.team
-                            )
-                                ? player.team.length
-                                : 0
-                        }
-                    </p>
-
                 `;
 
+                player.team.forEach(
+                    member => {
+
+                        html += `
+                            <div>
+                                ${escapeHTML(member.character)}
+                                — ₹${member.price}
+                            </div>
+                        `;
+                    }
+                );
+
+                box.innerHTML =
+                    html;
 
                 container.appendChild(
                     box
@@ -2191,11 +1903,48 @@ function showAuctionFinalResult(data) {
             }
         );
     }
-}
-
+);
 
 /* =========================================================
-   ERROR MESSAGE
+   MONEY DISPLAY
+========================================================= */
+
+function updateAuctionMoney(
+    amount
+) {
+
+    if (
+        amount === undefined ||
+        amount === null
+    ) {
+        return;
+    }
+
+    const money =
+        $("myMoney");
+
+    if (money) {
+
+        money.textContent =
+            `Money: ₹${Number(
+                amount
+            ).toLocaleString()}`;
+    }
+
+    const balance =
+        $("playerBalance");
+
+    if (balance) {
+
+        balance.textContent =
+            `₹${Number(
+                amount
+            ).toLocaleString()}`;
+    }
+}
+
+/* =========================================================
+   ERROR
 ========================================================= */
 
 socket.on(
@@ -2208,80 +1957,17 @@ socket.on(
     }
 );
 
-
-/* =========================================================
-   GENERAL ERROR
-========================================================= */
-
-socket.on(
-    "connect_error",
-    error => {
-
-        console.error(
-            "Socket connection error:",
-            error
-        );
-
-
-        showMessage(
-            "Cannot connect to multiplayer server."
-        );
-    }
-);
-
-
-/* =========================================================
-   CONNECTION
-========================================================= */
-
-socket.on(
-    "connect",
-    () => {
-
-        console.log(
-            "Connected to server:",
-            socket.id
-        );
-    }
-);
-
-
-/* =========================================================
-   DISCONNECTION
-========================================================= */
-
-socket.on(
-    "disconnect",
-    reason => {
-
-        console.log(
-            "Disconnected:",
-            reason
-        );
-
-        clearInterval(
-            auctionTimer
-        );
-    }
-);
-
-
 /* =========================================================
    ESCAPE HTML
 ========================================================= */
 
-function escapeHTML(value) {
+function escapeHTML(
+    value
+) {
 
-    if (
-        value === undefined ||
-        value === null
-    ) {
-
-        return "";
-    }
-
-
-    return String(value)
+    return String(
+        value ?? ""
+    )
         .replace(
             /&/g,
             "&amp;"
@@ -2303,22 +1989,3 @@ function escapeHTML(value) {
             "&#039;"
         );
 }
-
-
-/* =========================================================
-   DEBUG
-========================================================= */
-
-console.log(
-    "Naruto Character Rank loaded."
-);
-
-console.log(
-    "Characters:",
-    Object.keys(characters).length
-);
-
-console.log(
-    "Categories:",
-    categories.length
-);
