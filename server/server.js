@@ -15,15 +15,34 @@ const io = new Server(server, {
 
 const PORT = process.env.PORT || 10000;
 
+/* =========================================================
+   EXPRESS
+========================================================= */
+
 app.use(express.json());
-app.use(express.static(path.join(__dirname, "..")));
+
+app.use(
+    express.static(
+        path.join(__dirname, "..")
+    )
+);
 
 app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "..", "index.html"));
+    res.sendFile(
+        path.join(__dirname, "..", "index.html")
+    );
 });
 
 /* =========================================================
-   CHARACTERS
+   ROOMS
+========================================================= */
+
+const rooms = new Map();
+
+/* =========================================================
+   CHARACTER KEYS
+   IMPORTANT:
+   These MUST match game.js exactly.
 ========================================================= */
 
 const CHARACTERS = [
@@ -38,37 +57,39 @@ const CHARACTERS = [
     "Jiraiya",
     "Hiruzen",
     "Orochimaru",
-    "Might Guy",
-    "Rock Lee",
+
+    "Guy",
+    "Lee",
     "Shikamaru",
     "Neji",
     "Gaara",
     "Kisame",
     "Sakura",
-    "Nagato / Pain",
+    "Nagato",
     "Obito",
+
     "Tsunade",
-    "Killer B",
+    "KillerB",
     "Kabuto",
     "Shisui",
-    "Sakumo Hatake",
+    "Sakumo",
     "Hanzo",
-    "Third Raikage",
-    "Fourth Raikage",
+    "ThirdRaikage",
+    "FourthRaikage",
     "Onoki",
-    "Mei Terumi",
+    "Mei",
     "Sasori",
     "Deidara",
-    "Mū",
-    "Gengetsu Hōzuki",
-    "Danzō",
+    "Mu",
+    "Gengetsu",
+    "Danzo",
     "Kakuzu",
     "Hidan",
     "Konan",
     "Zabuza",
     "Kimimaro",
     "Suigetsu",
-    "Jūgo",
+    "Jugo",
     "Karin",
     "Yahiko",
     "Zetsu",
@@ -80,22 +101,25 @@ const CHARACTERS = [
     "Tenten",
     "Iruka",
     "Anko",
-    "Might Duy",
+
+    /* Might Guy's father */
+    "Duy",
+
     "Shizune",
     "Asuma",
     "Kurenai",
     "Yamato",
     "Sai",
     "Konohamaru",
-    "Chiyo",
     "Kurotsuchi",
     "Mifune",
-    "Fū",
+    "Fu",
     "Utakata",
-    "Rōshi",
+    "Roshi",
     "Rasa",
+    "Chiyo",
     "Darui",
-    "Chōjūrō"
+    "Chojuro"
 ];
 
 /* =========================================================
@@ -122,230 +146,6 @@ const CATEGORIES = [
 ];
 
 /* =========================================================
-   CHARACTER RANKINGS
-   These are AI-style predefined rankings.
-   Characters not in the top list are automatically placed
-   after them, so EVERY character is selectable.
-========================================================= */
-
-const RANKINGS = {
-
-    "Speed": [
-        "Minato",
-        "Naruto",
-        "Tobirama",
-        "Fourth Raikage",
-        "Sasuke",
-        "Kakashi",
-        "Shisui",
-        "Might Guy",
-        "Rock Lee",
-        "Obito"
-    ],
-
-    "Strength": [
-        "Madara",
-        "Hashirama",
-        "Naruto",
-        "Sasuke",
-        "Might Guy",
-        "Tsunade",
-        "Minato",
-        "Itachi",
-        "Obito",
-        "Killer B"
-    ],
-
-    "Battle IQ": [
-        "Shikamaru",
-        "Itachi",
-        "Kakashi",
-        "Minato",
-        "Tobirama",
-        "Madara",
-        "Sasuke",
-        "Orochimaru",
-        "Jiraiya",
-        "Obito"
-    ],
-
-    "Durability": [
-        "Hashirama",
-        "Naruto",
-        "Madara",
-        "Kisame",
-        "Killer B",
-        "Tsunade",
-        "Obito",
-        "Sakura",
-        "Gaara",
-        "Third Raikage"
-    ],
-
-    "Chakra": [
-        "Naruto",
-        "Hashirama",
-        "Madara",
-        "Nagato / Pain",
-        "Kisame",
-        "Killer B",
-        "Minato",
-        "Tobirama",
-        "Jiraiya",
-        "Orochimaru"
-    ],
-
-    "Ninjutsu": [
-        "Madara",
-        "Naruto",
-        "Sasuke",
-        "Hashirama",
-        "Orochimaru",
-        "Kakashi",
-        "Minato",
-        "Tobirama",
-        "Jiraiya",
-        "Itachi"
-    ],
-
-    "Taijutsu": [
-        "Might Guy",
-        "Rock Lee",
-        "Might Duy",
-        "Naruto",
-        "Sasuke",
-        "Neji",
-        "Third Raikage",
-        "Fourth Raikage",
-        "Killer B",
-        "Sakura"
-    ],
-
-    "Genjutsu": [
-        "Itachi",
-        "Shisui",
-        "Sasuke",
-        "Madara",
-        "Kurenai",
-        "Obito",
-        "Orochimaru",
-        "Kakashi",
-        "Ino",
-        "Sakura"
-    ],
-
-    "Defense": [
-        "Gaara",
-        "Hashirama",
-        "Madara",
-        "Naruto",
-        "Kakashi",
-        "Tsunade",
-        "Sasuke",
-        "Obito",
-        "Third Raikage",
-        "Kisame"
-    ],
-
-    "Attack": [
-        "Madara",
-        "Naruto",
-        "Sasuke",
-        "Hashirama",
-        "Might Guy",
-        "Minato",
-        "Itachi",
-        "Killer B",
-        "Nagato / Pain",
-        "Obito"
-    ],
-
-    "Stamina": [
-        "Naruto",
-        "Hashirama",
-        "Kisame",
-        "Killer B",
-        "Madara",
-        "Tsunade",
-        "Sakura",
-        "Jiraiya",
-        "Orochimaru",
-        "Third Raikage"
-    ],
-
-    "Leadership": [
-        "Hashirama",
-        "Naruto",
-        "Minato",
-        "Tobirama",
-        "Madara",
-        "Kakashi",
-        "Gaara",
-        "Tsunade",
-        "Jiraiya",
-        "Itachi"
-    ],
-
-    "Versatility": [
-        "Kakashi",
-        "Naruto",
-        "Sasuke",
-        "Orochimaru",
-        "Itachi",
-        "Madara",
-        "Jiraiya",
-        "Minato",
-        "Tobirama",
-        "Obito"
-    ],
-
-    "Experience": [
-        "Hiruzen",
-        "Madara",
-        "Orochimaru",
-        "Jiraiya",
-        "Tobirama",
-        "Hashirama",
-        "Kakashi",
-        "Itachi",
-        "Onoki",
-        "Tsunade"
-    ],
-
-    "Teamwork": [
-        "Naruto",
-        "Kakashi",
-        "Shikamaru",
-        "Minato",
-        "Sakura",
-        "Gaara",
-        "Hinata",
-        "Choji",
-        "Kiba",
-        "Shino"
-    ],
-
-    "Overall Power": [
-        "Madara",
-        "Naruto",
-        "Sasuke",
-        "Hashirama",
-        "Minato",
-        "Itachi",
-        "Obito",
-        "Nagato / Pain",
-        "Might Guy",
-        "Tobirama"
-    ]
-};
-
-/* =========================================================
-   ROOMS
-========================================================= */
-
-const rooms = new Map();
-
-/* =========================================================
    HELPERS
 ========================================================= */
 
@@ -363,58 +163,532 @@ function generateRoomCode() {
     return code;
 }
 
-function getRoom(socket) {
-    if (!socket.roomCode) return null;
-    return rooms.get(socket.roomCode);
+
+function shuffle(array) {
+
+    const arr = [...array];
+
+    for (
+        let i = arr.length - 1;
+        i > 0;
+        i--
+    ) {
+
+        const j =
+            Math.floor(
+                Math.random() * (i + 1)
+            );
+
+        [
+            arr[i],
+            arr[j]
+        ] = [
+            arr[j],
+            arr[i]
+        ];
+    }
+
+    return arr;
 }
+
+
+function getRoom(roomCode) {
+
+    if (!roomCode) {
+        return null;
+    }
+
+    return rooms.get(
+        String(roomCode).toUpperCase()
+    ) || null;
+}
+
 
 function getPlayers(room) {
 
-    return Object.values(room.players).map(player => ({
+    return Object.values(
+        room.players
+    ).map(player => ({
         id: player.id,
         name: player.name,
         balance: player.balance,
-        team: [...player.team]
+        team: [...player.team],
+        givenUp: player.givenUp
     }));
 }
 
+
 function broadcastPlayers(room) {
 
-    io.to(room.code).emit("playersUpdated", {
-        players: getPlayers(room)
-    });
+    io.to(room.code).emit(
+        "playersUpdated",
+        {
+            players:
+                getPlayers(room)
+        }
+    );
 }
 
-function sendError(socket, message) {
 
-    socket.emit("errorMessage", message);
+/* =========================================================
+   AI / TEAM EVALUATION
+========================================================= */
+
+/*
+   Local evaluation is always available.
+
+   If OPENAI_API_KEY exists in Render,
+   the server will additionally ask OpenAI
+   for a natural-language evaluation.
+*/
+
+const POWER = {
+
+    Naruto: 100,
+    Sasuke: 99,
+    Madara: 100,
+    Hashirama: 99,
+    Kaguya: 100,
+
+    Itachi: 94,
+    Minato: 97,
+    Tobirama: 94,
+    Kakashi: 91,
+    Obito: 96,
+
+    Jiraiya: 89,
+    Hiruzen: 91,
+    Orochimaru: 91,
+
+    Guy: 97,
+    Lee: 82,
+    Duy: 78,
+
+    Nagato: 95,
+    Pain: 95,
+
+    Shikamaru: 76,
+    Neji: 74,
+    Gaara: 84,
+    Kisame: 87,
+    Sakura: 82,
+
+    Tsunade: 88,
+    KillerB: 88,
+    Kabuto: 88,
+    Shisui: 91,
+    Sakumo: 88,
+    Hanzo: 88,
+
+    ThirdRaikage: 92,
+    FourthRaikage: 88,
+
+    Onoki: 87,
+    Mei: 78,
+
+    Sasori: 87,
+    Deidara: 84,
+
+    Mu: 91,
+    Gengetsu: 88,
+
+    Danzo: 82,
+    Kakuzu: 84,
+    Hidan: 72,
+
+    Konan: 79,
+    Zabuza: 76,
+    Kimimaro: 79,
+
+    Suigetsu: 70,
+    Jugo: 71,
+    Karin: 60,
+    Yahiko: 70,
+    Zetsu: 55,
+
+    Hinata: 67,
+    Ino: 62,
+    Choji: 67,
+    Kiba: 64,
+    Shino: 68,
+    Tenten: 59,
+
+    Iruka: 45,
+    Anko: 55,
+    Shizune: 57,
+    Asuma: 71,
+    Kurenai: 68,
+
+    Yamato: 75,
+    Sai: 67,
+    Konohamaru: 62,
+
+    Kurotsuchi: 75,
+    Mifune: 78,
+
+    Fu: 79,
+    Utakata: 79,
+    Roshi: 81,
+
+    Rasa: 78,
+    Chiyo: 75,
+
+    Darui: 79,
+    Chojuro: 70
+};
+
+
+function characterPower(character) {
+
+    return POWER[character] || 50;
 }
+
+
+/*
+   Calculate a team strength.
+
+   This is NOT points shown to the players.
+   It is only used internally for comparison.
+*/
+
+function calculateTeamStrength(team) {
+
+    if (!team || !team.length) {
+        return 0;
+    }
+
+    const values =
+        team.map(
+            characterPower
+        );
+
+    const average =
+        values.reduce(
+            (a, b) => a + b,
+            0
+        ) / values.length;
+
+    const top =
+        Math.max(...values);
+
+    const variety =
+        new Set(team).size;
+
+    const synergy =
+        Math.min(
+            10,
+            variety * 1.5
+        );
+
+    return (
+        average * 0.75 +
+        top * 0.15 +
+        synergy
+    );
+}
+
+
+function getLocalTeamEvaluation(
+    teams
+) {
+
+    const evaluations =
+        teams.map(team => {
+
+            const strength =
+                calculateTeamStrength(
+                    team.team
+                );
+
+            return {
+                playerId:
+                    team.playerId,
+
+                playerName:
+                    team.playerName,
+
+                team:
+                    team.team,
+
+                internalStrength:
+                    strength
+            };
+        });
+
+
+    evaluations.sort(
+        (a, b) =>
+            b.internalStrength -
+            a.internalStrength
+    );
+
+
+    const strongest =
+        evaluations[0] || null;
+
+
+    return {
+        strongestTeam:
+            strongest
+                ? strongest.playerName
+                : null,
+
+        strongestPlayerId:
+            strongest
+                ? strongest.playerId
+                : null,
+
+        explanation:
+            strongest
+                ? `${strongest.playerName} has the strongest overall team because the selected characters provide the best combination of raw power, elite fighters, versatility, durability and team balance.`
+                : "No teams are available.",
+
+        teams:
+            evaluations.map(
+                item => ({
+                    playerId:
+                        item.playerId,
+
+                    playerName:
+                        item.playerName,
+
+                    team:
+                        item.team
+                })
+            )
+    };
+}
+
+
+/* =========================================================
+   OPENAI TEAM EVALUATION
+========================================================= */
+
+async function getAITeamEvaluation(
+    teams,
+    purpose = "final"
+) {
+
+    const local =
+        getLocalTeamEvaluation(
+            teams
+        );
+
+
+    /*
+     * No API key:
+     * use reliable local fallback.
+     */
+
+    if (!process.env.OPENAI_API_KEY) {
+
+        return {
+            ...local,
+
+            source:
+                "local-ai-fallback",
+
+            purpose
+        };
+    }
+
+
+    try {
+
+        const teamText =
+            teams.map(
+                team =>
+                    `${team.playerName}: ${team.team.join(", ")}`
+            ).join("\n");
+
+
+        const prompt = `
+You are evaluating Naruto teams for a multiplayer Naruto character game.
+
+Compare these teams:
+
+${teamText}
+
+Determine:
+1. Which team is strongest overall.
+2. Why that team is strongest.
+3. The strengths of every team.
+4. Weaknesses of every team.
+5. Which team has the best balance.
+6. Which team has the best offensive power.
+7. Which team has the best defensive/utility combination.
+
+Do NOT use numerical game points in the response.
+
+Return concise plain text.
+`;
+
+
+        const response =
+            await fetch(
+                "https://api.openai.com/v1/responses",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json",
+
+                        "Authorization":
+                            `Bearer ${process.env.OPENAI_API_KEY}`
+                    },
+
+                    body:
+                        JSON.stringify({
+                            model:
+                                process.env.OPENAI_MODEL ||
+                                "gpt-5.6-luna",
+
+                            input:
+                                prompt
+                        })
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                `OpenAI HTTP ${response.status}`
+            );
+        }
+
+
+        const data =
+            await response.json();
+
+
+        const text =
+            data.output_text ||
+            extractResponseText(
+                data
+            );
+
+
+        if (!text) {
+            throw new Error(
+                "Empty AI response"
+            );
+        }
+
+
+        return {
+
+            ...local,
+
+            source:
+                "openai",
+
+            purpose,
+
+            aiText:
+                text
+        };
+
+    } catch (error) {
+
+        console.error(
+            "AI evaluation failed:",
+            error.message
+        );
+
+
+        return {
+
+            ...local,
+
+            source:
+                "local-ai-fallback",
+
+            purpose,
+
+            aiText:
+                "AI evaluation was unavailable, so the game used its built-in team evaluation."
+        };
+    }
+}
+
+
+function extractResponseText(
+    data
+) {
+
+    try {
+
+        if (
+            !data ||
+            !Array.isArray(
+                data.output
+            )
+        ) {
+            return "";
+        }
+
+
+        let result = "";
+
+
+        for (
+            const item
+            of data.output
+        ) {
+
+            if (
+                !Array.isArray(
+                    item.content
+                )
+            ) {
+                continue;
+            }
+
+
+            for (
+                const content
+                of item.content
+            ) {
+
+                if (
+                    content.type ===
+                    "output_text"
+                ) {
+
+                    result +=
+                        content.text || "";
+                }
+            }
+        }
+
+
+        return result.trim();
+
+    } catch {
+
+        return "";
+    }
+}
+
 
 /* =========================================================
    AUCTION STATE
 ========================================================= */
 
-function getAuctionState(room) {
+function getAuctionState(
+    room
+) {
 
-    const auction = room.auction;
+    const auction =
+        room.auction;
 
-    let timeLeft = auction.timeLeft;
-
-    if (auction.timerStartedAt) {
-
-        const elapsed =
-            Date.now() - auction.timerStartedAt;
-
-        timeLeft = Math.max(
-            0,
-            auction.bidTime -
-            Math.floor(elapsed / 1000)
-        );
-    }
 
     return {
 
-        character: auction.character,
+        character:
+            auction.character,
 
         currentBid:
             auction.currentBid,
@@ -429,846 +703,1166 @@ function getAuctionState(room) {
                 ]?.name || null
                 : null,
 
-        timeLeft,
+        bidAmount:
+            room.settings.bidAmount,
+
+        bidTime:
+            room.settings.bidTime,
+
+        characterNumber:
+            auction.index + 1,
+
+        totalCharacters:
+            auction.order.length,
+
+        remainingCharacters:
+            auction.order.length -
+            auction.index,
 
         active:
             auction.active,
 
-        givenUp:
-            [...auction.givenUp],
-
-        index:
-            auction.index,
-
-        totalCharacters:
-            CHARACTERS.length,
-
-        bidAmount:
-            room.settings.bidAmount,
-
-        startingBalance:
-            room.settings.startingBalance,
+        eligiblePlayers:
+            Object.values(
+                room.players
+            )
+            .filter(
+                player =>
+                    !player.givenUp
+            )
+            .map(
+                player => player.id
+            ),
 
         players:
             getPlayers(room)
     };
 }
 
-function broadcastAuction(room) {
+
+/* =========================================================
+   SEND AUCTION STATE
+========================================================= */
+
+function broadcastAuction(
+    room
+) {
 
     io.to(room.code).emit(
         "auctionUpdated",
         getAuctionState(room)
     );
-}
 
-/* =========================================================
-   AUCTION TIMER
-========================================================= */
-
-function clearAuctionTimer(room) {
-
-    if (room.auction.timer) {
-
-        clearInterval(
-            room.auction.timer
-        );
-
-        room.auction.timer = null;
-    }
-}
-
-function startAuctionTimer(room) {
-
-    clearAuctionTimer(room);
-
-    const auction =
-        room.auction;
-
-    auction.timerStartedAt =
-        Date.now();
-
-    auction.timeLeft =
-        auction.bidTime;
-
-    auction.timer =
-        setInterval(() => {
-
-            if (!auction.active) {
-
-                clearAuctionTimer(room);
-                return;
-            }
-
-            const elapsed =
-                Date.now() -
-                auction.timerStartedAt;
-
-            auction.timeLeft =
-                Math.max(
-                    0,
-                    auction.bidTime -
-                    Math.floor(
-                        elapsed / 1000
-                    )
-                );
-
-            io.to(room.code).emit(
-                "auctionTimer",
-                {
-                    timeLeft:
-                        auction.timeLeft
-                }
-            );
-
-            if (
-                auction.timeLeft <= 0
-            ) {
-
-                clearAuctionTimer(room);
-
-                finishAuctionCharacter(
-                    room,
-                    auction.highestBidder
-                        ? false
-                        : true
-                );
-            }
-
-        }, 250);
-}
-
-function resetAuctionTimer(room) {
-
-    startAuctionTimer(room);
-
-    broadcastAuction(room);
-}
-
-/* =========================================================
-   START AUCTION
-========================================================= */
-
-function startAuction(room) {
-
-    room.auction = {
-
-        index: 0,
-
-        character: null,
-
-        currentBid: 0,
-
-        highestBidder: null,
-
-        highestBidderName: null,
-
-        active: true,
-
-        givenUp: new Set(),
-
-        timer: null,
-
-        timerStartedAt: null,
-
-        timeLeft:
-            room.settings.bidTime,
-
-        bidTime:
-            room.settings.bidTime,
-
-        soldCharacters: []
-    };
-
-    Object.values(room.players)
-        .forEach(player => {
-
-            player.balance =
-                room.settings.startingBalance;
-
-            player.team = [];
-        });
-
-    io.to(room.code).emit(
-        "auctionStarted",
-        {
-            settings:
-                room.settings
-        }
-    );
+    /*
+     * Also send complete player
+     * money/team information.
+     */
 
     broadcastPlayers(room);
-
-    startAuctionCharacter(room);
 }
 
-/* =========================================================
-   START AUCTION CHARACTER
-========================================================= */
-
-function startAuctionCharacter(room) {
-
-    const auction =
-        room.auction;
-
-    clearAuctionTimer(room);
-
-    const players =
-        Object.values(room.players);
-
-    if (!players.length) {
-
-        finishAuction(room);
-        return;
-    }
-
-    const allFull =
-        players.every(player =>
-            player.team.length >=
-            room.settings.teamSize
-        );
-
-    if (
-        allFull ||
-        auction.index >= CHARACTERS.length
-    ) {
-
-        finishAuction(room);
-        return;
-    }
-
-    auction.character =
-        CHARACTERS[
-            auction.index
-        ];
-
-    auction.currentBid =
-        0;
-
-    auction.highestBidder =
-        null;
-
-    auction.highestBidderName =
-        null;
-
-    auction.givenUp =
-        new Set();
-
-    auction.active =
-        true;
-
-    auction.timerStartedAt =
-        Date.now();
-
-    auction.timeLeft =
-        room.settings.bidTime;
-
-    auction.bidTime =
-        room.settings.bidTime;
-
-    io.to(room.code).emit(
-        "auctionCharacter",
-        getAuctionState(room)
-    );
-
-    broadcastAuction(room);
-
-    startAuctionTimer(room);
-}
 
 /* =========================================================
-   AUCTION BID
+   CREATE ROOM
 ========================================================= */
 
-function auctionBid(socket) {
+io.on(
+    "connection",
+    socket => {
 
-    const room =
-        getRoom(socket);
-
-    if (!room) return;
-
-    const auction =
-        room.auction;
-
-    if (!auction.active) {
-
-        sendError(
-            socket,
-            "Auction is not active."
-        );
-
-        return;
-    }
-
-    const player =
-        room.players[socket.id];
-
-    if (!player) return;
-
-    if (
-        player.team.length >=
-        room.settings.teamSize
-    ) {
-
-        sendError(
-            socket,
-            "Your team is already full."
-        );
-
-        return;
-    }
-
-    if (
-        auction.givenUp.has(
+        console.log(
+            "Connected:",
             socket.id
-        )
-    ) {
-
-        sendError(
-            socket,
-            "You gave up on this character."
         );
 
-        return;
-    }
 
-    if (
-        auction.highestBidder ===
-        socket.id
-    ) {
+        /* =================================================
+           CREATE
+        ================================================= */
 
-        sendError(
-            socket,
-            "You are already the highest bidder."
-        );
+        socket.on(
+            "createRoom",
+            data => {
 
-        return;
-    }
+                data =
+                    data || {};
 
-    const newBid =
-        auction.currentBid === 0
-            ? room.settings.bidAmount
-            : auction.currentBid +
-              room.settings.bidAmount;
 
-    if (
-        player.balance <
-        newBid
-    ) {
+                const roomCode =
+                    generateRoomCode();
 
-        sendError(
-            socket,
-            `Not enough money. You have ₹${player.balance}.`
-        );
 
-        return;
-    }
+                const playerName =
+                    String(
+                        data.name ||
+                        "Player 1"
+                    ).trim();
 
-    auction.currentBid =
-        newBid;
 
-    auction.highestBidder =
-        socket.id;
+                const gameMode =
+                    data.gameMode ===
+                    "auction"
+                        ? "auction"
+                        : "rank";
 
-    auction.highestBidderName =
-        player.name;
 
-    /*
-     * A new bid means the countdown
-     * starts again from 10 seconds.
-     */
-    resetAuctionTimer(room);
+                const maxPlayers =
+                    Math.max(
+                        2,
+                        Math.min(
+                            25,
+                            Number(
+                                data.maxPlayers
+                            ) || 6
+                        )
+                    );
 
-    io.to(room.code).emit(
-        "auctionBidPlaced",
-        {
-            playerId:
-                socket.id,
 
-            playerName:
-                player.name,
+                const teamSize =
+                    Math.max(
+                        1,
+                        Number(
+                            data.teamSize
+                        ) || 5
+                    );
 
-            character:
-                auction.character,
 
-            bid:
-                auction.currentBid,
+                const startingBalance =
+                    Math.max(
+                        1,
+                        Number(
+                            data.startingBalance
+                        ) || 1000
+                    );
 
-            remainingMoney:
-                player.balance -
-                auction.currentBid
-        }
-    );
 
-    broadcastAuction(room);
-}
+                const bidAmount =
+                    Math.max(
+                        1,
+                        Number(
+                            data.bidAmount
+                        ) || 50
+                    );
 
-/* =========================================================
-   GIVE UP
-========================================================= */
 
-function auctionGiveUp(socket) {
+                const bidTime =
+                    Math.max(
+                        1,
+                        Number(
+                            data.bidTime
+                        ) || 10
+                    );
 
-    const room =
-        getRoom(socket);
 
-    if (!room) return;
+                const room = {
 
-    const auction =
-        room.auction;
+                    code:
+                        roomCode,
 
-    if (!auction.active) return;
+                    host:
+                        socket.id,
 
-    const player =
-        room.players[socket.id];
+                    gameMode,
 
-    if (!player) return;
+                    settings: {
 
-    auction.givenUp.add(
-        socket.id
-    );
+                        maxPlayers,
 
-    io.to(room.code).emit(
-        "auctionPlayerGaveUp",
-        {
-            playerId:
-                socket.id,
+                        teamSize,
 
-            playerName:
-                player.name,
+                        startingBalance,
 
-            character:
-                auction.character
-        }
-    );
+                        bidAmount,
 
-    /*
-     * If this player was the highest bidder,
-     * remove their bid.
-     */
-    if (
-        auction.highestBidder ===
-        socket.id
-    ) {
+                        bidTime
+                    },
 
-        auction.highestBidder =
-            null;
+                    players: {},
 
-        auction.highestBidderName =
-            null;
+                    rank: {
 
-        auction.currentBid =
-            0;
-    }
+                        started:
+                            false,
 
-    /*
-     * If exactly one eligible player remains,
-     * immediately sell to that player.
-     *
-     * This handles the important
-     * 2-player case.
-     */
-    const eligible =
-        Object.values(room.players)
-            .filter(p =>
-                p.team.length <
-                room.settings.teamSize &&
-                !auction.givenUp.has(p.id)
-            );
+                        categoryIndex:
+                            0,
 
-    if (
-        eligible.length === 1
-    ) {
+                        categoryLocked:
+                            false,
 
-        const winner =
-            eligible[0];
+                        completion:
+                            {}
+                    },
 
-        auction.currentBid =
-            auction.currentBid ||
-            room.settings.bidAmount;
+                    auction: {
 
-        auction.highestBidder =
-            winner.id;
+                        started:
+                            false,
 
-        auction.highestBidderName =
-            winner.name;
+                        active:
+                            false,
 
-        finishAuctionCharacter(
-            room,
-            false
-        );
+                        index:
+                            0,
 
-        return;
-    }
+                        order:
+                            shuffle(
+                                CHARACTERS
+                            ),
 
-    /*
-     * If nobody remains, character is unsold.
-     */
-    if (
-        eligible.length === 0
-    ) {
+                        character:
+                            null,
 
-        finishAuctionCharacter(
-            room,
-            true
-        );
+                        currentBid:
+                            0,
 
-        return;
-    }
+                        highestBidder:
+                            null,
 
-    resetAuctionTimer(room);
+                        eligible:
+                            new Set(),
 
-    broadcastAuction(room);
-}
+                        timer:
+                            null,
 
-/* =========================================================
-   FINISH AUCTION CHARACTER
-========================================================= */
+                        timerEndsAt:
+                            0
+                    }
+                };
 
-function finishAuctionCharacter(
-    room,
-    unsold
-) {
 
-    const auction =
-        room.auction;
+                room.players[
+                    socket.id
+                ] = {
 
-    if (!auction.active) return;
+                    id:
+                        socket.id,
 
-    clearAuctionTimer(room);
+                    name:
+                        playerName,
 
-    auction.active =
-        false;
+                    balance:
+                        startingBalance,
 
-    const character =
-        auction.character;
+                    team:
+                        [],
 
-    if (
-        !unsold &&
-        auction.highestBidder
-    ) {
+                    rankSelections:
+                        {},
 
-        const winner =
-            room.players[
-                auction.highestBidder
-            ];
+                    givenUp:
+                        false,
 
-        if (winner) {
+                    auctionGivenUpFor:
+                        null
+                };
 
-            const price =
-                auction.currentBid;
 
-            winner.balance =
-                Math.max(
-                    0,
-                    winner.balance -
-                    price
+                rooms.set(
+                    roomCode,
+                    room
                 );
 
-            winner.team.push(
-                character
-            );
 
-            auction.soldCharacters.push({
-                character,
-                playerId:
-                    winner.id,
-                playerName:
-                    winner.name,
-                price
-            });
+                socket.join(
+                    roomCode
+                );
 
-            io.to(room.code).emit(
-                "auctionSold",
-                {
-                    character,
-                    playerId:
-                        winner.id,
-                    playerName:
-                        winner.name,
-                    price,
-                    remainingMoney:
-                        winner.balance,
-                    team:
-                        [...winner.team]
+
+                socket.roomCode =
+                    roomCode;
+
+
+                socket.emit(
+                    "roomCreated",
+                    {
+
+                        roomCode,
+
+                        isHost:
+                            true,
+
+                        gameMode,
+
+                        settings:
+                            room.settings
+                    }
+                );
+
+
+                broadcastPlayers(
+                    room
+                );
+
+
+                console.log(
+                    "Room created:",
+                    roomCode
+                );
+            }
+        );
+
+
+        /* =================================================
+           JOIN
+        ================================================= */
+
+        socket.on(
+            "joinRoom",
+            data => {
+
+                data =
+                    data || {};
+
+
+                const roomCode =
+                    String(
+                        data.roomCode ||
+                        ""
+                    )
+                    .trim()
+                    .toUpperCase();
+
+
+                const room =
+                    getRoom(
+                        roomCode
+                    );
+
+
+                if (!room) {
+
+                    socket.emit(
+                        "errorMessage",
+                        "Room not found."
+                    );
+
+                    return;
                 }
-            );
 
-            broadcastPlayers(room);
 
-        }
+                const count =
+                    Object.keys(
+                        room.players
+                    ).length;
 
-    } else {
 
-        io.to(room.code).emit(
-            "auctionUnsoldResult",
-            {
-                character
+                if (
+                    count >=
+                    room.settings.maxPlayers
+                ) {
+
+                    socket.emit(
+                        "errorMessage",
+                        "Room is full."
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    room.auction.started ||
+                    room.rank.started
+                ) {
+
+                    socket.emit(
+                        "errorMessage",
+                        "Game has already started."
+                    );
+
+                    return;
+                }
+
+
+                const playerName =
+                    String(
+                        data.name ||
+                        `Player ${count + 1}`
+                    ).trim();
+
+
+                room.players[
+                    socket.id
+                ] = {
+
+                    id:
+                        socket.id,
+
+                    name:
+                        playerName,
+
+                    balance:
+                        room.settings
+                            .startingBalance,
+
+                    team:
+                        [],
+
+                    rankSelections:
+                        {},
+
+                    givenUp:
+                        false,
+
+                    auctionGivenUpFor:
+                        null
+                };
+
+
+                socket.join(
+                    roomCode
+                );
+
+
+                socket.roomCode =
+                    roomCode;
+
+
+                socket.emit(
+                    "roomJoined",
+                    {
+
+                        roomCode,
+
+                        isHost:
+                            false,
+
+                        gameMode:
+                            room.gameMode,
+
+                        settings:
+                            room.settings
+                    }
+                );
+
+
+                broadcastPlayers(
+                    room
+                );
+            }
+        );
+
+
+        /* =================================================
+           START GAME
+        ================================================= */
+
+        socket.on(
+            "startGame",
+            () => {
+
+                const room =
+                    getRoom(
+                        socket.roomCode
+                    );
+
+
+                if (!room) {
+                    return;
+                }
+
+
+                if (
+                    socket.id !==
+                    room.host
+                ) {
+
+                    socket.emit(
+                        "errorMessage",
+                        "Only the host can start the game."
+                    );
+
+                    return;
+                }
+
+
+                const count =
+                    Object.keys(
+                        room.players
+                    ).length;
+
+
+                if (
+                    count < 2
+                ) {
+
+                    socket.emit(
+                        "errorMessage",
+                        "At least 2 players are required."
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    room.gameMode ===
+                    "auction"
+                ) {
+
+                    startAuction(
+                        room
+                    );
+
+                } else {
+
+                    startRankGame(
+                        room
+                    );
+                }
+            }
+        );
+
+
+        /* =================================================
+           RANK SELECT
+        ================================================= */
+
+        socket.on(
+            "rankSelect",
+            data => {
+
+                const room =
+                    getRoom(
+                        socket.roomCode
+                    );
+
+
+                if (!room) {
+                    return;
+                }
+
+
+                if (
+                    !room.rank.started
+                ) {
+                    return;
+                }
+
+
+                const player =
+                    room.players[
+                        socket.id
+                    ];
+
+
+                if (!player) {
+                    return;
+                }
+
+
+                const category =
+                    Number(
+                        data?.categoryIndex
+                    );
+
+
+                const character =
+                    data?.character;
+
+
+                if (
+                    !Number.isInteger(
+                        category
+                    )
+                ) {
+                    return;
+                }
+
+
+                if (
+                    category !==
+                    room.rank.categoryIndex
+                ) {
+                    return;
+                }
+
+
+                if (
+                    !CHARACTERS.includes(
+                        character
+                    )
+                ) {
+
+                    socket.emit(
+                        "errorMessage",
+                        `Invalid character: ${character}`
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * IMPORTANT:
+                 * Same character may be selected
+                 * by different players.
+                 */
+
+
+                player.rankSelections[
+                    category
+                ] =
+                    character;
+
+
+                /*
+                 * DO NOT broadcast the actual
+                 * character to everyone.
+                 *
+                 * This fixes the problem where
+                 * another player sees your selection.
+                 */
+
+                socket.emit(
+                    "rankSelectionAccepted",
+                    {
+
+                        categoryIndex:
+                            category,
+
+                        character
+                    }
+                );
+
+
+                checkRankCategoryComplete(
+                    room
+                );
+            }
+        );
+
+
+        /* =================================================
+           AUCTION BID
+        ================================================= */
+
+        socket.on(
+            "auctionBid",
+            () => {
+
+                const room =
+                    getRoom(
+                        socket.roomCode
+                    );
+
+
+                if (!room) {
+                    return;
+                }
+
+
+                const auction =
+                    room.auction;
+
+
+                if (
+                    !auction.active
+                ) {
+                    return;
+                }
+
+
+                const player =
+                    room.players[
+                        socket.id
+                    ];
+
+
+                if (!player) {
+                    return;
+                }
+
+
+                /*
+                 * Player who gave up this
+                 * character cannot bid again.
+                 */
+
+                if (
+                    !auction.eligible.has(
+                        socket.id
+                    )
+                ) {
+
+                    socket.emit(
+                        "errorMessage",
+                        "You gave up this character and cannot bid again."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * Team already full.
+                 */
+
+                if (
+                    player.team.length >=
+                    room.settings.teamSize
+                ) {
+
+                    socket.emit(
+                        "errorMessage",
+                        "Your team is already full."
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * You cannot bid against
+                 * yourself.
+                 */
+
+                if (
+                    auction.highestBidder ===
+                    socket.id
+                ) {
+
+                    socket.emit(
+                        "errorMessage",
+                        "You are already the highest bidder."
+                    );
+
+                    return;
+                }
+
+
+                const newBid =
+                    auction.currentBid +
+                    room.settings.bidAmount;
+
+
+                if (
+                    newBid >
+                    player.balance
+                ) {
+
+                    socket.emit(
+                        "errorMessage",
+                        `Not enough money. You have ${player.balance} remaining.`
+                    );
+
+                    return;
+                }
+
+
+                auction.currentBid =
+                    newBid;
+
+
+                auction.highestBidder =
+                    socket.id;
+
+
+                /*
+                 * EVERY valid bid resets
+                 * the timer.
+                 */
+
+                resetAuctionTimer(
+                    room
+                );
+
+
+                broadcastAuction(
+                    room
+                );
+
+
+                /*
+                 * Send remaining balance
+                 * information immediately.
+                 */
+
+                io.to(room.code).emit(
+                    "auctionMoneyUpdated",
+                    {
+
+                        playerId:
+                            socket.id,
+
+                        playerName:
+                            player.name,
+
+                        balance:
+                            player.balance -
+                            newBid,
+
+                        currentBid:
+                            newBid
+                    }
+                );
+            }
+        );
+
+
+        /* =================================================
+           AUCTION GIVE UP
+        ================================================= */
+
+        socket.on(
+            "auctionGiveUp",
+            () => {
+
+                const room =
+                    getRoom(
+                        socket.roomCode
+                    );
+
+
+                if (!room) {
+                    return;
+                }
+
+
+                const auction =
+                    room.auction;
+
+
+                if (
+                    !auction.active
+                ) {
+                    return;
+                }
+
+
+                const player =
+                    room.players[
+                        socket.id
+                    ];
+
+
+                if (!player) {
+                    return;
+                }
+
+
+                /*
+                 * Remove this player from
+                 * eligible bidders.
+                 */
+
+                auction.eligible.delete(
+                    socket.id
+                );
+
+
+                player.auctionGivenUpFor =
+                    auction.character;
+
+
+                io.to(room.code).emit(
+                    "auctionPlayerGaveUp",
+                    {
+
+                        playerId:
+                            socket.id,
+
+                        playerName:
+                            player.name,
+
+                        character:
+                            auction.character
+                    }
+                );
+
+
+                /*
+                 * 2-player special rule:
+                 *
+                 * If one player gives up and
+                 * the other player is the only
+                 * eligible player AND there is
+                 * already a bid, immediately sell.
+                 */
+
+                const eligible =
+                    Array.from(
+                        auction.eligible
+                    );
+
+
+                if (
+                    eligible.length === 1 &&
+                    auction.highestBidder &&
+                    auction.highestBidder ===
+                        eligible[0]
+                ) {
+
+                    finishAuctionCharacter(
+                        room,
+                        false
+                    );
+
+                    return;
+                }
+
+
+                /*
+                 * If nobody is left,
+                 * character is unsold.
+                 */
+
+                if (
+                    eligible.length === 0
+                ) {
+
+                    finishAuctionCharacter(
+                        room,
+                        true
+                    );
+
+                    return;
+                }
+
+
+                broadcastAuction(
+                    room
+                );
+            }
+        );
+
+
+        /*
+         * Backward compatibility:
+         * old frontend may still send auctionUnsold.
+         */
+
+        socket.on(
+            "auctionUnsold",
+            () => {
+
+                const room =
+                    getRoom(
+                        socket.roomCode
+                    );
+
+
+                if (!room) {
+                    return;
+                }
+
+
+                /*
+                 * Treat old UNSOLD button
+                 * as GIVE UP for this player.
+                 */
+
+                const auction =
+                    room.auction;
+
+
+                if (
+                    !auction.active
+                ) {
+                    return;
+                }
+
+
+                const player =
+                    room.players[
+                        socket.id
+                    ];
+
+
+                if (!player) {
+                    return;
+                }
+
+
+                auction.eligible.delete(
+                    socket.id
+                );
+
+
+                player.auctionGivenUpFor =
+                    auction.character;
+
+
+                io.to(room.code).emit(
+                    "auctionPlayerGaveUp",
+                    {
+
+                        playerId:
+                            socket.id,
+
+                        playerName:
+                            player.name,
+
+                        character:
+                            auction.character
+                    }
+                );
+
+
+                const eligible =
+                    Array.from(
+                        auction.eligible
+                    );
+
+
+                if (
+                    eligible.length === 0
+                ) {
+
+                    finishAuctionCharacter(
+                        room,
+                        true
+                    );
+
+                    return;
+                }
+
+
+                if (
+                    eligible.length === 1 &&
+                    auction.highestBidder ===
+                        eligible[0]
+                ) {
+
+                    finishAuctionCharacter(
+                        room,
+                        false
+                    );
+
+                    return;
+                }
+
+
+                broadcastAuction(
+                    room
+                );
+            }
+        );
+
+
+        /* =================================================
+           DISCONNECT
+        ================================================= */
+
+        socket.on(
+            "disconnect",
+            () => {
+
+                const roomCode =
+                    socket.roomCode;
+
+
+                if (!roomCode) {
+                    return;
+                }
+
+
+                const room =
+                    getRoom(
+                        roomCode
+                    );
+
+
+                if (!room) {
+                    return;
+                }
+
+
+                /*
+                 * If someone disconnects
+                 * during auction, remove them
+                 * from eligible bidders.
+                 */
+
+                if (
+                    room.auction.active
+                ) {
+
+                    room.auction.eligible.delete(
+                        socket.id
+                    );
+
+
+                    if (
+                        room.auction.highestBidder ===
+                        socket.id
+                    ) {
+
+                        room.auction.highestBidder =
+                            null;
+
+                        room.auction.currentBid =
+                            0;
+                    }
+                }
+
+
+                delete room.players[
+                    socket.id
+                ];
+
+
+                if (
+                    room.host ===
+                    socket.id
+                ) {
+
+                    const remaining =
+                        Object.keys(
+                            room.players
+                        );
+
+
+                    if (
+                        remaining.length > 0
+                    ) {
+
+                        room.host =
+                            remaining[0];
+
+
+                        io.to(
+                            room.code
+                        ).emit(
+                            "hostChanged",
+                            {
+                                host:
+                                    room.host
+                            }
+                        );
+
+                    } else {
+
+                        clearAuctionTimer(
+                            room
+                        );
+
+                        rooms.delete(
+                            roomCode
+                        );
+
+                        return;
+                    }
+                }
+
+
+                broadcastPlayers(
+                    room
+                );
             }
         );
     }
+);
 
-    setTimeout(() => {
-
-        if (
-            !rooms.has(room.code)
-        ) return;
-
-        auction.index++;
-
-        startAuctionCharacter(
-            room
-        );
-
-    }, 1200);
-}
 
 /* =========================================================
-   FINISH AUCTION
+   START RANK GAME
 ========================================================= */
 
-function finishAuction(room) {
-
-    clearAuctionTimer(room);
-
-    room.auction.active =
-        false;
-
-    const teams =
-        Object.values(room.players)
-            .map(player => ({
-                playerId:
-                    player.id,
-
-                playerName:
-                    player.name,
-
-                balance:
-                    player.balance,
-
-                team:
-                    [...player.team]
-            }));
-
-    const recommendation =
-        generateTeamRecommendation(
-            teams
-        );
-
-    io.to(room.code).emit(
-        "auctionFinished",
-        {
-            teams,
-            recommendation
-        }
-    );
-
-    /*
-     * Also emit the event name used by
-     * some frontend versions.
-     */
-    io.to(room.code).emit(
-        "finalTeams",
-        {
-            teams,
-            recommendation
-        }
-    );
-}
-
-/* =========================================================
-   TEAM RECOMMENDATION
-========================================================= */
-
-function characterPower(name) {
-
-    const power = {
-
-        "Madara": 100,
-        "Naruto": 99,
-        "Sasuke": 98,
-        "Hashirama": 98,
-        "Might Guy": 96,
-        "Minato": 96,
-        "Itachi": 95,
-        "Obito": 94,
-        "Nagato / Pain": 94,
-        "Tobirama": 93,
-        "Kakashi": 91,
-        "Might Duy": 90,
-        "Rock Lee": 88,
-        "Jiraiya": 88,
-        "Orochimaru": 88,
-        "Hiruzen": 87,
-        "Shisui": 87,
-        "Killer B": 87,
-        "Third Raikage": 87,
-        "Sakura": 83,
-        "Tsunade": 83,
-        "Gaara": 82,
-        "Kisame": 81,
-        "Kabuto": 81,
-        "Sasori": 80,
-        "Deidara": 79,
-        "Hanzo": 79,
-        "Fourth Raikage": 79,
-        "Danzo": 78,
-        "Onoki": 78,
-        "Kakuzu": 77,
-        "Konan": 75,
-        "Darui": 74,
-        "Mei Terumi": 74,
-        "Kimimaro": 73,
-        "Zabuza": 72,
-        "Chiyo": 71,
-        "Neji": 70,
-        "Shikamaru": 69,
-        "Yamato": 68,
-        "Sai": 66,
-        "Asuma": 65,
-        "Kurenai": 64,
-        "Suigetsu": 63,
-        "Jūgo": 63,
-        "Kurotsuchi": 62,
-        "Chōjūrō": 62,
-        "Rasa": 62,
-        "Mifune": 61,
-        "Utakata": 61,
-        "Fū": 60,
-        "Rōshi": 60,
-        "Yahiko": 59,
-        "Zetsu": 58,
-        "Hinata": 58,
-        "Kiba": 57,
-        "Shino": 57,
-        "Choji": 56,
-        "Ino": 55,
-        "Tenten": 54,
-        "Konohamaru": 53,
-        "Shizune": 52,
-        "Anko": 52,
-        "Karin": 50,
-        "Iruka": 48
-    };
-
-    return power[name] || 45;
-}
-
-function teamScore(team) {
-
-    if (!team.length) return 0;
-
-    let total = 0;
-
-    team.forEach(character => {
-        total += characterPower(
-            character
-        );
-    });
-
-    /*
-     * Small bonus for team diversity.
-     */
-    const unique =
-        new Set(team).size;
-
-    total +=
-        unique * 1.5;
-
-    return Math.round(total);
-}
-
-function generateTeamRecommendation(
-    teams
+function startRankGame(
+    room
 ) {
-
-    if (!teams.length) {
-
-        return {
-            bestPlayer: null,
-            bestTeam: [],
-            reason: "No teams available."
-        };
-    }
-
-    const scored =
-        teams.map(team => ({
-
-            playerId:
-                team.playerId,
-
-            playerName:
-                team.playerName,
-
-            team:
-                team.team,
-
-            score:
-                teamScore(team),
-
-            reason:
-                buildTeamReason(
-                    team.team
-                )
-        }));
-
-    scored.sort(
-        (a, b) =>
-            b.score - a.score
-    );
-
-    const best =
-        scored[0];
-
-    return {
-
-        bestPlayer:
-            best.playerName,
-
-        bestTeam:
-            best.team,
-
-        bestScore:
-            best.score,
-
-        reason:
-            best.reason,
-
-        allTeams:
-            scored
-    };
-}
-
-function buildTeamReason(team) {
-
-    if (!team.length) {
-
-        return "This team has no characters.";
-    }
-
-    const strongest =
-        [...team]
-            .sort(
-                (a, b) =>
-                    characterPower(b) -
-                    characterPower(a)
-            )
-            .slice(0, 3);
-
-    return (
-        `AI-style analysis: ${team.join(", ")}. ` +
-        `The strongest core is ${strongest.join(", ")}. ` +
-        `This team is evaluated by overall combat strength, ` +
-        `speed, attack, defense, versatility, stamina and ` +
-        `how well the characters can complement each other.`
-    );
-}
-
-/* =========================================================
-   RANKING GAME
-========================================================= */
-
-function startRankGame(room) {
 
     room.rank.started =
         true;
@@ -1276,178 +1870,114 @@ function startRankGame(room) {
     room.rank.categoryIndex =
         0;
 
-    Object.values(room.players)
-        .forEach(player => {
+    room.rank.categoryLocked =
+        false;
 
-            player.rankSelections = {};
+    room.rank.completion =
+        {};
 
-        });
+
+    Object.values(
+        room.players
+    ).forEach(
+        player => {
+
+            player.rankSelections =
+                {};
+        }
+    );
+
 
     io.to(room.code).emit(
         "rankGameStarted",
         {
-            categoryIndex: 0,
-            categoryNumber: 1,
+
+            categoryIndex:
+                0,
+
+            category:
+                CATEGORIES[0],
+
             totalCategories:
                 CATEGORIES.length,
-            categoryName:
-                CATEGORIES[0],
-            categories:
-                CATEGORIES
+
+            categoryNumber:
+                1
         }
     );
 }
 
-/* =========================================================
-   RANK SELECTION
-========================================================= */
-
-function rankSelect(socket, data) {
-
-    const room =
-        getRoom(socket);
-
-    if (!room) return;
-
-    if (!room.rank.started) return;
-
-    const player =
-        room.players[socket.id];
-
-    if (!player) return;
-
-    const category =
-        Number(data.categoryIndex);
-
-    const character =
-        String(
-            data.character || ""
-        );
-
-    if (
-        category !==
-        room.rank.categoryIndex
-    ) {
-
-        sendError(
-            socket,
-            "Please select for the current category."
-        );
-
-        return;
-    }
-
-    if (
-        category < 0 ||
-        category >=
-        CATEGORIES.length
-    ) return;
-
-    if (
-        !CHARACTERS.includes(
-            character
-        )
-    ) {
-
-        sendError(
-            socket,
-            `Invalid character: ${character}`
-        );
-
-        return;
-    }
-
-    /*
-     * IMPORTANT:
-     * Selection belongs ONLY to this player.
-     *
-     * Other players can select the same character.
-     */
-    player.rankSelections[
-        category
-    ] = character;
-
-    /*
-     * Send private confirmation.
-     * The global event only tells everyone
-     * that this player has completed the category.
-     */
-    socket.emit(
-        "myRankSelection",
-        {
-            categoryIndex:
-                category,
-
-            categoryName:
-                CATEGORIES[category],
-
-            character
-        }
-    );
-
-    io.to(room.code).emit(
-        "rankPlayerSelected",
-        {
-            playerId:
-                socket.id,
-
-            playerName:
-                player.name,
-
-            categoryIndex:
-                category,
-
-            categoryName:
-                CATEGORIES[category]
-        }
-    );
-
-    checkRankCategoryComplete(
-        room
-    );
-}
 
 /* =========================================================
-   CHECK RANK CATEGORY
+   RANK CATEGORY COMPLETE
 ========================================================= */
 
 function checkRankCategoryComplete(
     room
 ) {
 
+    if (
+        !room.rank.started
+    ) {
+        return;
+    }
+
+
+    if (
+        room.rank.categoryLocked
+    ) {
+        return;
+    }
+
+
     const category =
         room.rank.categoryIndex;
 
+
     const players =
-        Object.values(room.players);
-
-    if (!players.length) return;
-
-    const everyoneSelected =
-        players.every(player =>
-            Object.prototype.hasOwnProperty.call(
-                player.rankSelections,
-                category
-            )
+        Object.values(
+            room.players
         );
 
-    if (!everyoneSelected) {
+
+    /*
+     * EVERY player must have selected.
+     */
+
+    const allSelected =
+        players.length >= 2 &&
+        players.every(
+            player =>
+                Object.prototype
+                    .hasOwnProperty.call(
+                        player.rankSelections,
+                        category
+                    )
+        );
+
+
+    if (!allSelected) {
 
         /*
-         * Tell each player how many
-         * have selected.
+         * Send only progress count.
+         * Do NOT reveal selections.
          */
+
         const selectedCount =
-            players.filter(player =>
-                Object.prototype.hasOwnProperty.call(
-                    player.rankSelections,
-                    category
-                )
+            players.filter(
+                player =>
+                    Object.prototype
+                        .hasOwnProperty.call(
+                            player.rankSelections,
+                            category
+                        )
             ).length;
 
+
         io.to(room.code).emit(
-            "rankWaiting",
+            "rankSelectionProgress",
             {
+
                 categoryIndex:
                     category,
 
@@ -1457,20 +1987,26 @@ function checkRankCategoryComplete(
                 totalCategories:
                     CATEGORIES.length,
 
-                selected:
-                    selectedCount,
+                selectedCount,
 
-                total:
+                totalPlayers:
                     players.length
             }
         );
 
+
         return;
     }
+
+
+    room.rank.categoryLocked =
+        true;
+
 
     io.to(room.code).emit(
         "rankCategoryComplete",
         {
+
             categoryIndex:
                 category,
 
@@ -1478,65 +2014,90 @@ function checkRankCategoryComplete(
                 category + 1,
 
             totalCategories:
-                CATEGORIES.length,
-
-            categoryName:
-                CATEGORIES[category]
+                CATEGORIES.length
         }
     );
 
-    setTimeout(() => {
 
-        if (
-            !rooms.has(room.code)
-        ) return;
+    setTimeout(
+        () => {
 
-        if (
-            room.rank.categoryIndex >=
-            CATEGORIES.length - 1
-        ) {
-
-            finishRankGame(room);
-            return;
-        }
-
-        room.rank.categoryIndex++;
-
-        const next =
-            room.rank.categoryIndex;
-
-        io.to(room.code).emit(
-            "rankNextCategory",
-            {
-                categoryIndex:
-                    next,
-
-                categoryNumber:
-                    next + 1,
-
-                totalCategories:
-                    CATEGORIES.length,
-
-                categoryName:
-                    CATEGORIES[next]
+            if (
+                !room.rank.started
+            ) {
+                return;
             }
-        );
 
-    }, 1200);
+
+            /*
+             * LAST CATEGORY
+             */
+
+            if (
+                category >=
+                CATEGORIES.length - 1
+            ) {
+
+                finishRankGame(
+                    room
+                );
+
+                return;
+            }
+
+
+            room.rank.categoryIndex =
+                category + 1;
+
+            room.rank.categoryLocked =
+                false;
+
+
+            const next =
+                room.rank.categoryIndex;
+
+
+            io.to(room.code).emit(
+                "rankNextCategory",
+                {
+
+                    categoryIndex:
+                        next,
+
+                    category:
+                        CATEGORIES[next],
+
+                    categoryNumber:
+                        next + 1,
+
+                    totalCategories:
+                        CATEGORIES.length
+                }
+            );
+
+        },
+        1200
+    );
 }
 
+
 /* =========================================================
-   RANK FINAL
+   FINISH RANK GAME
 ========================================================= */
 
-function finishRankGame(room) {
+async function finishRankGame(
+    room
+) {
 
     room.rank.started =
         false;
 
-    const results =
-        Object.values(room.players)
-            .map(player => ({
+
+    const teams =
+        Object.values(
+            room.players
+        ).map(
+            player => ({
 
                 playerId:
                     player.id,
@@ -1544,602 +2105,748 @@ function finishRankGame(room) {
                 playerName:
                     player.name,
 
-                selections:
-                    Object.fromEntries(
-                        Object.entries(
-                            player.rankSelections
-                        ).map(
-                            ([index, character]) =>
-                                [
-                                    index,
-                                    character
-                                ]
-                        )
-                    )
-            }));
-
-    const teams =
-        results.map(player => {
-
-            const team =
-                Object.values(
-                    player.selections
-                );
-
-            return {
-
-                playerId:
-                    player.playerId,
-
-                playerName:
-                    player.playerName,
-
-                team,
-
-                score:
-                    teamScore(team),
-
-                reason:
-                    buildTeamReason(team)
-            };
-        });
-
-    const recommendation =
-        generateTeamRecommendation(
-            teams
+                team:
+                    CATEGORIES.map(
+                        (_, index) =>
+                            player.rankSelections[
+                                index
+                            ]
+                    ).filter(Boolean)
+            })
         );
+
+
+    /*
+     * Evaluate every player's
+     * complete selection.
+     */
+
+    const ai =
+        await getAITeamEvaluation(
+            teams,
+            "rank"
+        );
+
 
     io.to(room.code).emit(
         "rankGameFinished",
         {
-            results,
+
+            results:
+                teams.map(
+                    team => ({
+
+                        playerId:
+                            team.playerId,
+
+                        playerName:
+                            team.playerName,
+
+                        selections:
+                            room.players[
+                                team.playerId
+                            ]?.rankSelections ||
+                            {},
+
+                        team:
+                            team.team
+                    })
+                ),
+
             teams,
-            recommendation,
-            categories:
-                CATEGORIES
+
+            aiEvaluation:
+                ai,
+
+            strongestTeam:
+                ai.strongestTeam,
+
+            strongestPlayerId:
+                ai.strongestPlayerId,
+
+            aiText:
+                ai.aiText ||
+                ai.explanation
         }
     );
 }
 
+
 /* =========================================================
-   SOCKET CONNECTION
+   START AUCTION
 ========================================================= */
 
-io.on("connection", socket => {
+function startAuction(
+    room
+) {
 
-    console.log(
-        "Connected:",
-        socket.id
+    clearAuctionTimer(
+        room
     );
 
-    /* =====================================================
-       CREATE ROOM
-    ===================================================== */
 
-    socket.on(
-        "createRoom",
-        data => {
+    room.auction.started =
+        true;
 
-            data =
-                data || {};
+    room.auction.active =
+        false;
 
-            const roomCode =
-                generateRoomCode();
+    room.auction.index =
+        0;
 
-            const name =
-                String(
-                    data.name ||
-                    "Player 1"
-                ).trim();
-
-            const gameMode =
-                data.gameMode ===
-                "auction"
-                    ? "auction"
-                    : "rank";
-
-            const maxPlayers =
-                Math.max(
-                    2,
-                    Math.min(
-                        25,
-                        Number(
-                            data.maxPlayers
-                        ) || 6
-                    )
-                );
-
-            const teamSize =
-                Math.max(
-                    1,
-                    Math.min(
-                        CHARACTERS.length,
-                        Number(
-                            data.teamSize
-                        ) || 5
-                    )
-                );
-
-            const startingBalance =
-                Math.max(
-                    0,
-                    Number(
-                        data.startingBalance
-                    ) || 1000
-                );
-
-            const bidAmount =
-                Math.max(
-                    1,
-                    Number(
-                        data.bidAmount
-                    ) || 50
-                );
-
-            const bidTime =
-                Math.max(
-                    1,
-                    Number(
-                        data.bidTime
-                    ) || 10
-                );
-
-            const room = {
-
-                code:
-                    roomCode,
-
-                host:
-                    socket.id,
-
-                gameMode,
-
-                settings: {
-
-                    maxPlayers,
-
-                    teamSize,
-
-                    startingBalance,
-
-                    bidAmount,
-
-                    bidTime
-                },
-
-                players: {},
-
-                rank: {
-
-                    started: false,
-
-                    categoryIndex: 0
-                },
-
-                auction: {
-
-                    active: false,
-
-                    index: 0,
-
-                    character: null,
-
-                    currentBid: 0,
-
-                    highestBidder: null,
-
-                    highestBidderName: null,
-
-                    givenUp: new Set(),
-
-                    timer: null,
-
-                    timerStartedAt: null,
-
-                    timeLeft:
-                        bidTime,
-
-                    bidTime,
-
-                    soldCharacters: []
-                }
-            };
-
-            room.players[
-                socket.id
-            ] = {
-
-                id:
-                    socket.id,
-
-                name,
-
-                balance:
-                    startingBalance,
-
-                team: [],
-
-                rankSelections: {}
-            };
-
-            rooms.set(
-                roomCode,
-                room
-            );
-
-            socket.join(
-                roomCode
-            );
-
-            socket.roomCode =
-                roomCode;
-
-            socket.emit(
-                "roomCreated",
-                {
-                    roomCode,
-                    isHost: true,
-                    gameMode,
-                    settings:
-                        room.settings
-                }
-            );
-
-            broadcastPlayers(room);
-
-            console.log(
-                `Room created: ${roomCode}`
-            );
-        }
-    );
-
-    /* =====================================================
-       JOIN ROOM
-    ===================================================== */
-
-    socket.on(
-        "joinRoom",
-        data => {
-
-            data =
-                data || {};
-
-            const roomCode =
-                String(
-                    data.roomCode ||
-                    ""
-                )
-                .trim()
-                .toUpperCase();
-
-            const room =
-                rooms.get(
-                    roomCode
-                );
-
-            if (!room) {
-
-                sendError(
-                    socket,
-                    "Room not found."
-                );
-
-                return;
-            }
-
-            if (
-                room.rank.started ||
-                room.auction.active
-            ) {
-
-                sendError(
-                    socket,
-                    "Game has already started."
-                );
-
-                return;
-            }
-
-            const count =
-                Object.keys(
-                    room.players
-                ).length;
-
-            if (
-                count >=
-                room.settings.maxPlayers
-            ) {
-
-                sendError(
-                    socket,
-                    "Room is full."
-                );
-
-                return;
-            }
-
-            const name =
-                String(
-                    data.name ||
-                    `Player ${count + 1}`
-                ).trim();
-
-            room.players[
-                socket.id
-            ] = {
-
-                id:
-                    socket.id,
-
-                name,
-
-                balance:
-                    room.settings
-                        .startingBalance,
-
-                team: [],
-
-                rankSelections: {}
-            };
-
-            socket.join(
-                roomCode
-            );
-
-            socket.roomCode =
-                roomCode;
-
-            socket.emit(
-                "roomJoined",
-                {
-                    roomCode,
-                    isHost: false,
-                    gameMode:
-                        room.gameMode,
-                    settings:
-                        room.settings
-                }
-            );
-
-            broadcastPlayers(room);
-        }
-    );
-
-    /* =====================================================
-       START GAME
-    ===================================================== */
-
-    socket.on(
-        "startGame",
-        () => {
-
-            const room =
-                getRoom(socket);
-
-            if (!room) return;
-
-            if (
-                socket.id !==
-                room.host
-            ) {
-
-                sendError(
-                    socket,
-                    "Only the host can start the game."
-                );
-
-                return;
-            }
-
-            const count =
-                Object.keys(
-                    room.players
-                ).length;
-
-            if (count < 2) {
-
-                sendError(
-                    socket,
-                    "At least 2 players are required."
-                );
-
-                return;
-            }
-
-            if (
-                room.gameMode ===
-                "auction"
-            ) {
-
-                startAuction(room);
-
-            } else {
-
-                startRankGame(room);
-            }
-        }
-    );
-
-    /* =====================================================
-       RANK SELECT
-    ===================================================== */
-
-    socket.on(
-        "rankSelect",
-        data => {
-
-            rankSelect(
-                socket,
-                data || {}
-            );
-        }
-    );
-
-    /* =====================================================
-       AUCTION BID
-    ===================================================== */
-
-    socket.on(
-        "auctionBid",
-        () => {
-
-            auctionBid(socket);
-        }
-    );
 
     /*
-     * Support alternative frontend event names.
+     * RANDOM ORDER EVERY GAME
      */
-    socket.on(
-        "bid",
-        () => {
 
-            auctionBid(socket);
+    room.auction.order =
+        shuffle(
+            CHARACTERS
+        );
+
+
+    Object.values(
+        room.players
+    ).forEach(
+        player => {
+
+            player.balance =
+                room.settings
+                    .startingBalance;
+
+            player.team =
+                [];
+
+            player.givenUp =
+                false;
+
+            player.auctionGivenUpFor =
+                null;
         }
     );
 
-    /* =====================================================
-       AUCTION GIVE UP
-    ===================================================== */
 
-    socket.on(
-        "auctionGiveUp",
-        () => {
+    io.to(room.code).emit(
+        "auctionStarted",
+        {
 
-            auctionGiveUp(socket);
+            settings:
+                room.settings,
+
+            totalCharacters:
+                room.auction.order.length
         }
     );
 
-    socket.on(
-        "giveUp",
-        () => {
 
-            auctionGiveUp(socket);
-        }
+    startAuctionCharacter(
+        room
     );
+}
+
+
+/* =========================================================
+   START AUCTION CHARACTER
+========================================================= */
+
+function startAuctionCharacter(
+    room
+) {
+
+    const auction =
+        room.auction;
+
+
+    clearAuctionTimer(
+        room
+    );
+
 
     /*
-     * Old frontend may call this.
-     * Treat it as Give Up during an active auction.
+     * Finished all random characters.
      */
-    socket.on(
-        "auctionUnsold",
-        () => {
 
-            auctionGiveUp(socket);
+    if (
+        auction.index >=
+        auction.order.length
+    ) {
+
+        finishAuction(
+            room
+        );
+
+        return;
+    }
+
+
+    /*
+     * Stop if all teams are full.
+     */
+
+    const allFull =
+        Object.values(
+            room.players
+        ).every(
+            player =>
+                player.team.length >=
+                room.settings.teamSize
+        );
+
+
+    if (allFull) {
+
+        finishAuction(
+            room
+        );
+
+        return;
+    }
+
+
+    /*
+     * Find the next character
+     * that can still be useful.
+     */
+
+    const character =
+        auction.order[
+            auction.index
+        ];
+
+
+    auction.character =
+        character;
+
+
+    auction.currentBid =
+        0;
+
+
+    auction.highestBidder =
+        null;
+
+
+    auction.active =
+        true;
+
+
+    /*
+     * EVERY PLAYER WHOSE TEAM IS NOT FULL
+     * can bid at the beginning.
+     */
+
+    auction.eligible =
+        new Set(
+            Object.values(
+                room.players
+            )
+            .filter(
+                player =>
+                    player.team.length <
+                    room.settings.teamSize
+            )
+            .map(
+                player =>
+                    player.id
+            )
+        );
+
+
+    /*
+     * Reset give-up state
+     * for the new character.
+     */
+
+    Object.values(
+        room.players
+    ).forEach(
+        player => {
+
+            player.auctionGivenUpFor =
+                null;
         }
     );
 
-    /* =====================================================
-       DISCONNECT
-    ===================================================== */
 
-    socket.on(
-        "disconnect",
-        () => {
+    resetAuctionTimer(
+        room
+    );
 
-            const room =
-                getRoom(socket);
 
-            if (!room) return;
+    io.to(room.code).emit(
+        "auctionCharacter",
+        getAuctionState(room)
+    );
 
-            const wasHost =
-                room.host ===
-                socket.id;
 
-            delete room.players[
-                socket.id
-            ];
+    /*
+     * Also explicitly tell frontend
+     * to start its visible countdown.
+     */
 
-            /*
-             * If an auction is active and
-             * the highest bidder disconnects,
-             * remove that bid.
-             */
-            if (
-                room.auction.active &&
-                room.auction.highestBidder ===
-                socket.id
-            ) {
+    io.to(room.code).emit(
+        "auctionTimerStart",
+        {
 
-                room.auction.highestBidder =
-                    null;
+            duration:
+                room.settings.bidTime,
 
-                room.auction.highestBidderName =
-                    null;
+            endsAt:
+                auction.timerEndsAt,
 
-                room.auction.currentBid =
-                    0;
-            }
+            character
+        }
+    );
+}
 
-            if (wasHost) {
 
-                const remaining =
-                    Object.keys(
-                        room.players
-                    );
+/* =========================================================
+   AUCTION TIMER
+========================================================= */
+
+function resetAuctionTimer(
+    room
+) {
+
+    const auction =
+        room.auction;
+
+
+    clearAuctionTimer(
+        room
+    );
+
+
+    if (
+        !auction.active
+    ) {
+        return;
+    }
+
+
+    const duration =
+        Math.max(
+            1,
+            Number(
+                room.settings.bidTime
+            ) || 10
+        );
+
+
+    auction.timerEndsAt =
+        Date.now() +
+        duration * 1000;
+
+
+    auction.timer =
+        setTimeout(
+            () => {
 
                 if (
-                    remaining.length
+                    !auction.active
+                ) {
+                    return;
+                }
+
+
+                /*
+                 * Timer expired.
+                 *
+                 * If someone has the highest bid,
+                 * sell to that person.
+                 *
+                 * Otherwise unsold.
+                 */
+
+                if (
+                    auction.highestBidder
                 ) {
 
-                    room.host =
-                        remaining[0];
-
-                    io.to(room.code).emit(
-                        "hostChanged",
-                        {
-                            host:
-                                room.host
-                        }
+                    finishAuctionCharacter(
+                        room,
+                        false
                     );
 
                 } else {
 
-                    clearAuctionTimer(
-                        room
+                    finishAuctionCharacter(
+                        room,
+                        true
                     );
-
-                    rooms.delete(
-                        room.code
-                    );
-
-                    return;
                 }
-            }
 
-            broadcastPlayers(room);
+            },
+            duration * 1000
+        );
 
-            if (
-                room.auction.active
-            ) {
 
-                broadcastAuction(
-                    room
-                );
-            }
+    /*
+     * Send reset event so every
+     * browser resets its visible timer.
+     */
+
+    io.to(room.code).emit(
+        "auctionTimerReset",
+        {
+
+            duration,
+
+            endsAt:
+                auction.timerEndsAt,
+
+            character:
+                auction.character
         }
     );
-});
+}
+
 
 /* =========================================================
-   HEALTH CHECK
+   CLEAR TIMER
 ========================================================= */
 
-app.get(
-    "/health",
-    (req, res) => {
+function clearAuctionTimer(
+    room
+) {
 
-        res.json({
-            status: "ok",
-            rooms:
-                rooms.size
-        });
+    if (
+        room.auction &&
+        room.auction.timer
+    ) {
+
+        clearTimeout(
+            room.auction.timer
+        );
+
+        room.auction.timer =
+            null;
+    }
+}
+
+
+/* =========================================================
+   FINISH ONE AUCTION CHARACTER
+========================================================= */
+
+function finishAuctionCharacter(
+    room,
+    unsold = false
+) {
+
+    const auction =
+        room.auction;
+
+
+    if (
+        !auction.active
+    ) {
+        return;
+    }
+
+
+    clearAuctionTimer(
+        room
+    );
+
+
+    auction.active =
+        false;
+
+
+    const character =
+        auction.character;
+
+
+    const buyerId =
+        unsold
+            ? null
+            : auction.highestBidder;
+
+
+    /*
+     * UNSOLD
+     */
+
+    if (
+        !buyerId
+    ) {
+
+        io.to(room.code).emit(
+            "auctionCharacterUnsold",
+            {
+
+                character,
+
+                message:
+                    `${character} was unsold.`,
+
+                players:
+                    getPlayers(room)
+            }
+        );
+
+
+        auction.index++;
+
+
+        setTimeout(
+            () => {
+
+                startAuctionCharacter(
+                    room
+                );
+
+            },
+            1200
+        );
+
+
+        return;
+    }
+
+
+    const buyer =
+        room.players[
+            buyerId
+        ];
+
+
+    /*
+     * Safety check.
+     */
+
+    if (!buyer) {
+
+        auction.index++;
+
+
+        setTimeout(
+            () => {
+
+                startAuctionCharacter(
+                    room
+                );
+
+            },
+            500
+        );
+
+        return;
+    }
+
+
+    const price =
+        auction.currentBid;
+
+
+    /*
+     * FINAL MONEY DEDUCTION.
+     */
+
+    buyer.balance =
+        Math.max(
+            0,
+            buyer.balance - price
+        );
+
+
+    buyer.team.push(
+        character
+    );
+
+
+    /*
+     * IMPORTANT:
+     * Send buyer NAME explicitly.
+     * This fixes "sold to undefined".
+     */
+
+    io.to(room.code).emit(
+        "auctionSold",
+        {
+
+            character,
+
+            buyerId:
+                buyer.id,
+
+            buyerName:
+                buyer.name,
+
+            price,
+
+            remainingBalance:
+                buyer.balance,
+
+            team:
+                [...buyer.team],
+
+            players:
+                getPlayers(room),
+
+            message:
+                `${character} sold to ${buyer.name} for ${price}.`
+        }
+    );
+
+
+    /*
+     * Update everyone immediately.
+     */
+
+    broadcastPlayers(
+        room
+    );
+
+
+    auction.index++;
+
+
+    /*
+     * If buyer's team is now full,
+     * remove them from future bidding.
+     */
+
+    if (
+        buyer.team.length >=
+        room.settings.teamSize
+    ) {
+
+        auction.eligible.delete(
+            buyer.id
+        );
+    }
+
+
+    setTimeout(
+        () => {
+
+            startAuctionCharacter(
+                room
+            );
+
+        },
+        1500
+    );
+}
+
+
+/* =========================================================
+   FINISH ENTIRE AUCTION
+========================================================= */
+
+async function finishAuction(
+    room
+) {
+
+    clearAuctionTimer(
+        room
+    );
+
+
+    room.auction.active =
+        false;
+
+    room.auction.started =
+        false;
+
+
+    const teams =
+        Object.values(
+            room.players
+        ).map(
+            player => ({
+
+                playerId:
+                    player.id,
+
+                playerName:
+                    player.name,
+
+                team:
+                    [...player.team],
+
+                remainingBalance:
+                    player.balance
+            })
+        );
+
+
+    /*
+     * AI evaluates all teams.
+     */
+
+    const ai =
+        await getAITeamEvaluation(
+            teams,
+            "auction"
+        );
+
+
+    io.to(room.code).emit(
+        "auctionFinished",
+        {
+
+            teams,
+
+            players:
+                getPlayers(room),
+
+            aiEvaluation:
+                ai,
+
+            strongestTeam:
+                ai.strongestTeam,
+
+            strongestPlayerId:
+                ai.strongestPlayerId,
+
+            aiText:
+                ai.aiText ||
+                ai.explanation,
+
+            message:
+                "Auction finished. AI has evaluated all teams."
+        }
+    );
+
+
+    broadcastPlayers(
+        room
+    );
+}
+
+
+/* =========================================================
+   ERROR HANDLER
+========================================================= */
+
+process.on(
+    "uncaughtException",
+    error => {
+
+        console.error(
+            "UNCAUGHT EXCEPTION:",
+            error
+        );
     }
 );
 
+
+process.on(
+    "unhandledRejection",
+    error => {
+
+        console.error(
+            "UNHANDLED REJECTION:",
+            error
+        );
+    }
+);
+
+
 /* =========================================================
-   SERVER START
+   SERVER
 ========================================================= */
 
 server.listen(
@@ -2151,5 +2858,20 @@ server.listen(
             `Naruto Character Rank server running on port ${PORT}`
         );
 
+        console.log(
+            `Characters loaded: ${CHARACTERS.length}`
+        );
+
+        console.log(
+            `Categories loaded: ${CATEGORIES.length}`
+        );
+
+        console.log(
+            `OpenAI AI evaluation: ${
+                process.env.OPENAI_API_KEY
+                    ? "ENABLED"
+                    : "LOCAL FALLBACK"
+            }`
+        );
     }
 );
