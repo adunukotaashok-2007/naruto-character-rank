@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
     <meta charset="UTF-8">
 
     <meta
@@ -10,1264 +8,1751 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <meta
-        name="theme-color"
-        content="#090014"
-    >
+    <title>Naruto Character Rank</title>
 
-    <title>Naruto Character Games</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
 
-    <link
-        rel="stylesheet"
-        href="style.css"
-    >
+        body {
+            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            background:
+                linear-gradient(
+                    135deg,
+                    #080808,
+                    #1b1b1b,
+                    #080808
+                );
+            color: white;
+        }
 
-    <!-- Socket.IO -->
-    <script src="/socket.io/socket.io.js"></script>
+        button,
+        input,
+        select {
+            font: inherit;
+        }
 
+        button {
+            cursor: pointer;
+        }
+
+        .screen {
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        /* =================================================
+           HEADER
+        ================================================= */
+
+        header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        header h1 {
+            font-size: 32px;
+            color: #ff9800;
+            text-shadow: 0 0 15px rgba(255, 152, 0, .5);
+        }
+
+        header p {
+            margin-top: 8px;
+            color: #bbb;
+        }
+
+        /* =================================================
+           HOME
+        ================================================= */
+
+        .home-container {
+            width: 100%;
+            max-width: 600px;
+            margin: auto;
+            padding-top: 50px;
+        }
+
+        .panel {
+            background: rgba(25, 25, 25, .95);
+            border: 1px solid #333;
+            border-radius: 18px;
+            padding: 25px;
+            box-shadow: 0 10px 40px rgba(0,0,0,.5);
+        }
+
+        .panel h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 7px;
+            color: #bbb;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 13px;
+            border: 1px solid #444;
+            border-radius: 10px;
+            background: #111;
+            color: white;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus {
+            border-color: #ff9800;
+        }
+
+        .main-button {
+            width: 100%;
+            border: none;
+            border-radius: 10px;
+            padding: 14px;
+            margin-top: 10px;
+            background: #ff9800;
+            color: #111;
+            font-weight: bold;
+        }
+
+        .main-button:hover {
+            background: #ffb52e;
+        }
+
+        .secondary-button {
+            width: 100%;
+            border: 1px solid #555;
+            border-radius: 10px;
+            padding: 13px;
+            margin-top: 10px;
+            background: #222;
+            color: white;
+        }
+
+        .secondary-button:hover {
+            background: #333;
+        }
+
+        /* =================================================
+           ROOM
+        ================================================= */
+
+        .room-container {
+            max-width: 900px;
+            margin: auto;
+        }
+
+        .room-code {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .room-code span {
+            display: inline-block;
+            margin-top: 8px;
+            padding: 12px 25px;
+            background: #111;
+            border: 2px solid #ff9800;
+            border-radius: 12px;
+            font-size: 25px;
+            letter-spacing: 4px;
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .players {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(180px, 1fr));
+            gap: 12px;
+            margin-top: 20px;
+        }
+
+        .player-card {
+            background: #151515;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 15px;
+        }
+
+        .player-name {
+            font-weight: bold;
+            color: #ff9800;
+        }
+
+        .player-money {
+            margin-top: 8px;
+            color: #aaa;
+        }
+
+        /* =================================================
+           GAME
+        ================================================= */
+
+        .game-container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .game-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-bottom: 15px;
+        }
+
+        .status-box {
+            background: #151515;
+            border: 1px solid #333;
+            border-radius: 10px;
+            padding: 10px 15px;
+        }
+
+        #categoryTitle {
+            color: #ff9800;
+            font-size: 26px;
+            font-weight: bold;
+        }
+
+        #categoryNumber {
+            color: #aaa;
+        }
+
+        #characterGrid {
+            display: grid;
+            grid-template-columns:
+                repeat(auto-fit, minmax(170px, 1fr));
+            gap: 15px;
+        }
+
+        .character-card {
+            position: relative;
+            overflow: hidden;
+            background:
+                linear-gradient(
+                    145deg,
+                    #242424,
+                    #111
+                );
+            border: 1px solid #444;
+            border-radius: 15px;
+            padding: 10px;
+            text-align: center;
+            transition: .2s;
+        }
+
+        .character-card:hover {
+            transform: translateY(-4px);
+            border-color: #ff9800;
+        }
+
+        .character-card img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-radius: 10px;
+            background: #222;
+        }
+
+        .rank-number {
+            position: absolute;
+            top: 15px;
+            left: 15px;
+            z-index: 2;
+            padding: 5px 9px;
+            border-radius: 8px;
+            background: #111;
+            color: #ff9800;
+            font-weight: bold;
+        }
+
+        .character-name {
+            margin-top: 10px;
+            font-size: 18px;
+            font-weight: bold;
+        }
+
+        .best-badge {
+            margin-top: 8px;
+            padding: 6px;
+            border-radius: 8px;
+            background: #ff9800;
+            color: #111;
+            font-weight: bold;
+        }
+
+        /* =================================================
+           AUCTION
+        ================================================= */
+
+        .auction-panel {
+            max-width: 900px;
+            margin: auto;
+            text-align: center;
+        }
+
+        #auctionCharacter {
+            font-size: 42px;
+            color: #ff9800;
+            margin: 20px 0;
+        }
+
+        #auctionBid {
+            font-size: 25px;
+            margin: 15px 0;
+        }
+
+        #auctionTimer {
+            font-size: 45px;
+            font-weight: bold;
+            margin: 15px;
+        }
+
+        .auction-buttons {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .auction-buttons button {
+            min-width: 150px;
+            padding: 13px 20px;
+            border: none;
+            border-radius: 10px;
+            font-weight: bold;
+        }
+
+        #bidButton {
+            background: #ff9800;
+            color: #111;
+        }
+
+        #giveUpButton {
+            background: #b71c1c;
+            color: white;
+        }
+
+        /* =================================================
+           TEAM
+        ================================================= */
+
+        .team-panel {
+            margin-top: 20px;
+        }
+
+        .team-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .team-character {
+            background: #222;
+            border: 1px solid #444;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        /* =================================================
+           MESSAGES
+        ================================================= */
+
+        #message {
+            position: fixed;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            z-index: 1000;
+
+            max-width: 90%;
+            padding: 12px 18px;
+
+            background: #222;
+            border: 1px solid #555;
+            border-radius: 10px;
+
+            color: white;
+            text-align: center;
+
+            display: none;
+        }
+
+        #message.show {
+            display: block;
+        }
+
+        /* =================================================
+           MOBILE
+        ================================================= */
+
+        @media (max-width: 600px) {
+
+            .screen {
+                padding: 12px;
+            }
+
+            header h1 {
+                font-size: 25px;
+            }
+
+            .panel {
+                padding: 18px;
+            }
+
+            #categoryTitle {
+                font-size: 21px;
+            }
+
+            #characterGrid {
+                grid-template-columns:
+                    repeat(2, 1fr);
+                gap: 10px;
+            }
+
+            .character-card img {
+                height: 150px;
+            }
+
+            .character-name {
+                font-size: 15px;
+            }
+
+            #auctionCharacter {
+                font-size: 30px;
+            }
+
+            #auctionTimer {
+                font-size: 35px;
+            }
+        }
+    </style>
 </head>
-
 
 <body>
 
-
 <!-- =====================================================
-     MAIN GAME
+     HOME SCREEN
 ===================================================== -->
 
-<div class="game-container">
-
-
-    <!-- =================================================
-         HEADER
-    ================================================== -->
-
-    <header class="game-header">
-
-        <div class="logo-section">
-
-            <div class="logo-symbol">
-                🌀
-            </div>
-
-            <div class="logo-text">
-
-                <h1>
-                    NARUTO
-                </h1>
-
-                <p>
-                    CHARACTER GAMES
-                </p>
-
-            </div>
-
-        </div>
-
-
-        <div class="connection-status">
-
-            <span
-                id="connectionDot"
-                class="connection-dot"
-            ></span>
-
-            <span id="connectionText">
-                CONNECTING...
-            </span>
-
-        </div>
-
-    </header>
-
-
-
-    <!-- =================================================
-         MESSAGE
-    ================================================== -->
-
-    <div
-        id="message"
-        class="game-message"
-        style="display:none;"
-    ></div>
-
-
-
-    <!-- =================================================
-         HOME SCREEN
-    ================================================== -->
-
-    <section
-        id="homeScreen"
-        class="screen"
-    >
-
-
-        <!-- HERO -->
-
-        <div class="hero-section">
-
-            <div class="hero-badge">
-                ⚔️ SHINOBI ARENA ⚔️
-            </div>
-
-            <h2>
-                BUILD YOUR
-                <span>
-                    ULTIMATE TEAM
-                </span>
-            </h2>
-
-            <p>
-                Rank legendary shinobi,
-                compete with your friends
-                and build the strongest team.
-            </p>
-
-        </div>
-
-
-
-        <!-- =================================================
-             GAME CARDS
-        ================================================== -->
-
-        <div class="game-cards">
-
-
-            <!-- =============================================
-                 CREATE ROOM
-            ============================================== -->
-
-            <div class="game-card create-card">
-
-
-                <div class="card-icon">
-                    🏯
-                </div>
-
-
-                <h2>
-                    CREATE ROOM
-                </h2>
-
-
-                <p class="card-description">
-                    Create a private room
-                    and invite your friends.
-                </p>
-
-
-
-                <!-- NAME -->
-
-                <div class="input-group">
-
-                    <label>
-                        🥷 YOUR NAME
-                    </label>
-
-                    <input
-                        type="text"
-                        id="playerName"
-                        placeholder="Enter your ninja name"
-                        autocomplete="off"
-                        maxlength="20"
-                    >
-
-                </div>
-
-
-
-                <!-- GAME MODE -->
-
-                <div class="input-group">
-
-                    <label>
-                        ⚔️ GAME MODE
-                    </label>
-
-                    <select id="gameMode">
-
-                        <option value="rank">
-                            🏆 CHARACTER RANKING
-                        </option>
-
-                        <option value="auction">
-                            💰 CHARACTER AUCTION
-                        </option>
-
-                    </select>
-
-                </div>
-
-
-
-                <!-- PLAYERS + TEAM SIZE -->
-
-                <div class="two-column">
-
-
-                    <div class="input-group">
-
-                        <label>
-                            👥 PLAYERS
-                        </label>
-
-                        <select id="maxPlayers">
-
-                            <option value="2">
-                                2 Players
-                            </option>
-
-                            <option value="3">
-                                3 Players
-                            </option>
-
-                            <option value="4">
-                                4 Players
-                            </option>
-
-                            <option value="5">
-                                5 Players
-                            </option>
-
-                            <option
-                                value="6"
-                                selected
-                            >
-                                6 Players
-                            </option>
-
-                            <option value="7">
-                                7 Players
-                            </option>
-
-                            <option value="8">
-                                8 Players
-                            </option>
-
-                        </select>
-
-                    </div>
-
-
-
-                    <div class="input-group">
-
-                        <label>
-                            🥷 TEAM SIZE
-                        </label>
-
-                        <input
-                            type="number"
-                            id="teamSize"
-                            value="5"
-                            min="1"
-                            max="20"
-                        >
-
-                    </div>
-
-
-                </div>
-
-
-
-                <!-- STARTING MONEY -->
-
-                <div class="input-group">
-
-                    <label>
-                        💰 STARTING RYO
-                    </label>
-
-
-                    <div class="money-input">
-
-                        <span>
-                            💰
-                        </span>
-
-                        <input
-                            type="number"
-                            id="startingBalance"
-                            value="1000"
-                            min="100"
-                            step="100"
-                        >
-
-                        <span>
-                            RYO
-                        </span>
-
-                    </div>
-
-                </div>
-
-
-
-                <!-- CREATE -->
-
-                <button
-                    type="button"
-                    class="game-button primary-button"
-                    onclick="createRoom()"
+<section
+    id="homeScreen"
+    class="screen"
+>
+
+    <div class="home-container">
+
+        <header>
+            <h1>🍥 NARUTO CHARACTER RANK</h1>
+            <p>Multiplayer Ninja Ranking & Auction</p>
+        </header>
+
+        <div class="panel">
+
+            <h2>Enter Game</h2>
+
+            <div class="input-group">
+                <label for="playerName">
+                    Your Name
+                </label>
+
+                <input
+                    id="playerName"
+                    type="text"
+                    placeholder="Enter your name"
+                    maxlength="20"
                 >
-
-                    ⚔️
-                    CREATE ROOM
-                    ⚔️
-
-                </button>
-
-
             </div>
 
+            <div class="input-group">
+                <label for="gameMode">
+                    Game Mode
+                </label>
 
+                <select id="gameMode">
 
-            <!-- =============================================
-                 JOIN ROOM
-            ============================================== -->
+                    <option value="rank">
+                        Character Rank
+                    </option>
 
-            <div class="game-card join-card">
+                    <option value="auction">
+                        Character Auction
+                    </option>
 
-
-                <div class="card-icon">
-                    🔗
-                </div>
-
-
-                <h2>
-                    JOIN ROOM
-                </h2>
-
-
-                <p class="card-description">
-                    Enter your friend's room code
-                    and join the battle.
-                </p>
-
-
-
-                <!-- NAME -->
-
-                <div class="input-group">
-
-                    <label>
-                        🥷 YOUR NAME
-                    </label>
-
-                    <input
-                        type="text"
-                        id="joinPlayerName"
-                        placeholder="Enter your ninja name"
-                        autocomplete="off"
-                        maxlength="20"
-                    >
-
-                </div>
-
-
-
-                <!-- ROOM CODE -->
-
-                <div class="input-group">
-
-                    <label>
-                        🔑 ROOM CODE
-                    </label>
-
-                    <input
-                        type="text"
-                        id="joinRoomCode"
-                        placeholder="ENTER ROOM CODE"
-                        maxlength="8"
-                        autocomplete="off"
-                    >
-
-                </div>
-
-
-
-                <!-- JOIN -->
-
-                <button
-                    type="button"
-                    class="game-button secondary-button"
-                    onclick="joinRoom()"
-                >
-
-                    ⚡
-                    JOIN ROOM
-                    ⚡
-
-                </button>
-
-
-
-                <!-- FEATURES -->
-
-                <div class="mode-info">
-
-
-                    <div>
-
-                        <span class="mode-icon">
-                            🏆
-                        </span>
-
-                        <span>
-                            RANK BATTLE
-                        </span>
-
-                    </div>
-
-
-                    <div>
-
-                        <span class="mode-icon">
-                            💰
-                        </span>
-
-                        <span>
-                            AUCTION
-                        </span>
-
-                    </div>
-
-
-                    <div>
-
-                        <span class="mode-icon">
-                            👥
-                        </span>
-
-                        <span>
-                            MULTIPLAYER
-                        </span>
-
-                    </div>
-
-
-                </div>
-
-
+                </select>
             </div>
 
-
-        </div>
-
-
-    </section>
-
-
-
-    <!-- =================================================
-         LOBBY SCREEN
-    ================================================== -->
-
-    <section
-        id="lobbyScreen"
-        class="screen hidden"
-    >
-
-
-        <!-- LOBBY HEADER -->
-
-        <div class="lobby-header">
-
-
-            <div>
-
-                <div class="small-title">
-                    SHINOBI BATTLEFIELD
-                </div>
-
-                <h2>
-                    WAITING LOBBY
-                </h2>
-
-            </div>
-
-
-
-            <!-- ROOM CODE -->
-
-            <div class="room-code-box">
-
-                <span>
-                    ROOM CODE
-                </span>
-
-                <strong id="roomCode">
-                    ------
-                </strong>
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- LOBBY CONTENT -->
-
-        <div class="lobby-grid">
-
-
-            <!-- =============================================
-                 PLAYERS
-            ============================================== -->
-
-            <div class="game-card players-card">
-
-
-                <div class="section-title">
-
-                    <span>
-                        👥
-                    </span>
-
-                    PLAYERS
-
-                </div>
-
-
-                <div
-                    id="playersList"
-                    class="players-list"
-                ></div>
-
-
-            </div>
-
-
-
-            <!-- =============================================
-                 BATTLE INFORMATION
-            ============================================== -->
-
-            <div class="game-card lobby-info-card">
-
-
-                <div class="section-title">
-
-                    <span>
-                        ⚔️
-                    </span>
-
-                    BATTLE INFORMATION
-
-                </div>
-
-
-
-                <div class="info-row">
-
-                    <span>
-                        GAME MODE
-                    </span>
-
-                    <strong id="lobbyGameMode">
-                        --
-                    </strong>
-
-                </div>
-
-
-
-                <div class="info-row">
-
-                    <span>
-                        TEAM SIZE
-                    </span>
-
-                    <strong id="lobbyTeamSize">
-                        --
-                    </strong>
-
-                </div>
-
-
-
-                <div class="info-row">
-
-                    <span>
-                        PLAYERS
-                    </span>
-
-                    <strong id="lobbyPlayerCount">
-                        --
-                    </strong>
-
-                </div>
-
-
-
-                <div class="waiting-text">
-
-                    🌀
-                    WAITING FOR SHINOBI...
-
-                </div>
-
-
-
-                <!-- START -->
-
-                <button
-                    type="button"
-                    id="startGameButton"
-                    class="game-button primary-button"
-                    onclick="startGame()"
-                    style="display:none;"
-                >
-
-                    ⚔️ START BATTLE ⚔️
-
-                </button>
-
-
-            </div>
-
-
-        </div>
-
-
-    </section>
-
-
-
-    <!-- =================================================
-         CHARACTER RANKING
-    ================================================== -->
-
-    <section
-        id="rankScreen"
-        class="screen hidden"
-    >
-
-
-        <!-- TOP BAR -->
-
-        <div class="battle-topbar">
-
-
-            <div class="battle-title">
-
-                🏆
-                CHARACTER RANKING
-
-            </div>
-
-
+            <button
+                id="createButton"
+                class="main-button"
+            >
+                CREATE ROOM
+            </button>
+
+            <button
+                id="showJoinButton"
+                class="secondary-button"
+            >
+                JOIN ROOM
+            </button>
 
             <div
-                id="categoryCounter"
-                class="category-counter"
+                id="joinBox"
+                class="hidden"
+                style="margin-top:20px;"
             >
-                1 / 16
-            </div>
 
+                <div class="input-group">
+
+                    <label for="roomCodeInput">
+                        Room Code
+                    </label>
+
+                    <input
+                        id="roomCodeInput"
+                        type="text"
+                        placeholder="ABC123"
+                        maxlength="6"
+                    >
+
+                </div>
+
+                <button
+                    id="joinButton"
+                    class="main-button"
+                >
+                    JOIN ROOM
+                </button>
+
+            </div>
 
         </div>
 
+    </div>
+
+</section>
 
 
-        <!-- CATEGORY -->
+<!-- =====================================================
+     ROOM SCREEN
+===================================================== -->
 
-        <div class="category-panel">
+<section
+    id="roomScreen"
+    class="screen hidden"
+>
 
+    <div class="room-container">
 
-            <div class="category-label">
-                CURRENT CATEGORY
-            </div>
+        <header>
 
+            <h1>🥷 GAME ROOM</h1>
 
-            <h2 id="categoryTitle">
-                Speed (1/16)
-            </h2>
-
-
-            <p>
-                Choose one character for this category.
+            <p id="roomMode">
+                Waiting for players...
             </p>
 
+        </header>
+
+        <div class="panel">
+
+            <div class="room-code">
+
+                <div>ROOM CODE</div>
+
+                <span id="roomCodeDisplay">
+                    ------
+                </span>
+
+            </div>
+
+            <div
+                id="playerCount"
+                style="text-align:center;"
+            >
+                Players: 0
+            </div>
+
+            <div
+                id="playersList"
+                class="players"
+            ></div>
+
+            <button
+                id="startGameButton"
+                class="main-button"
+            >
+                START GAME
+            </button>
 
         </div>
 
+    </div>
+
+</section>
 
 
-        <!-- SELECTION STATUS -->
+<!-- =====================================================
+     RANK SCREEN
+===================================================== -->
 
-        <div
-            id="selectionStatus"
-            class="selection-status"
-        >
-            Choose a character
+<section
+    id="rankScreen"
+    class="screen hidden"
+>
+
+    <div class="game-container">
+
+        <div class="game-top">
+
+            <div class="status-box">
+
+                <div id="categoryTitle">
+                    🧠 BATTLE IQ
+                </div>
+
+                <div id="categoryNumber">
+                    Category 1 / 16
+                </div>
+
+            </div>
+
+            <div
+                id="rankStatus"
+                class="status-box"
+            >
+                Waiting...
+            </div>
+
         </div>
-
-
-
-        <!-- WAITING -->
-
-        <div
-            id="rankWaitingStatus"
-            class="waiting-status"
-        ></div>
-
-
-
-        <!-- CHARACTER GRID -->
 
         <div
             id="characterGrid"
-            class="character-grid"
         ></div>
 
+    </div>
 
-    </section>
-
-
-
-    <!-- =================================================
-         RANK RESULT
-    ================================================== -->
-
-    <section
-        id="rankResultScreen"
-        class="screen hidden"
-    >
-
-
-        <!-- RESULT HEADER -->
-
-        <div class="result-header">
-
-
-            <div class="result-icon">
-                🏆
-            </div>
-
-
-            <h2>
-                FINAL SHINOBI TEAMS
-            </h2>
-
-
-            <p>
-                CHARACTER RANKING COMPLETE
-            </p>
-
-
-        </div>
-
-
-
-        <!-- AI -->
-
-        <div class="ai-result-box">
-
-
-            <div class="ai-title">
-
-                🤖
-                AI OVERALL EVALUATION
-
-            </div>
-
-
-            <p class="ai-description">
-
-                AI analyzes all 16 categories
-                and determines which team is stronger.
-
-            </p>
-
-
-            <div
-                id="aiTeamResult"
-                class="ai-team-result"
-            >
-                Analysing teams...
-            </div>
-
-
-        </div>
-
-
-
-        <!-- RESULTS -->
-
-        <div
-            id="rankResults"
-            class="rank-results"
-        ></div>
-
-
-    </section>
-
-
-
-    <!-- =================================================
-         AUCTION SCREEN
-    ================================================== -->
-
-    <section
-        id="auctionScreen"
-        class="screen hidden"
-    >
-
-
-        <!-- AUCTION TOP BAR -->
-
-        <div class="auction-topbar">
-
-
-            <div class="battle-title">
-
-                💰
-                SHINOBI AUCTION
-
-            </div>
-
-
-
-            <!-- MONEY -->
-
-            <div class="auction-money">
-
-
-                <span>
-                    YOUR RYO
-                </span>
-
-
-                <strong id="myMoney">
-                    1000
-                </strong>
-
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- AUCTION MAIN -->
-
-        <div class="auction-layout">
-
-
-            <!-- =============================================
-                 CHARACTER
-            ============================================== -->
-
-            <div class="auction-character-card">
-
-
-                <div class="auction-label">
-                    CURRENT CHARACTER
-                </div>
-
-
-                <div
-                    id="auctionCharacterName"
-                    class="auction-character-name"
-                >
-                    WAITING...
-                </div>
-
-
-                <img
-                    id="auctionCharacterImage"
-                    class="auction-character-image"
-                    src=""
-                    alt="Auction Character"
-                >
-
-
-            </div>
-
-
-
-            <!-- =============================================
-                 AUCTION PANEL
-            ============================================== -->
-
-            <div class="auction-panel">
-
-
-                <!-- TIMER -->
-
-                <div class="timer-circle">
-
-
-                    <span>
-                        TIME
-                    </span>
-
-
-                    <strong id="auctionTimer">
-                        10
-                    </strong>
-
-
-                </div>
-
-
-
-                <!-- BID INFORMATION -->
-
-                <div class="bid-info">
-
-
-                    <div>
-
-                        <span>
-                            CURRENT BID
-                        </span>
-
-
-                        <strong id="currentBid">
-                            0
-                        </strong>
-
-                    </div>
-
-
-
-                    <div>
-
-                        <span>
-                            YOUR REMAINING
-                        </span>
-
-
-                        <strong id="remainingMoney">
-                            1000
-                        </strong>
-
-                    </div>
-
-
-                </div>
-
-
-
-                <!-- HIGHEST BIDDER -->
-
-                <div
-                    id="highestBidder"
-                    class="highest-bidder"
-                >
-                    No bids yet
-                </div>
-
-
-
-                <!-- BID BUTTONS -->
-
-                <div class="bid-buttons">
-
-
-                    <button
-                        type="button"
-                        id="bidButton"
-                        class="bid-button"
-                        onclick="placeBid()"
-                    >
-
-                        💰
-                        BID
-
-                    </button>
-
-
-
-                    <button
-                        type="button"
-                        id="giveUpButton"
-                        class="giveup-button"
-                        onclick="giveUpBid()"
-                    >
-
-                        🏳️
-                        GIVE UP
-
-                    </button>
-
-
-                </div>
-
-
-
-                <!-- AUCTION STATUS -->
-
-                <div
-                    id="auctionStatus"
-                    class="auction-status"
-                >
-                    Auction waiting...
-                </div>
-
-
-            </div>
-
-
-        </div>
-
-
-
-        <!-- =============================================
-             AUCTION TEAMS
-        ============================================== -->
-
-        <div class="auction-teams">
-
-
-            <div class="section-title">
-
-                🥷
-                TEAMS
-
-            </div>
-
-
-            <div
-                id="auctionTeams"
-                class="teams-grid"
-            ></div>
-
-
-        </div>
-
-
-    </section>
-
-
-
-    <!-- =================================================
-         AUCTION RESULT
-    ================================================== -->
-
-    <section
-        id="auctionResultScreen"
-        class="screen hidden"
-    >
-
-
-        <!-- RESULT HEADER -->
-
-        <div class="result-header">
-
-
-            <div class="result-icon">
-                🏆
-            </div>
-
-
-            <h2>
-                AUCTION COMPLETE
-            </h2>
-
-
-            <p>
-                FINAL SHINOBI TEAMS
-            </p>
-
-
-        </div>
-
-
-
-        <!-- AUCTION RESULTS -->
-
-        <div
-            id="auctionResults"
-            class="rank-results"
-        ></div>
-
-
-
-        <!-- AI -->
-
-        <div class="ai-result-box">
-
-
-            <div class="ai-title">
-
-                🤖
-                AI OVERALL EVALUATION
-
-            </div>
-
-
-            <p class="ai-description">
-
-                AI compares the completed teams
-                and determines the strongest team.
-
-            </p>
-
-
-            <div
-                id="auctionAIResult"
-                class="ai-team-result"
-            >
-                Analysing teams...
-            </div>
-
-
-        </div>
-
-
-    </section>
-
-
-
-    <!-- =================================================
-         FOOTER
-    ================================================== -->
-
-    <footer class="game-footer">
-
-
-        <span>
-            🌀 NARUTO CHARACTER GAMES
-        </span>
-
-
-        <span>
-            •
-        </span>
-
-
-        <span>
-            SHINOBI ARENA
-        </span>
-
-
-    </footer>
-
-
-</div>
-
+</section>
 
 
 <!-- =====================================================
-     GAME.JS
+     AUCTION SCREEN
 ===================================================== -->
 
-<script src="game.js"></script>
+<section
+    id="auctionScreen"
+    class="screen hidden"
+>
 
+    <div class="auction-panel">
+
+        <header>
+
+            <h1>🔥 NARUTO AUCTION</h1>
+
+            <p id="auctionCharacterNumber">
+                Character 1
+            </p>
+
+        </header>
+
+        <div class="panel">
+
+            <div id="auctionCharacter">
+                Waiting...
+            </div>
+
+            <div id="auctionTimer">
+                0
+            </div>
+
+            <div id="auctionBid">
+                Current Bid: ₹0
+            </div>
+
+            <div id="auctionHighest">
+                Highest Bidder: Nobody
+            </div>
+
+            <div
+                id="auctionMoney"
+                style="margin:15px 0;"
+            >
+                Balance: ₹0
+            </div>
+
+            <div class="auction-buttons">
+
+                <button id="bidButton">
+                    BID
+                </button>
+
+                <button id="giveUpButton">
+                    GIVE UP
+                </button>
+
+            </div>
+
+        </div>
+
+        <div class="panel team-panel">
+
+            <h2>Your Team</h2>
+
+            <div
+                id="myTeam"
+                class="team-list"
+            ></div>
+
+        </div>
+
+    </div>
+
+</section>
 
 
 <!-- =====================================================
-     CONNECTION STATUS
+     MESSAGE
+===================================================== -->
+
+<div id="message"></div>
+
+
+<!-- =====================================================
+     SOCKET.IO
+===================================================== -->
+
+<script src="/socket.io/socket.io.js"></script>
+
+
+<!-- =====================================================
+     CLIENT SCRIPT
 ===================================================== -->
 
 <script>
 
-    function updateConnectionStatus(
-        connected
-    ) {
+    /* =====================================================
+       SOCKET
+    ===================================================== */
 
-        const dot =
-            document.getElementById(
-                "connectionDot"
-            );
-
-        const text =
-            document.getElementById(
-                "connectionText"
-            );
+    const socket = io();
 
 
-        if (!dot || !text) {
-            return;
-        }
+    /* =====================================================
+       ELEMENTS
+    ===================================================== */
+
+    const homeScreen =
+        document.getElementById("homeScreen");
+
+    const roomScreen =
+        document.getElementById("roomScreen");
+
+    const rankScreen =
+        document.getElementById("rankScreen");
+
+    const auctionScreen =
+        document.getElementById("auctionScreen");
+
+    const playerNameInput =
+        document.getElementById("playerName");
+
+    const gameModeSelect =
+        document.getElementById("gameMode");
+
+    const roomCodeInput =
+        document.getElementById("roomCodeInput");
+
+    const roomCodeDisplay =
+        document.getElementById("roomCodeDisplay");
+
+    const playersList =
+        document.getElementById("playersList");
+
+    const playerCount =
+        document.getElementById("playerCount");
+
+    const startGameButton =
+        document.getElementById("startGameButton");
+
+    const message =
+        document.getElementById("message");
 
 
-        if (connected) {
+    /* =====================================================
+       STATE
+    ===================================================== */
 
-            dot.classList.add(
-                "connected"
-            );
+    let myPlayerId = null;
 
-            text.textContent =
-                "CONNECTED";
+    let currentRoomCode = null;
 
-        } else {
+    let currentGameMode = "rank";
 
-            dot.classList.remove(
-                "connected"
-            );
+    let currentPlayers = [];
 
-            text.textContent =
-                "DISCONNECTED";
+    let currentAuction = null;
 
-        }
 
+    /* =====================================================
+       SHOW SCREEN
+    ===================================================== */
+
+    function showScreen(screen) {
+
+        homeScreen.classList.add("hidden");
+        roomScreen.classList.add("hidden");
+        rankScreen.classList.add("hidden");
+        auctionScreen.classList.add("hidden");
+
+        screen.classList.remove("hidden");
     }
 
 
+    /* =====================================================
+       MESSAGE
+    ===================================================== */
 
-    /*
-     * game.js creates the socket.
-     * Wait until it has loaded.
-     */
+    function showMessage(text) {
 
-    setTimeout(() => {
+        message.textContent = text;
 
-        if (
-            typeof socket !==
-            "undefined"
-        ) {
+        message.classList.add("show");
 
-            socket.on(
-                "connect",
-                () => {
+        setTimeout(() => {
+            message.classList.remove("show");
+        }, 3000);
+    }
 
-                    updateConnectionStatus(
-                        true
+
+    /* =====================================================
+       CREATE ROOM
+    ===================================================== */
+
+    document
+        .getElementById("createButton")
+        .addEventListener(
+            "click",
+            () => {
+
+                const name =
+                    playerNameInput
+                        .value
+                        .trim();
+
+                const gameMode =
+                    gameModeSelect.value;
+
+                if (!name) {
+
+                    showMessage(
+                        "Enter your name."
                     );
+
+                    return;
+                }
+
+                socket.emit(
+                    "createRoom",
+                    {
+                        name,
+                        gameMode,
+
+                        maxPlayers: 6,
+
+                        teamSize: 5,
+
+                        startingBalance: 1000,
+
+                        bidAmount: 50,
+
+                        bidTime: 10
+                    }
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       SHOW JOIN
+    ===================================================== */
+
+    document
+        .getElementById("showJoinButton")
+        .addEventListener(
+            "click",
+            () => {
+
+                document
+                    .getElementById("joinBox")
+                    .classList
+                    .toggle("hidden");
+
+            }
+        );
+
+
+    /* =====================================================
+       JOIN ROOM
+    ===================================================== */
+
+    document
+        .getElementById("joinButton")
+        .addEventListener(
+            "click",
+            () => {
+
+                const name =
+                    playerNameInput
+                        .value
+                        .trim();
+
+                const roomCode =
+                    roomCodeInput
+                        .value
+                        .trim()
+                        .toUpperCase();
+
+                if (!name) {
+
+                    showMessage(
+                        "Enter your name."
+                    );
+
+                    return;
+                }
+
+                if (!roomCode) {
+
+                    showMessage(
+                        "Enter room code."
+                    );
+
+                    return;
+                }
+
+                socket.emit(
+                    "joinRoom",
+                    {
+                        name,
+                        roomCode
+                    }
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       ROOM CREATED
+    ===================================================== */
+
+    socket.on(
+        "roomCreated",
+        data => {
+
+            myPlayerId =
+                socket.id;
+
+            currentRoomCode =
+                data.roomCode;
+
+            currentGameMode =
+                data.gameMode;
+
+            roomCodeDisplay.textContent =
+                data.roomCode;
+
+            document
+                .getElementById("roomMode")
+                .textContent =
+                    data.gameMode === "auction"
+                    ? "🔥 Auction Mode"
+                    : "🏆 Character Rank Mode";
+
+            startGameButton
+                .classList
+                .remove("hidden");
+
+            showScreen(roomScreen);
+
+        }
+    );
+
+
+    /* =====================================================
+       ROOM JOINED
+    ===================================================== */
+
+    socket.on(
+        "roomJoined",
+        data => {
+
+            myPlayerId =
+                socket.id;
+
+            currentRoomCode =
+                data.roomCode;
+
+            currentGameMode =
+                data.gameMode;
+
+            roomCodeDisplay.textContent =
+                data.roomCode;
+
+            document
+                .getElementById("roomMode")
+                .textContent =
+                    data.gameMode === "auction"
+                    ? "🔥 Auction Mode"
+                    : "🏆 Character Rank Mode";
+
+            /*
+             * Only host can see START GAME.
+             */
+
+            if (data.isHost) {
+
+                startGameButton
+                    .classList
+                    .remove("hidden");
+
+            } else {
+
+                startGameButton
+                    .classList
+                    .add("hidden");
+
+            }
+
+            showScreen(roomScreen);
+
+        }
+    );
+
+
+    /* =====================================================
+       PLAYERS UPDATED
+    ===================================================== */
+
+    socket.on(
+        "playersUpdated",
+        data => {
+
+            currentPlayers =
+                data.players || [];
+
+            playerCount.textContent =
+                `Players: ${currentPlayers.length}`;
+
+            playersList.innerHTML = "";
+
+            currentPlayers.forEach(
+                player => {
+
+                    const card =
+                        document.createElement(
+                            "div"
+                        );
+
+                    card.className =
+                        "player-card";
+
+                    card.innerHTML = `
+
+                        <div class="player-name">
+                            ${escapeHtml(
+                                player.name
+                            )}
+                        </div>
+
+                        <div class="player-money">
+                            Balance:
+                            ₹${player.balance}
+                        </div>
+
+                        <div class="player-money">
+                            Team:
+                            ${player.team.length}
+                        </div>
+
+                    `;
+
+                    playersList
+                        .appendChild(card);
 
                 }
             );
 
-
-            socket.on(
-                "disconnect",
-                () => {
-
-                    updateConnectionStatus(
-                        false
-                    );
-
-                }
-            );
+        }
+    );
 
 
-            if (socket.connected) {
+    /* =====================================================
+       START GAME
+    ===================================================== */
 
-                updateConnectionStatus(
-                    true
+    startGameButton
+        .addEventListener(
+            "click",
+            () => {
+
+                socket.emit(
+                    "startGame"
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       GAME STARTED
+    ===================================================== */
+
+    socket.on(
+        "gameStarted",
+        data => {
+
+            currentGameMode =
+                data.gameMode;
+
+            if (
+                data.gameMode ===
+                "auction"
+            ) {
+
+                showScreen(
+                    auctionScreen
+                );
+
+            } else {
+
+                showScreen(
+                    rankScreen
                 );
 
             }
 
         }
+    );
 
-    }, 100);
 
+    /* =====================================================
+       RANK CATEGORY
+    ===================================================== */
+
+    socket.on(
+        "rankNextCategory",
+        data => {
+
+            showScreen(
+                rankScreen
+            );
+
+            document
+                .getElementById(
+                    "categoryTitle"
+                )
+                .textContent =
+                    data.categoryName;
+
+            document
+                .getElementById(
+                    "categoryNumber"
+                )
+                .textContent =
+                    `Category ${
+                        data.categoryNumber
+                    } / ${
+                        data.totalCategories
+                    }`;
+
+            document
+                .getElementById(
+                    "rankStatus"
+                )
+                .textContent =
+                    "Choose your character.";
+
+        }
+    );
+
+
+    /* =====================================================
+       RANK SELECTION
+    ===================================================== */
+
+    document
+        .getElementById("characterGrid")
+        .addEventListener(
+            "click",
+            event => {
+
+                const card =
+                    event.target.closest(
+                        ".character-card"
+                    );
+
+                if (!card) return;
+
+                const character =
+                    card.querySelector(
+                        ".character-name"
+                    )?.textContent
+                    ?.trim();
+
+                if (!character) return;
+
+                const categoryNumber =
+                    document
+                        .getElementById(
+                            "categoryNumber"
+                        )
+                        .textContent
+                        .match(/\d+/);
+
+                const categoryIndex =
+                    categoryNumber
+                    ? Number(
+                        categoryNumber[0]
+                    ) - 1
+                    : 0;
+
+                socket.emit(
+                    "rankSelect",
+                    {
+                        categoryIndex,
+                        character
+                    }
+                );
+
+                document
+                    .getElementById(
+                        "rankStatus"
+                    )
+                    .textContent =
+                        `Selected: ${character}`;
+
+            }
+        );
+
+
+    /* =====================================================
+       RANK SELECTION MADE
+    ===================================================== */
+
+    socket.on(
+        "rankSelectionMade",
+        data => {
+
+            if (
+                data.playerId ===
+                myPlayerId
+            ) {
+                return;
+            }
+
+            showMessage(
+                `${data.playerName} selected ${data.character}`
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       RANK WAITING
+    ===================================================== */
+
+    socket.on(
+        "rankWaiting",
+        data => {
+
+            document
+                .getElementById(
+                    "rankStatus"
+                )
+                .textContent =
+                    "Waiting for all players...";
+
+        }
+    );
+
+
+    /* =====================================================
+       RANK COMPLETE
+    ===================================================== */
+
+    socket.on(
+        "rankCategoryComplete",
+        data => {
+
+            document
+                .getElementById(
+                    "rankStatus"
+                )
+                .textContent =
+                    "✅ Everyone selected!";
+
+        }
+    );
+
+
+    /* =====================================================
+       RANK FINISHED
+    ===================================================== */
+
+    socket.on(
+        "rankFinished",
+        data => {
+
+            document
+                .getElementById(
+                    "categoryTitle"
+                )
+                .textContent =
+                    "🏆 RANKING COMPLETE";
+
+            document
+                .getElementById(
+                    "categoryNumber"
+                )
+                .textContent =
+                    "16 / 16 Categories";
+
+            document
+                .getElementById(
+                    "rankStatus"
+                )
+                .textContent =
+                    "🎉 Game Finished!";
+
+        }
+    );
+
+
+    /* =====================================================
+       AUCTION NEW CHARACTER
+    ===================================================== */
+
+    socket.on(
+        "auctionNewCharacter",
+        data => {
+
+            showScreen(
+                auctionScreen
+            );
+
+            document
+                .getElementById(
+                    "auctionCharacter"
+                )
+                .textContent =
+                    data.character;
+
+            document
+                .getElementById(
+                    "auctionCharacterNumber"
+                )
+                .textContent =
+                    `Character ${
+                        data.characterNumber
+                    } / ${
+                        data.totalCharacters
+                    }`;
+
+        }
+    );
+
+
+    /* =====================================================
+       AUCTION UPDATE
+    ===================================================== */
+
+    socket.on(
+        "auctionUpdated",
+        data => {
+
+            currentAuction =
+                data;
+
+            document
+                .getElementById(
+                    "auctionCharacter"
+                )
+                .textContent =
+                    data.character || "Waiting...";
+
+            document
+                .getElementById(
+                    "auctionBid"
+                )
+                .textContent =
+                    `Current Bid: ₹${
+                        data.currentBid || 0
+                    }`;
+
+            document
+                .getElementById(
+                    "auctionHighest"
+                )
+                .textContent =
+                    `Highest Bidder: ${
+                        data.highestBidderName ||
+                        "Nobody"
+                    }`;
+
+            document
+                .getElementById(
+                    "auctionTimer"
+                )
+                .textContent =
+                    data.remainingTime || 0;
+
+        }
+    );
+
+
+    /* =====================================================
+       AUCTION TIMER
+    ===================================================== */
+
+    socket.on(
+        "auctionTimer",
+        data => {
+
+            document
+                .getElementById(
+                    "auctionTimer"
+                )
+                .textContent =
+                    data.seconds;
+
+        }
+    );
+
+
+    /* =====================================================
+       AUCTION MONEY
+    ===================================================== */
+
+    socket.on(
+        "auctionMoneyUpdated",
+        data => {
+
+            document
+                .getElementById(
+                    "auctionMoney"
+                )
+                .textContent =
+                    `Balance: ₹${
+                        data.balance
+                    } | Spent: ₹${
+                        data.spent
+                    }`;
+
+            const bidButton =
+                document.getElementById(
+                    "bidButton"
+                );
+
+            bidButton.disabled =
+                !data.canBid;
+
+            const giveUpButton =
+                document.getElementById(
+                    "giveUpButton"
+                );
+
+            giveUpButton.disabled =
+                data.gaveUp;
+
+        }
+    );
+
+
+    /* =====================================================
+       BID
+    ===================================================== */
+
+    document
+        .getElementById("bidButton")
+        .addEventListener(
+            "click",
+            () => {
+
+                socket.emit(
+                    "bid"
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       GIVE UP
+    ===================================================== */
+
+    document
+        .getElementById("giveUpButton")
+        .addEventListener(
+            "click",
+            () => {
+
+                socket.emit(
+                    "giveUp"
+                );
+
+            }
+        );
+
+
+    /* =====================================================
+       AUCTION BID MADE
+    ===================================================== */
+
+    socket.on(
+        "auctionBidMade",
+        data => {
+
+            showMessage(
+                `${data.playerName} bid ₹${data.bid}`
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       AUCTION SOLD
+    ===================================================== */
+
+    socket.on(
+        "auctionSold",
+        data => {
+
+            showMessage(
+                `🔥 ${data.character} sold to ${
+                    data.winnerName
+                } for ₹${data.price}`
+            );
+
+            updateTeam(
+                data.winnerId,
+                data.team
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       AUCTION UNSOLD
+    ===================================================== */
+
+    socket.on(
+        "auctionUnsold",
+        data => {
+
+            showMessage(
+                `${data.character} was unsold`
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       AUCTION FINISHED
+    ===================================================== */
+
+    socket.on(
+        "auctionFinished",
+        data => {
+
+            showMessage(
+                "🏆 AUCTION FINISHED!"
+            );
+
+            setTimeout(() => {
+
+                showScreen(
+                    roomScreen
+                );
+
+            }, 1500);
+
+        }
+    );
+
+
+    /* =====================================================
+       HOST CHANGED
+    ===================================================== */
+
+    socket.on(
+        "hostChanged",
+        data => {
+
+            if (
+                data.hostId ===
+                socket.id
+            ) {
+
+                startGameButton
+                    .classList
+                    .remove("hidden");
+
+                showMessage(
+                    "👑 You are now the host."
+                );
+
+            }
+
+        }
+    );
+
+
+    /* =====================================================
+       ERROR
+    ===================================================== */
+
+    socket.on(
+        "errorMessage",
+        text => {
+
+            showMessage(
+                text
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       CONNECTION
+    ===================================================== */
+
+    socket.on(
+        "connect",
+        () => {
+
+            myPlayerId =
+                socket.id;
+
+            console.log(
+                "Connected:",
+                socket.id
+            );
+
+        }
+    );
+
+
+    socket.on(
+        "disconnect",
+        () => {
+
+            showMessage(
+                "Connection lost. Reconnecting..."
+            );
+
+        }
+    );
+
+
+    /* =====================================================
+       UPDATE TEAM
+    ===================================================== */
+
+    function updateTeam(
+        playerId,
+        team
+    ) {
+
+        if (
+            playerId !==
+            myPlayerId
+        ) {
+            return;
+        }
+
+        const teamElement =
+            document.getElementById(
+                "myTeam"
+            );
+
+        teamElement.innerHTML = "";
+
+        team.forEach(
+            character => {
+
+                const item =
+                    document.createElement(
+                        "div"
+                    );
+
+                item.className =
+                    "team-character";
+
+                item.textContent =
+                    character;
+
+                teamElement
+                    .appendChild(item);
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       ESCAPE HTML
+    ===================================================== */
+
+    function escapeHtml(value) {
+
+        const div =
+            document.createElement(
+                "div"
+            );
+
+        div.textContent =
+            value;
+
+        return div.innerHTML;
+    }
+
+
+    /* =====================================================
+       INITIAL STATE
+    ===================================================== */
+
+    showScreen(
+        homeScreen
+    );
 
 </script>
 
-
 </body>
-
 </html>
