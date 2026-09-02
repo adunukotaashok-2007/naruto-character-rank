@@ -1,258 +1,101 @@
 /* =========================================================
    NARUTO CHARACTER BATTLE
    GAME.JS
-   =========================================================
-   FEATURES
-   ---------------------------------------------------------
-   • Multiplayer room
-   • 2–25 players
-   • Character Rank
-   • 16 Rank categories
-   • Private Rank selections
-   • Progress: selected / total players
-   • Character Auction
-   • ₹50 bid increment
-   • 15-second auction timer
-   • Give Up
-   • Team of 5
-   • Final team results
-   • OpenAI final analysis
    ========================================================= */
 
-
-/* =========================================================
-   SOCKET
-========================================================= */
-
 const socket = io({
-    transports: [
-        "websocket",
-        "polling"
-    ]
+    transports: ["websocket", "polling"]
 });
 
 
 /* =========================================================
    CHARACTER IMAGE DATABASE
-   MUST MATCH SERVER
+   EXACT SERVER CHARACTER NAMES
 ========================================================= */
 
 const CHARACTER_IMAGES = {
 
-    "Naruto":
-        "assets/characters/images%20%282%29.jpeg",
-
-    "Sasuke":
-        "assets/characters/images%20%283%29.jpeg",
-
-    "Itachi":
-        "assets/characters/images%20%284%29.jpeg",
-
-    "Madara":
-        "assets/characters/images%20%285%29.jpeg",
+    "Naruto": "assets/characters/images%20%282%29.jpeg",
+    "Sasuke": "assets/characters/images%20%283%29.jpeg",
+    "Itachi": "assets/characters/images%20%284%29.jpeg",
+    "Madara": "assets/characters/images%20%285%29.jpeg",
 
     "Kakashi":
         "assets/characters/why-do-people-believe-dms-kakashi-is-stronger-than-naruto-v0-6vyk8nfzaqre1.jpg",
 
-    "Minato":
-        "assets/characters/images%20%286%29.jpeg",
-
-    "Tobirama":
-        "assets/characters/images%20%287%29.jpeg",
-
-    "Hashirama":
-        "assets/characters/images%20%288%29.jpeg",
-
-    "Jiraiya":
-        "assets/characters/images%20%289%29.jpeg",
-
-    "Hiruzen":
-        "assets/characters/images%20%2810%29.jpeg",
-
-    "Orochimaru":
-        "assets/characters/images%20%2811%29.jpeg",
-
-    "Might Guy":
-        "assets/characters/images%20%2812%29.jpeg",
-
-    "Rock Lee":
-        "assets/characters/images%20%2813%29.jpeg",
-
-    "Shikamaru":
-        "assets/characters/images%20%2814%29.jpeg",
-
-    "Neji":
-        "assets/characters/images%20%2815%29.jpeg",
-
-    "Gaara":
-        "assets/characters/images%20%2816%29.jpeg",
-
-    "Kisame":
-        "assets/characters/images%20%2817%29.jpeg",
-
-    "Sakura":
-        "assets/characters/images%20%2818%29.jpeg",
-
-    "Nagato":
-        "assets/characters/images%20%2819%29.jpeg",
-
-    "Obito":
-        "assets/characters/images%20%2820%29.jpeg",
-
-    "Killer B":
-        "assets/characters/download%20%281%29.jpeg",
-
-    "Sasori":
-        "assets/characters/download%20%2810%29.jpeg",
-
-    "Deidara":
-        "assets/characters/download%20%2811%29.jpeg",
-
-    "Mu":
-        "assets/characters/download%20%2812%29.jpeg",
-
-    "Gengetsu Hōzuki":
-        "assets/characters/download%20%2813%29.jpeg",
-
-    "Danzo":
-        "assets/characters/download%20%2814%29.jpeg",
-
-    "Kakuzu":
-        "assets/characters/download%20%2815%29.jpeg",
-
-    "Hidan":
-        "assets/characters/download%20%2816%29.jpeg",
-
-    "Konan":
-        "assets/characters/download%20%2817%29.jpeg",
-
-    "Zabuza":
-        "assets/characters/download%20%2818%29.jpeg",
-
-    "Kimimaro":
-        "assets/characters/download%20%2819%29.jpeg",
-
-    "Kabuto":
-        "assets/characters/download%20%282%29.jpeg",
-
-    "Suigetsu":
-        "assets/characters/download%20%2820%29.jpeg",
-
-    "Jugo":
-        "assets/characters/download%20%2821%29.jpeg",
-
-    "Karin":
-        "assets/characters/download%20%2822%29.jpeg",
-
-    "Yahiko":
-        "assets/characters/download%20%2823%29.jpeg",
-
-    "Zetsu":
-        "assets/characters/download%20%2824%29.jpeg",
-
-    "Hinata":
-        "assets/characters/download%20%2825%29.jpeg",
-
-    "Ino":
-        "assets/characters/download%20%2826%29.jpeg",
-
-    "Choji":
-        "assets/characters/download%20%2827%29.jpeg",
-
-    "Kiba":
-        "assets/characters/download%20%2828%29.jpeg",
-
-    "Shino":
-        "assets/characters/download%20%2829%29.jpeg",
-
-    "Shisui":
-        "assets/characters/download%20%283%29.jpeg",
-
-    "Tenten":
-        "assets/characters/download%20%2830%29.jpeg",
-
-    "Iruka":
-        "assets/characters/download%20%2831%29.jpeg",
-
-    "Anko":
-        "assets/characters/download%20%2832%29.jpeg",
-
-    "Duy":
-        "assets/characters/download%20%2833%29.jpeg",
-
-    "Shizune":
-        "assets/characters/download%20%2834%29.jpeg",
-
-    "Asuma":
-        "assets/characters/download%20%2835%29.jpeg",
-
-    "Kurenai":
-        "assets/characters/download%20%2836%29.jpeg",
-
-    "Yamato":
-        "assets/characters/download%20%2837%29.jpeg",
-
-    "Sai":
-        "assets/characters/download%20%2838%29.jpeg",
-
-    "Konohamaru":
-        "assets/characters/download%20%2839%29.jpeg",
-
-    "Sakumo":
-        "assets/characters/download%20%284%29.jpeg",
-
-    "Kurotsuchi":
-        "assets/characters/download%20%2840%29.jpeg",
-
-    "Mifune":
-        "assets/characters/download%20%2841%29.jpeg",
-
-    "Fu":
-        "assets/characters/download%20%2842%29.jpeg",
-
-    "Utakata":
-        "assets/characters/download%20%2843%29.jpeg",
-
-    "Hanzo":
-        "assets/characters/download%20%285%29.jpeg",
-
-    "Four Tails Jinchuriki":
-        "assets/characters/download%20%2844%29.jpeg",
-
-    "Third Raikage":
-        "assets/characters/download%20%286%29.jpeg",
-
-    "Fourth Raikage":
-        "assets/characters/download%20%287%29.jpeg",
-
-    "Onoki":
-        "assets/characters/download%20%288%29.jpeg",
-
-    "Mei":
-        "assets/characters/download%20%289%29.jpeg",
-
-    "Tsunade":
-        "assets/characters/download.jpeg",
-
-    "Chiyo":
-        "assets/characters/images%20%2821%29.jpeg",
-
-    "Rasa":
-        "assets/characters/images%20%2822%29.jpeg",
-
-    "Masashi Kishimoto":
-        "assets/characters/images%20%2823%29.jpeg",
-
-    "Darui":
-        "assets/characters/images%20%2824%29.jpeg",
-
-    "Chōjūrō":
-        "assets/characters/images%20%2825%29.jpeg"
+    "Minato": "assets/characters/images%20%286%29.jpeg",
+    "Tobirama": "assets/characters/images%20%287%29.jpeg",
+    "Hashirama": "assets/characters/images%20%288%29.jpeg",
+    "Jiraiya": "assets/characters/images%20%289%29.jpeg",
+    "Hiruzen": "assets/characters/images%20%2810%29.jpeg",
+    "Orochimaru": "assets/characters/images%20%2811%29.jpeg",
+
+    "Might Guy": "assets/characters/images%20%2812%29.jpeg",
+    "Rock Lee": "assets/characters/images%20%2813%29.jpeg",
+    "Shikamaru": "assets/characters/images%20%2814%29.jpeg",
+    "Neji": "assets/characters/images%20%2815%29.jpeg",
+    "Gaara": "assets/characters/images%20%2816%29.jpeg",
+    "Kisame": "assets/characters/images%20%2817%29.jpeg",
+    "Sakura": "assets/characters/images%20%2818%29.jpeg",
+    "Nagato": "assets/characters/images%20%2819%29.jpeg",
+    "Obito": "assets/characters/images%20%2820%29.jpeg",
+
+    "Killer B": "assets/characters/download%20%281%29.jpeg",
+    "Sasori": "assets/characters/download%20%2810%29.jpeg",
+    "Deidara": "assets/characters/download%20%2811%29.jpeg",
+    "Mu": "assets/characters/download%20%2812%29.jpeg",
+    "Gengetsu Hōzuki": "assets/characters/download%20%2813%29.jpeg",
+    "Danzo": "assets/characters/download%20%2814%29.jpeg",
+    "Kakuzu": "assets/characters/download%20%2815%29.jpeg",
+    "Hidan": "assets/characters/download%20%2816%29.jpeg",
+    "Konan": "assets/characters/download%20%2817%29.jpeg",
+    "Zabuza": "assets/characters/download%20%2818%29.jpeg",
+    "Kimimaro": "assets/characters/download%20%2819%29.jpeg",
+    "Kabuto": "assets/characters/download%20%282%29.jpeg",
+    "Suigetsu": "assets/characters/download%20%2820%29.jpeg",
+    "Jugo": "assets/characters/download%20%2821%29.jpeg",
+    "Karin": "assets/characters/download%20%2822%29.jpeg",
+    "Yahiko": "assets/characters/download%20%2823%29.jpeg",
+    "Zetsu": "assets/characters/download%20%2824%29.jpeg",
+    "Hinata": "assets/characters/download%20%2825%29.jpeg",
+    "Ino": "assets/characters/download%20%2826%29.jpeg",
+    "Choji": "assets/characters/download%20%2827%29.jpeg",
+    "Kiba": "assets/characters/download%20%2828%29.jpeg",
+    "Shino": "assets/characters/download%20%2829%29.jpeg",
+    "Shisui": "assets/characters/download%20%283%29.jpeg",
+    "Tenten": "assets/characters/download%20%2830%29.jpeg",
+    "Iruka": "assets/characters/download%20%2831%29.jpeg",
+    "Anko": "assets/characters/download%20%2832%29.jpeg",
+    "Duy": "assets/characters/download%20%2833%29.jpeg",
+    "Shizune": "assets/characters/download%20%2834%29.jpeg",
+    "Asuma": "assets/characters/download%20%2835%29.jpeg",
+    "Kurenai": "assets/characters/download%20%2836%29.jpeg",
+    "Yamato": "assets/characters/download%20%2837%29.jpeg",
+    "Sai": "assets/characters/download%20%2838%29.jpeg",
+    "Konohamaru": "assets/characters/download%20%2839%29.jpeg",
+    "Sakumo": "assets/characters/download%20%284%29.jpeg",
+    "Kurotsuchi": "assets/characters/download%20%2840%29.jpeg",
+    "Mifune": "assets/characters/download%20%2841%29.jpeg",
+    "Fu": "assets/characters/download%20%2842%29.jpeg",
+    "Utakata": "assets/characters/download%20%2843%29.jpeg",
+    "Hanzo": "assets/characters/download%20%285%29.jpeg",
+    "Four Tails Jinchuriki": "assets/characters/download%20%2844%29.jpeg",
+    "Third Raikage": "assets/characters/download%20%286%29.jpeg",
+    "Fourth Raikage": "assets/characters/download%20%287%29.jpeg",
+    "Onoki": "assets/characters/download%20%288%29.jpeg",
+    "Mei": "assets/characters/download%20%289%29.jpeg",
+    "Tsunade": "assets/characters/download.jpeg",
+
+    "Chiyo": "assets/characters/images%20%2821%29.jpeg",
+    "Rasa": "assets/characters/images%20%2822%29.jpeg",
+    "Masashi Kishimoto": "assets/characters/images%20%2823%29.jpeg",
+    "Darui": "assets/characters/images%20%2824%29.jpeg",
+    "Chōjūrō": "assets/characters/images%20%2825%29.jpeg"
 };
 
 
 /* =========================================================
-   EXACT SERVER CHARACTER LIST
+   COMPLETE CHARACTER LIST
 ========================================================= */
 
 const SERVER_CHARACTERS = [
@@ -292,7 +135,6 @@ const SERVER_CHARACTERS = [
     "Konan",
     "Zabuza",
     "Kimimaro",
-
     "Kabuto",
     "Suigetsu",
     "Jugo",
@@ -322,19 +164,19 @@ const SERVER_CHARACTERS = [
     "Fu",
     "Utakata",
     "Hanzo",
-
-    "Four Tails Jinchuriki",
     "Third Raikage",
     "Fourth Raikage",
     "Onoki",
     "Mei",
-    "Tsunade",
 
+    "Tsunade",
     "Chiyo",
     "Rasa",
     "Masashi Kishimoto",
     "Darui",
-    "Chōjūrō"
+    "Chōjūrō",
+
+    "Four Tails Jinchuriki"
 ];
 
 
@@ -345,37 +187,21 @@ const SERVER_CHARACTERS = [
 const RANK_CATEGORIES = [
 
     "⚡ SPEED",
-
     "💪 STRENGTH",
-
     "🧠 BATTLE IQ",
-
     "🩸 DURABILITY",
-
     "🌀 CHAKRA",
-
     "🔥 NINJUTSU",
-
     "⚔️ TAIJUTSU",
-
     "👁️ GENJUTSU",
-
     "🛡️ DEFENSE",
-
     "💥 ATTACK",
-
     "❤️ STAMINA",
-
     "👑 LEADERSHIP",
-
     "🔄 VERSATILITY",
-
     "📚 EXPERIENCE",
-
     "🤝 TEAMWORK",
-
     "🏆 OVERALL POWER"
-
 ];
 
 
@@ -383,212 +209,231 @@ const RANK_CATEGORIES = [
    CONSTANTS
 ========================================================= */
 
-const STARTING_BALANCE =
-    1000;
-
-const BID_INCREMENT =
-    50;
-
-const AUCTION_TIME =
-    15;
-
-const TEAM_SIZE =
-    5;
-
-
-/* =========================================================
-   DOM ELEMENTS
-========================================================= */
-
-const homeScreen =
-    document.getElementById(
-        "homeScreen"
-    );
-
-const roomScreen =
-    document.getElementById(
-        "roomScreen"
-    );
-
-const rankScreen =
-    document.getElementById(
-        "rankScreen"
-    );
-
-const auctionScreen =
-    document.getElementById(
-        "auctionScreen"
-    );
-
-const playerNameInput =
-    document.getElementById(
-        "playerName"
-    );
-
-const gameModeSelect =
-    document.getElementById(
-        "gameMode"
-    );
-
-const roomCodeInput =
-    document.getElementById(
-        "roomCodeInput"
-    );
-
-const roomCodeDisplay =
-    document.getElementById(
-        "roomCodeDisplay"
-    );
-
-const playersList =
-    document.getElementById(
-        "playersList"
-    );
-
-const playerCount =
-    document.getElementById(
-        "playerCount"
-    );
-
-const startGameButton =
-    document.getElementById(
-        "startGameButton"
-    );
-
-const message =
-    document.getElementById(
-        "message"
-    );
-
-const characterGrid =
-    document.getElementById(
-        "characterGrid"
-    );
-
-const rankStatus =
-    document.getElementById(
-        "rankStatus"
-    );
-
-const auctionImage =
-    document.getElementById(
-        "auctionCharacterImage"
-    );
-
-const auctionCharacter =
-    document.getElementById(
-        "auctionCharacter"
-    );
-
-const auctionTimer =
-    document.getElementById(
-        "auctionTimer"
-    );
-
-const auctionBid =
-    document.getElementById(
-        "auctionBid"
-    );
-
-const auctionHighest =
-    document.getElementById(
-        "auctionHighest"
-    );
-
-const auctionBalance =
-    document.getElementById(
-        "auctionBalance"
-    );
-
-const auctionNextBid =
-    document.getElementById(
-        "auctionNextBid"
-    );
-
-const auctionMoney =
-    document.getElementById(
-        "auctionMoney"
-    );
-
-const bidButton =
-    document.getElementById(
-        "bidButton"
-    );
-
-const giveUpButton =
-    document.getElementById(
-        "giveUpButton"
-    );
-
-const myTeam =
-    document.getElementById(
-        "myTeam"
-    );
+const STARTING_BALANCE = 1000;
+const BID_INCREMENT = 50;
+const AUCTION_TIME = 15;
+const TEAM_SIZE = 5;
 
 
 /* =========================================================
    STATE
 ========================================================= */
 
-let myPlayerId =
-    null;
+let myPlayerId = null;
+let currentRoomCode = null;
+let currentGameMode = "rank";
 
-let currentRoomCode =
-    null;
+let currentPlayers = [];
 
-let currentGameMode =
-    "rank";
+let currentCategory = 0;
+let selectedCharacter = null;
 
-let currentPlayers =
-    [];
-
-let currentCategory =
-    0;
-
-let selectedCharacter =
-    null;
-
-let currentAuction =
-    null;
-
-let currentTeam =
-    [];
+let currentAuction = null;
 
 let roomSettings = {
-
-    teamSize:
-        TEAM_SIZE,
-
-    startingBalance:
-        STARTING_BALANCE,
-
-    bidAmount:
-        BID_INCREMENT,
-
-    bidTime:
-        AUCTION_TIME
-
+    teamSize: TEAM_SIZE,
+    startingBalance: STARTING_BALANCE,
+    bidAmount: BID_INCREMENT,
+    bidTime: AUCTION_TIME
 };
 
 
 /* =========================================================
-   ESCAPE HTML
+   ELEMENTS
 ========================================================= */
 
-function escapeHtml(
-    value
-) {
+const homeScreen =
+    document.getElementById("homeScreen");
+
+const roomScreen =
+    document.getElementById("roomScreen");
+
+const rankScreen =
+    document.getElementById("rankScreen");
+
+const auctionScreen =
+    document.getElementById("auctionScreen");
+
+const playerNameInput =
+    document.getElementById("playerName");
+
+const gameModeSelect =
+    document.getElementById("gameMode");
+
+const roomCodeInput =
+    document.getElementById("roomCodeInput");
+
+const roomCodeDisplay =
+    document.getElementById("roomCodeDisplay");
+
+const playersList =
+    document.getElementById("playersList");
+
+const playerCount =
+    document.getElementById("playerCount");
+
+const startGameButton =
+    document.getElementById("startGameButton");
+
+const message =
+    document.getElementById("message");
+
+const characterGrid =
+    document.getElementById("characterGrid");
+
+const rankStatus =
+    document.getElementById("rankStatus");
+
+const auctionImage =
+    document.getElementById("auctionCharacterImage");
+
+const auctionCharacter =
+    document.getElementById("auctionCharacter");
+
+const auctionTimer =
+    document.getElementById("auctionTimer");
+
+const auctionBid =
+    document.getElementById("auctionBid");
+
+const auctionHighest =
+    document.getElementById("auctionHighest");
+
+const auctionBalance =
+    document.getElementById("auctionBalance");
+
+const auctionNextBid =
+    document.getElementById("auctionNextBid");
+
+const auctionMoney =
+    document.getElementById("auctionMoney");
+
+const bidButton =
+    document.getElementById("bidButton");
+
+const giveUpButton =
+    document.getElementById("giveUpButton");
+
+const myTeam =
+    document.getElementById("myTeam");
+
+
+/* =========================================================
+   HTML ESCAPE
+========================================================= */
+
+function escapeHtml(value) {
 
     const div =
-        document.createElement(
-            "div"
-        );
+        document.createElement("div");
 
     div.textContent =
         String(value);
 
     return div.innerHTML;
+}
 
+
+/* =========================================================
+   SCREEN CONTROL
+========================================================= */
+
+function showScreen(screen) {
+
+    [
+        homeScreen,
+        roomScreen,
+        rankScreen,
+        auctionScreen
+    ].forEach(item => {
+
+        if (item) {
+            item.classList.add("hidden");
+        }
+
+    });
+
+    if (screen) {
+        screen.classList.remove("hidden");
+    }
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+let messageTimer = null;
+
+function showMessage(text) {
+
+    if (!message) {
+        return;
+    }
+
+    message.textContent = text;
+
+    message.classList.add("show");
+
+    clearTimeout(messageTimer);
+
+    messageTimer =
+        setTimeout(() => {
+
+            message.classList.remove("show");
+
+        }, 2500);
+}
+
+
+/* =========================================================
+   NORMALIZE CHARACTER
+========================================================= */
+
+function normalizeCharacterName(character) {
+
+    if (!character) {
+        return "";
+    }
+
+    const aliases = {
+
+        "Guy": "Might Guy",
+        "Lee": "Rock Lee",
+
+        "Killer Bee": "Killer B",
+        "KillerB": "Killer B",
+
+        "Nagato/Pain": "Nagato",
+        "Pain": "Nagato",
+
+        "Gengetsu": "Gengetsu Hōzuki",
+
+        "Danzō": "Danzo",
+
+        "Mū": "Mu",
+
+        "Jūgo": "Jugo",
+
+        "Chōji": "Choji",
+
+        "Chojuro": "Chōjūrō",
+
+        "Ōnoki": "Onoki",
+
+        "3rd Raikage": "Third Raikage",
+        "ThirdRaikage": "Third Raikage",
+
+        "4th Raikage": "Fourth Raikage",
+        "FourthRaikage": "Fourth Raikage",
+
+        "Roshi": "Four Tails Jinchuriki",
+
+        "Konahamaru": "Konohamaru"
+    };
+
+    return aliases[String(character).trim()]
+        || String(character).trim();
 }
 
 
@@ -596,43 +441,32 @@ function escapeHtml(
    GET CHARACTER IMAGE
 ========================================================= */
 
-function getCharacterImage(
-    character
-) {
+function getCharacterImage(character) {
 
-    if (!character) {
-        return "";
-    }
+    const normalized =
+        normalizeCharacterName(character);
 
     return (
-        CHARACTER_IMAGES[
-            character
-        ] || ""
+        CHARACTER_IMAGES[normalized] ||
+        CHARACTER_IMAGES[character] ||
+        ""
     );
-
 }
 
 
 /* =========================================================
-   CREATE SAFE IMAGE
+   SAFE IMAGE
 ========================================================= */
 
-function createImage(
-    character,
-    className = ""
-) {
+function createImage(character) {
 
     const image =
-        getCharacterImage(
-            character
-        );
+        getCharacterImage(character);
 
     if (!image) {
 
         const fallback =
-            document.createElement(
-                "div"
-            );
+            document.createElement("div");
 
         fallback.className =
             "image-fallback";
@@ -641,40 +475,23 @@ function createImage(
             "Image unavailable";
 
         return fallback;
-
     }
-
 
     const img =
-        document.createElement(
-            "img"
-        );
+        document.createElement("img");
 
-    img.src =
-        image;
+    img.src = image;
 
-    img.alt =
-        character;
+    img.alt = character;
 
-    img.loading =
-        "lazy";
-
-    if (className) {
-
-        img.className =
-            className;
-
-    }
-
+    img.loading = "lazy";
 
     img.addEventListener(
         "error",
         () => {
 
             const fallback =
-                document.createElement(
-                    "div"
-                );
+                document.createElement("div");
 
             fallback.className =
                 "image-fallback";
@@ -682,100 +499,12 @@ function createImage(
             fallback.textContent =
                 "Image unavailable";
 
-            img.replaceWith(
-                fallback
-            );
+            img.replaceWith(fallback);
 
         }
     );
-
 
     return img;
-
-}
-
-
-/* =========================================================
-   SHOW SCREEN
-========================================================= */
-
-function showScreen(
-    screen
-) {
-
-    [
-        homeScreen,
-        roomScreen,
-        rankScreen,
-        auctionScreen
-    ]
-    .forEach(
-        item => {
-
-            if (item) {
-
-                item.classList.add(
-                    "hidden"
-                );
-
-            }
-
-        }
-    );
-
-
-    if (screen) {
-
-        screen.classList.remove(
-            "hidden"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-   MESSAGE
-========================================================= */
-
-let messageTimer =
-    null;
-
-function showMessage(
-    text
-) {
-
-    if (!message) {
-        return;
-    }
-
-
-    message.textContent =
-        text;
-
-    message.classList.add(
-        "show"
-    );
-
-
-    clearTimeout(
-        messageTimer
-    );
-
-
-    messageTimer =
-        setTimeout(
-            () => {
-
-                message.classList.remove(
-                    "show"
-                );
-
-            },
-            2500
-        );
-
 }
 
 
@@ -784,71 +513,45 @@ function showMessage(
 ========================================================= */
 
 document
-    .getElementById(
-        "createButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
+    .getElementById("createButton")
+    .addEventListener("click", () => {
 
-            const name =
-                playerNameInput.value
-                    .trim();
+        const name =
+            playerNameInput.value.trim();
 
-            const gameMode =
-                gameModeSelect.value;
+        const gameMode =
+            gameModeSelect.value;
 
+        if (!name) {
 
-            if (!name) {
-
-                showMessage(
-                    "Enter your name."
-                );
-
-                playerNameInput.focus();
-
-                return;
-
-            }
-
-
-            socket.emit(
-                "createRoom",
-                {
-
-                    name:
-
-                        name,
-
-                    gameMode:
-
-                        gameMode,
-
-                    maxPlayers:
-
-                        25,
-
-                    teamSize:
-
-                        TEAM_SIZE,
-
-                    startingBalance:
-
-                        STARTING_BALANCE,
-
-                    bidAmount:
-
-                        BID_INCREMENT,
-
-                    bidTime:
-
-                        AUCTION_TIME
-
-                }
+            showMessage(
+                "Enter your name."
             );
 
+            playerNameInput.focus();
+
+            return;
         }
-    );
+
+        socket.emit(
+            "createRoom",
+            {
+                name,
+                gameMode,
+
+                maxPlayers: 25,
+
+                teamSize: 5,
+
+                startingBalance: 1000,
+
+                bidAmount: 50,
+
+                bidTime: 15
+            }
+        );
+
+    });
 
 
 /* =========================================================
@@ -856,28 +559,15 @@ document
 ========================================================= */
 
 document
-    .getElementById(
-        "showJoinButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
+    .getElementById("showJoinButton")
+    .addEventListener("click", () => {
 
-            const box =
-                document.getElementById(
-                    "joinBox"
-                );
+        document
+            .getElementById("joinBox")
+            .classList
+            .toggle("hidden");
 
-            if (box) {
-
-                box.classList.toggle(
-                    "hidden"
-                );
-
-            }
-
-        }
-    );
+    });
 
 
 /* =========================================================
@@ -885,62 +575,44 @@ document
 ========================================================= */
 
 document
-    .getElementById(
-        "joinButton"
-    )
-    .addEventListener(
-        "click",
-        () => {
+    .getElementById("joinButton")
+    .addEventListener("click", () => {
 
-            const name =
-                playerNameInput.value
-                    .trim();
+        const name =
+            playerNameInput.value.trim();
 
-            const roomCode =
-                roomCodeInput.value
-                    .trim()
-                    .toUpperCase();
+        const roomCode =
+            roomCodeInput.value
+                .trim()
+                .toUpperCase();
 
+        if (!name) {
 
-            if (!name) {
-
-                showMessage(
-                    "Enter your name."
-                );
-
-                return;
-
-            }
-
-
-            if (!roomCode) {
-
-                showMessage(
-                    "Enter room code."
-                );
-
-                return;
-
-            }
-
-
-            socket.emit(
-                "joinRoom",
-                {
-
-                    name:
-
-                        name,
-
-                    roomCode:
-
-                        roomCode
-
-                }
+            showMessage(
+                "Enter your name."
             );
 
+            return;
         }
-    );
+
+        if (!roomCode) {
+
+            showMessage(
+                "Enter room code."
+            );
+
+            return;
+        }
+
+        socket.emit(
+            "joinRoom",
+            {
+                name,
+                roomCode
+            }
+        );
+
+    });
 
 
 /* =========================================================
@@ -951,8 +623,7 @@ socket.on(
     "roomCreated",
     data => {
 
-        myPlayerId =
-            socket.id;
+        myPlayerId = socket.id;
 
         currentRoomCode =
             data.roomCode;
@@ -960,33 +631,16 @@ socket.on(
         currentGameMode =
             data.gameMode;
 
-
         roomCodeDisplay.textContent =
             data.roomCode;
 
-
-        document
-            .getElementById(
-                "roomMode"
-            )
-            .textContent =
-
-                data.gameMode ===
-                "auction"
-
-                    ? "🔥 Auction Mode — ₹50 bid increment — 15 seconds"
-
-                    : "🏆 Character Rank Mode";
-
+        updateRoomModeText();
 
         startGameButton.classList.remove(
             "hidden"
         );
 
-
-        showScreen(
-            roomScreen
-        );
+        showScreen(roomScreen);
 
     }
 );
@@ -1000,8 +654,7 @@ socket.on(
     "roomJoined",
     data => {
 
-        myPlayerId =
-            socket.id;
+        myPlayerId = socket.id;
 
         currentRoomCode =
             data.roomCode;
@@ -1009,24 +662,10 @@ socket.on(
         currentGameMode =
             data.gameMode;
 
-
         roomCodeDisplay.textContent =
             data.roomCode;
 
-
-        document
-            .getElementById(
-                "roomMode"
-            )
-            .textContent =
-
-                data.gameMode ===
-                "auction"
-
-                    ? "🔥 Auction Mode — ₹50 bid increment — 15 seconds"
-
-                    : "🏆 Character Rank Mode";
-
+        updateRoomModeText();
 
         if (data.isHost) {
 
@@ -1042,13 +681,37 @@ socket.on(
 
         }
 
-
-        showScreen(
-            roomScreen
-        );
+        showScreen(roomScreen);
 
     }
 );
+
+
+/* =========================================================
+   ROOM MODE TEXT
+========================================================= */
+
+function updateRoomModeText() {
+
+    const roomMode =
+        document.getElementById("roomMode");
+
+    if (!roomMode) {
+        return;
+    }
+
+    if (currentGameMode === "auction") {
+
+        roomMode.textContent =
+            "🔥 Auction Mode — ₹50 increment — 15 seconds";
+
+    } else {
+
+        roomMode.textContent =
+            "🏆 Character Rank Mode — 16 Categories";
+
+    }
+}
 
 
 /* =========================================================
@@ -1062,92 +725,69 @@ socket.on(
         currentPlayers =
             data.players || [];
 
-
         playerCount.textContent =
             `Players: ${currentPlayers.length}`;
 
+        playersList.innerHTML = "";
 
-        playersList.innerHTML =
-            "";
+        currentPlayers.forEach(player => {
 
+            const card =
+                document.createElement("div");
 
-        currentPlayers.forEach(
-            player => {
+            card.className =
+                "player-card";
 
-                const card =
-                    document.createElement(
-                        "div"
-                    );
+            if (
+                player.id ===
+                myPlayerId
+            ) {
 
-                card.className =
-                    "player-card";
-
-
-                if (
-                    player.id ===
-                    myPlayerId
-                ) {
-
-                    card.classList.add(
-                        "me"
-                    );
-
-                }
-
-
-                const teamCount =
-                    Array.isArray(
-                        player.team
-                    )
-                        ? player.team.length
-                        : 0;
-
-
-                card.innerHTML = `
-
-                    <div class="player-name">
-
-                        ${escapeHtml(
-                            player.name
-                        )}
-
-                        ${
-                            player.id ===
-                            myPlayerId
-                                ? " (YOU)"
-                                : ""
-                        }
-
-                    </div>
-
-                    <div class="player-balance">
-
-                        💰 Balance:
-                        ₹${Number(
-                            player.balance ??
-                            STARTING_BALANCE
-                        ).toLocaleString(
-                            "en-IN"
-                        )}
-
-                    </div>
-
-                    <div class="player-team">
-
-                        🏆 Team:
-                        ${teamCount}/${TEAM_SIZE}
-
-                    </div>
-
-                `;
-
-
-                playersList.appendChild(
-                    card
-                );
+                card.classList.add("me");
 
             }
-        );
+
+            const teamCount =
+                Array.isArray(player.team)
+                    ? player.team.length
+                    : 0;
+
+            card.innerHTML = `
+
+                <div class="player-name">
+
+                    ${escapeHtml(player.name)}
+
+                    ${
+                        player.id === myPlayerId
+                            ? " (YOU)"
+                            : ""
+                    }
+
+                </div>
+
+                <div class="player-balance">
+
+                    💰 Balance:
+                    ₹${Number(
+                        player.balance ??
+                        STARTING_BALANCE
+                    ).toLocaleString("en-IN")}
+
+                </div>
+
+                <div class="player-team">
+
+                    🏆 Team:
+                    ${teamCount}/${TEAM_SIZE}
+
+                </div>
+
+            `;
+
+            playersList.appendChild(card);
+
+        });
 
     }
 );
@@ -1161,9 +801,7 @@ startGameButton.addEventListener(
     "click",
     () => {
 
-        socket.emit(
-            "startGame"
-        );
+        socket.emit("startGame");
 
     }
 );
@@ -1180,21 +818,16 @@ socket.on(
         currentGameMode =
             data.gameMode;
 
-
         if (
             data.gameMode ===
             "auction"
         ) {
 
-            showScreen(
-                auctionScreen
-            );
+            showScreen(auctionScreen);
 
         } else {
 
-            showScreen(
-                rankScreen
-            );
+            showScreen(rankScreen);
 
         }
 
@@ -1212,16 +845,12 @@ socket.on(
 
         currentCategory =
             Number(
-                data.categoryIndex ?? 0
+                data.categoryIndex || 0
             );
 
-        selectedCharacter =
-            null;
+        selectedCharacter = null;
 
-
-        renderRankCategory(
-            data
-        );
+        renderRankCategory(data);
 
     }
 );
@@ -1237,16 +866,12 @@ socket.on(
 
         currentCategory =
             Number(
-                data.categoryIndex ?? 0
+                data.categoryIndex || 0
             );
 
-        selectedCharacter =
-            null;
+        selectedCharacter = null;
 
-
-        renderRankCategory(
-            data
-        );
+        renderRankCategory(data);
 
     }
 );
@@ -1256,60 +881,48 @@ socket.on(
    RENDER RANK CATEGORY
 ========================================================= */
 
-function renderRankCategory(
-    data
-) {
+function renderRankCategory(data) {
 
-    showScreen(
-        rankScreen
-    );
+    showScreen(rankScreen);
 
-
-    const categoryTitle =
+    const title =
         document.getElementById(
             "categoryTitle"
         );
 
-
-    const categoryNumber =
+    const number =
         document.getElementById(
             "categoryNumber"
         );
 
+    if (title) {
 
-    if (categoryTitle) {
-
-        categoryTitle.textContent =
+        title.textContent =
             data.categoryName ||
-            RANK_CATEGORIES[
-                currentCategory
-            ] ||
+            RANK_CATEGORIES[currentCategory] ||
             "Character Rank";
 
     }
 
+    if (number) {
 
-    if (categoryNumber) {
-
-        categoryNumber.textContent =
+        number.textContent =
             `Category ${
                 Number(
-                    data.categoryNumber ??
+                    data.categoryNumber ||
                     currentCategory + 1
                 )
             } / ${
                 Number(
-                    data.totalCategories ??
+                    data.totalCategories ||
                     16
                 )
             }`;
 
     }
 
-
     rankStatus.textContent =
         "Choose one character.";
-
 
     renderRankCharacters();
 
@@ -1322,29 +935,19 @@ function renderRankCategory(
 
 function renderRankCharacters() {
 
-    characterGrid.innerHTML =
-        "";
-
+    characterGrid.innerHTML = "";
 
     SERVER_CHARACTERS.forEach(
-        (
-            character,
-            index
-        ) => {
+        (character, index) => {
 
             const card =
-                document.createElement(
-                    "div"
-                );
-
+                document.createElement("div");
 
             card.className =
                 "character-card";
 
-
             card.dataset.character =
                 character;
-
 
             if (
                 selectedCharacter ===
@@ -1357,110 +960,33 @@ function renderRankCharacters() {
 
             }
 
-
             const rankNumber =
-                document.createElement(
-                    "div"
-                );
-
+                document.createElement("div");
 
             rankNumber.className =
                 "rank-number";
 
-
             rankNumber.textContent =
                 `#${index + 1}`;
 
+            card.appendChild(rankNumber);
 
             card.appendChild(
-                rankNumber
+                createImage(character)
             );
-
-
-            const image =
-                createImage(
-                    character
-                );
-
-
-            card.appendChild(
-                image
-            );
-
 
             const name =
-                document.createElement(
-                    "div"
-                );
-
+                document.createElement("div");
 
             name.className =
                 "character-name";
 
-
             name.textContent =
                 character;
 
+            card.appendChild(name);
 
-            card.appendChild(
-                name
-            );
-
-
-            if (
-                index === 0
-            ) {
-
-                const badge =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                badge.className =
-                    "best-badge";
-
-
-                badge.textContent =
-                    "🥇 CHARACTER";
-
-
-                card.appendChild(
-                    badge
-                );
-
-            }
-
-
-            if (
-                selectedCharacter ===
-                character
-            ) {
-
-                const badge =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                badge.className =
-                    "selection-badge";
-
-
-                badge.textContent =
-                    "✅ SELECTED";
-
-
-                card.appendChild(
-                    badge
-                );
-
-            }
-
-
-            characterGrid.appendChild(
-                card
-            );
+            characterGrid.appendChild(card);
 
         }
     );
@@ -1481,20 +1007,16 @@ characterGrid.addEventListener(
                 ".character-card"
             );
 
-
         if (!card) {
             return;
         }
 
-
         const character =
             card.dataset.character;
-
 
         if (!character) {
             return;
         }
-
 
         if (selectedCharacter) {
 
@@ -1503,35 +1025,25 @@ characterGrid.addEventListener(
             );
 
             return;
-
         }
-
 
         selectedCharacter =
             character;
-
 
         card.classList.add(
             "selected"
         );
 
-
         rankStatus.textContent =
-            `Selected: ${character} | Waiting for other players...`;
-
+            `⏳ Selected ${character}. Waiting for other players...`;
 
         socket.emit(
             "rankSelect",
             {
-
                 categoryIndex:
-
                     currentCategory,
 
-                character:
-
-                    character
-
+                character
             }
         );
 
@@ -1542,7 +1054,7 @@ characterGrid.addEventListener(
 /* =========================================================
    PRIVATE RANK SELECTION ACCEPTED
    IMPORTANT:
-   SERVER SENDS THIS ONLY TO THE PLAYER
+   DO NOT SHOW OTHER PLAYER'S SELECTION
 ========================================================= */
 
 socket.on(
@@ -1550,26 +1062,43 @@ socket.on(
     data => {
 
         if (
-            Number(
-                data.categoryIndex
-            ) !==
+            Number(data.categoryIndex) !==
             currentCategory
         ) {
-
             return;
-
         }
-
 
         selectedCharacter =
             data.character;
 
+        rankStatus.textContent =
+            `✅ You selected ${data.character}. Waiting for other players...`;
+
+        showMessage(
+            `✅ ${data.character} selected`
+        );
+
+    }
+);
+
+
+/* =========================================================
+   MY RANK STATUS
+========================================================= */
+
+socket.on(
+    "myRankStatus",
+    data => {
+
+        if (!data.selected) {
+            return;
+        }
+
+        selectedCharacter =
+            data.character;
 
         rankStatus.textContent =
-            `✅ Selected: ${data.character} | Waiting for other players...`;
-
-
-        renderRankCharacters();
+            `✅ You selected ${data.character} — waiting...`;
 
     }
 );
@@ -1577,8 +1106,6 @@ socket.on(
 
 /* =========================================================
    RANK WAITING
-   ONLY SHOW COUNT
-   NEVER SHOW OTHER PLAYER'S CHARACTER
 ========================================================= */
 
 socket.on(
@@ -1590,12 +1117,10 @@ socket.on(
                 data.selectedCount || 0
             );
 
-
         const total =
             Number(
                 data.totalPlayers || 0
             );
-
 
         if (selectedCharacter) {
 
@@ -1605,7 +1130,7 @@ socket.on(
         } else {
 
             rankStatus.textContent =
-                `${selected}/${total} players selected`;
+                `⏳ ${selected}/${total} players selected`;
 
         }
 
@@ -1629,35 +1154,6 @@ socket.on(
 
 
 /* =========================================================
-   MY RANK STATUS
-========================================================= */
-
-socket.on(
-    "myRankStatus",
-    data => {
-
-        if (
-            data &&
-            data.selected
-        ) {
-
-            selectedCharacter =
-                data.character;
-
-
-            rankStatus.textContent =
-                `✅ Selected: ${data.character} | Waiting...`;
-
-
-            renderRankCharacters();
-
-        }
-
-    }
-);
-
-
-/* =========================================================
    RANK FINISHED
 ========================================================= */
 
@@ -1665,191 +1161,113 @@ socket.on(
     "rankFinished",
     data => {
 
-        selectedCharacter =
-            null;
-
-
-        const categoryTitle =
+        const title =
             document.getElementById(
                 "categoryTitle"
             );
 
-
-        const categoryNumber =
+        const number =
             document.getElementById(
                 "categoryNumber"
             );
 
+        if (title) {
 
-        if (categoryTitle) {
-
-            categoryTitle.textContent =
-                "🏆 RANKING COMPLETE";
-
-        }
-
-
-        if (categoryNumber) {
-
-            categoryNumber.textContent =
-                "16 / 16 Categories";
+            title.textContent =
+                "🏆 CHARACTER RANK COMPLETE";
 
         }
 
+        if (number) {
+
+            number.textContent =
+                "16 / 16 Categories Completed";
+
+        }
 
         rankStatus.textContent =
-            "🎉 All categories completed!";
+            "🎉 All categories completed! AI is analyzing the results...";
 
+        showScreen(rankScreen);
 
-        /*
-         * The server may reveal all selections
-         * only AFTER the game is complete.
-         */
+        if (data && data.results) {
 
-        if (
-            data &&
-            Array.isArray(
-                data.results
-            )
-        ) {
-
-            renderRankFinalSelections(
+            renderBasicRankResults(
                 data.results
             );
 
         }
-
-
-        showScreen(
-            rankScreen
-        );
 
     }
 );
 
 
 /* =========================================================
-   RANK FINAL SELECTIONS
+   BASIC RANK RESULTS
 ========================================================= */
 
-function renderRankFinalSelections(
-    results
-) {
+function renderBasicRankResults(results) {
 
-    if (!characterGrid) {
+    if (!Array.isArray(results)) {
         return;
     }
 
+    let box =
+        document.getElementById(
+            "basicRankResults"
+        );
 
-    characterGrid.innerHTML =
-        "";
+    if (!box) {
 
+        box =
+            document.createElement("div");
 
-    if (
-        !Array.isArray(
-            results
-        ) ||
-        results.length === 0
-    ) {
+        box.id =
+            "basicRankResults";
 
-        const box =
-            document.createElement(
-                "div"
-            );
+        box.style.marginTop =
+            "25px";
 
-        box.className =
-            "panel";
-
-        box.style.gridColumn =
-            "1 / -1";
-
-        box.innerHTML = `
-            <h2>🎉 Rank Game Complete</h2>
-            <p style="text-align:center;color:#aaa;">
-                All 16 categories have been completed.
-            </p>
-        `;
-
-        characterGrid.appendChild(
+        characterGrid.parentNode.appendChild(
             box
         );
 
-        return;
-
     }
 
+    box.innerHTML = `
+        <div class="panel">
 
-    results.forEach(
-        category => {
+            <h2>🏆 Rank Results</h2>
 
-            const box =
-                document.createElement(
-                    "div"
-                );
+            <p style="color:#aaa;text-align:center;">
+                All player selections are now revealed.
+            </p>
 
+            ${results.map(item => `
 
-            box.className =
-                "panel";
+                <div
+                    style="
+                        margin-top:12px;
+                        padding:12px;
+                        background:#171717;
+                        border:1px solid #333;
+                        border-radius:10px;
+                    "
+                >
 
-            box.style.gridColumn =
-                "1 / -1";
+                    <strong>
+                        ${escapeHtml(
+                            item.playerName ||
+                            "Player"
+                        )}
+                    </strong>
 
-            const title =
-                document.createElement(
-                    "h2"
-                );
+                </div>
 
+            `).join("")}
 
-            title.textContent =
-                category.categoryName ||
-                "Category";
-
-
-            box.appendChild(
-                title
-            );
-
-
-            const selections =
-                category.selections ||
-                category.players ||
-                [];
-
-
-            selections.forEach(
-                selection => {
-
-                    const row =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    row.style.padding =
-                        "8px";
-
-                    row.style.borderBottom =
-                        "1px solid #333";
-
-
-                    row.textContent =
-                        `${selection.playerName || "Player"} → ${selection.character || "Unknown"}`;
-
-
-                    box.appendChild(
-                        row
-                    );
-
-                }
-            );
-
-
-            characterGrid.appendChild(
-                box
-            );
-
-        }
-    );
+        </div>
+    `;
 
 }
 
@@ -1862,49 +1280,31 @@ socket.on(
     "auctionStarted",
     data => {
 
-        showScreen(
-            auctionScreen
-        );
+        showScreen(auctionScreen);
 
+        roomSettings.teamSize =
+            Number(
+                data.teamSize ||
+                TEAM_SIZE
+            );
 
-        roomSettings =
-            {
+        roomSettings.startingBalance =
+            Number(
+                data.startingBalance ||
+                STARTING_BALANCE
+            );
 
-                teamSize:
-                    Number(
-                        data?.teamSize ??
-                        TEAM_SIZE
-                    ),
+        roomSettings.bidAmount =
+            BID_INCREMENT;
 
-                startingBalance:
-                    Number(
-                        data?.startingBalance ??
-                        STARTING_BALANCE
-                    ),
-
-                bidAmount:
-                    BID_INCREMENT,
-
-                bidTime:
-                    AUCTION_TIME
-
-            };
-
+        roomSettings.bidTime =
+            AUCTION_TIME;
 
         bidButton.textContent =
             "💰 BID ₹50";
 
-
-        giveUpButton.disabled =
-            false;
-
-
-        auctionTimer.textContent =
-            AUCTION_TIME;
-
-
         showMessage(
-            "🔥 Auction started! ₹50 increments, 15 seconds per character."
+            "🔥 Auction started! ₹50 increments — 15 seconds."
         );
 
     }
@@ -1919,69 +1319,56 @@ socket.on(
     "auctionNewCharacter",
     data => {
 
-        showScreen(
-            auctionScreen
-        );
-
+        showScreen(auctionScreen);
 
         const character =
             data.character;
 
-
-        currentAuction =
-            data;
-
-
         auctionCharacter.textContent =
             character;
 
-
-        document
-            .getElementById(
+        const number =
+            document.getElementById(
                 "auctionCharacterNumber"
-            )
-            .textContent =
+            );
+
+        if (number) {
+
+            number.textContent =
                 `Character ${
-                    data.characterNumber ||
-                    1
+                    data.characterNumber || 1
                 } / ${
                     data.totalCharacters ||
                     SERVER_CHARACTERS.length
                 }`;
 
+        }
 
         auctionBid.textContent =
             "₹0";
 
-
         auctionHighest.textContent =
             "Nobody";
-
 
         auctionNextBid.textContent =
             "Next Bid: ₹50";
 
-
         auctionTimer.textContent =
             AUCTION_TIME;
-
 
         auctionTimer.classList.remove(
             "warning"
         );
 
+        updateAuctionCharacter(
+            character
+        );
 
         bidButton.disabled =
             false;
 
-
         giveUpButton.disabled =
             false;
-
-
-        updateAuctionCharacter(
-            character
-        );
 
     }
 );
@@ -2021,29 +1408,20 @@ function updateAuctionCharacter(
     auctionCharacter.textContent =
         character;
 
-
     const image =
-        getCharacterImage(
-            character
-        );
-
+        getCharacterImage(character);
 
     const parent =
         auctionImage.parentNode;
-
 
     const oldFallback =
         parent.querySelector(
             ".auction-image-fallback"
         );
 
-
     if (oldFallback) {
-
         oldFallback.remove();
-
     }
-
 
     if (image) {
 
@@ -2065,20 +1443,16 @@ function updateAuctionCharacter(
         auctionImage.style.display =
             "none";
 
-
         const fallback =
             document.createElement(
                 "div"
             );
 
-
         fallback.className =
             "auction-image-fallback";
 
-
         fallback.textContent =
             "Image unavailable";
-
 
         parent.insertBefore(
             fallback,
@@ -2091,7 +1465,7 @@ function updateAuctionCharacter(
 
 
 /* =========================================================
-   AUCTION UPDATED
+   AUCTION UPDATE
 ========================================================= */
 
 socket.on(
@@ -2101,10 +1475,7 @@ socket.on(
         currentAuction =
             data;
 
-
-        if (
-            data.character
-        ) {
+        if (data.character) {
 
             updateAuctionCharacter(
                 data.character
@@ -2112,48 +1483,33 @@ socket.on(
 
         }
 
-
-        const currentBid =
+        const current =
             Number(
                 data.currentBid || 0
             );
 
-
-        const nextBid =
-            currentBid +
-            BID_INCREMENT;
-
+        const next =
+            current + BID_INCREMENT;
 
         auctionBid.textContent =
-            `₹${currentBid.toLocaleString(
-                "en-IN"
-            )}`;
-
+            `₹${current.toLocaleString("en-IN")}`;
 
         auctionHighest.textContent =
             data.highestBidderName ||
             "Nobody";
 
-
         auctionNextBid.textContent =
-            `Next Bid: ₹${nextBid.toLocaleString(
-                "en-IN"
-            )}`;
-
+            `Next Bid: ₹${next.toLocaleString("en-IN")}`;
 
         const seconds =
             Number(
-                data.remainingTime ?? 0
+                data.remainingTime ?? AUCTION_TIME
             );
-
 
         auctionTimer.textContent =
             seconds;
 
-
-        updateTimerStyle(
-            seconds
-        );
+        updateTimerStyle(seconds);
 
     }
 );
@@ -2169,13 +1525,11 @@ socket.on(
 
         const seconds =
             Number(
-                data.seconds ?? 0
+                data.seconds || 0
             );
-
 
         auctionTimer.textContent =
             seconds;
-
 
         updateTimerStyle(
             seconds
@@ -2189,9 +1543,7 @@ socket.on(
    TIMER STYLE
 ========================================================= */
 
-function updateTimerStyle(
-    seconds
-) {
+function updateTimerStyle(seconds) {
 
     if (
         seconds <= 5 &&
@@ -2223,55 +1575,36 @@ socket.on(
 
         const balance =
             Number(
-                data.balance ?? 0
+                data.balance || 0
             );
-
 
         const spent =
             Number(
-                data.spent ?? 0
+                data.spent || 0
             );
 
-
-        const currentBid =
+        const current =
             Number(
-                data.currentBid ?? 0
+                data.currentBid || 0
             );
-
 
         const nextBid =
-            currentBid +
-            BID_INCREMENT;
-
+            current + BID_INCREMENT;
 
         auctionBalance.textContent =
-            `₹${balance.toLocaleString(
-                "en-IN"
-            )}`;
-
+            `₹${balance.toLocaleString("en-IN")}`;
 
         auctionMoney.textContent =
-            `Balance: ₹${balance.toLocaleString(
-                "en-IN"
-            )} | Spent: ₹${spent.toLocaleString(
-                "en-IN"
-            )}`;
-
+            `Balance: ₹${balance.toLocaleString("en-IN")} | Spent: ₹${spent.toLocaleString("en-IN")}`;
 
         auctionNextBid.textContent =
-            `Next Bid: ₹${nextBid.toLocaleString(
-                "en-IN"
-            )}`;
-
+            `Next Bid: ₹${nextBid.toLocaleString("en-IN")}`;
 
         bidButton.disabled =
             !data.canBid;
 
-
         giveUpButton.disabled =
-            Boolean(
-                data.gaveUp
-            );
+            !!data.gaveUp;
 
     }
 );
@@ -2285,18 +1618,11 @@ bidButton.addEventListener(
     "click",
     () => {
 
-        if (
-            bidButton.disabled
-        ) {
-
+        if (bidButton.disabled) {
             return;
-
         }
 
-
-        socket.emit(
-            "bid"
-        );
+        socket.emit("bid");
 
     }
 );
@@ -2310,18 +1636,11 @@ giveUpButton.addEventListener(
     "click",
     () => {
 
-        if (
-            giveUpButton.disabled
-        ) {
-
+        if (giveUpButton.disabled) {
             return;
-
         }
 
-
-        socket.emit(
-            "giveUp"
-        );
+        socket.emit("giveUp");
 
     }
 );
@@ -2340,11 +1659,8 @@ socket.on(
                 data.bid || 0
             );
 
-
         showMessage(
-            `💰 ${data.playerName} bid ₹${amount.toLocaleString(
-                "en-IN"
-            )}`
+            `💰 ${data.playerName} bid ₹${amount.toLocaleString("en-IN")}`
         );
 
     }
@@ -2387,29 +1703,17 @@ socket.on(
                 data.price || 0
             );
 
-
         showMessage(
-            `🔥 ${data.character} sold to ${data.winnerName} for ₹${price.toLocaleString(
-                "en-IN"
-            )}`
+            `🔥 ${data.character} sold to ${data.winnerName} for ₹${price.toLocaleString("en-IN")}`
         );
-
 
         if (
             data.winnerId ===
             myPlayerId
         ) {
 
-            currentTeam =
-                Array.isArray(
-                    data.team
-                )
-                    ? data.team
-                    : currentTeam;
-
-
             updateTeam(
-                currentTeam
+                data.team
             );
 
         }
@@ -2427,7 +1731,7 @@ socket.on(
     data => {
 
         showMessage(
-            `❌ ${data.character} was unsold`
+            `❌ ${data.character} was UNSOLD`
         );
 
     }
@@ -2443,15 +1747,10 @@ socket.on(
     data => {
 
         showMessage(
-            "🏆 AUCTION FINISHED!"
+            "🏆 AUCTION FINISHED! AI is analyzing all teams..."
         );
 
-
-        if (
-            Array.isArray(
-                data.teams
-            )
-        ) {
+        if (data.teams) {
 
             const myResult =
                 data.teams.find(
@@ -2460,85 +1759,159 @@ socket.on(
                         myPlayerId
                 );
 
-
             if (myResult) {
 
-                currentTeam =
-                    Array.isArray(
-                        myResult.team
-                    )
-                        ? myResult.team
-                        : [];
-
-
                 updateTeam(
-                    currentTeam
+                    myResult.team
                 );
 
             }
 
         }
 
-
-        /*
-         * Keep the auction screen visible
-         * while the server generates AI results.
-         */
-
-        showScreen(
-            auctionScreen
+        renderAuctionFinalTeams(
+            data.teams || []
         );
 
-
-        if (
-            Array.isArray(
-                data.teams
-            )
-        ) {
-
-            renderAuctionFinalTeams(
-                data.teams
-            );
-
-        }
+        showScreen(roomScreen);
 
     }
 );
 
 
 /* =========================================================
-   UPDATE MY TEAM
+   RENDER FINAL AUCTION TEAMS
 ========================================================= */
 
-function updateTeam(
-    team
-) {
+function renderAuctionFinalTeams(teams) {
 
-    if (
-        !Array.isArray(
-            team
-        )
-    ) {
-
+    if (!Array.isArray(teams)) {
         return;
+    }
+
+    let box =
+        document.getElementById(
+            "finalAuctionTeams"
+        );
+
+    if (!box) {
+
+        box =
+            document.createElement("div");
+
+        box.id =
+            "finalAuctionTeams";
+
+        box.className =
+            "panel";
+
+        box.style.maxWidth =
+            "1100px";
+
+        box.style.margin =
+            "20px auto";
+
+        roomScreen.appendChild(box);
 
     }
 
+    box.innerHTML = `
+        <h2 style="text-align:center;">
+            🏆 FINAL AUCTION TEAMS
+        </h2>
 
-    currentTeam =
-        team;
+        <div class="players">
+
+            ${teams.map(team => `
+
+                <div class="player-card">
+
+                    <div class="player-name">
+
+                        ${escapeHtml(
+                            team.playerName ||
+                            "Player"
+                        )}
+
+                    </div>
+
+                    <div class="player-team">
+
+                        Team:
+                        ${
+                            Array.isArray(team.team)
+                                ? team.team.length
+                                : 0
+                        }/${TEAM_SIZE}
+
+                    </div>
+
+                    <div
+                        class="team-list"
+                        style="margin-top:10px;"
+                    >
+
+                        ${
+                            Array.isArray(team.team)
+                                ? team.team.map(character => `
+
+                                    <div
+                                        class="team-character"
+                                    >
+
+                                        <img
+                                            src="${getCharacterImage(character)}"
+                                            alt="${escapeHtml(character)}"
+                                            style="
+                                                width:100%;
+                                                height:100px;
+                                                object-fit:cover;
+                                                border-radius:7px;
+                                            "
+                                            onerror="
+                                                this.style.display='none';
+                                            "
+                                        >
+
+                                        <div
+                                            class="team-character-name"
+                                        >
+                                            ${escapeHtml(character)}
+                                        </div>
+
+                                    </div>
+
+                                `).join("")
+                                : ""
+                        }
+
+                    </div>
+
+                </div>
+
+            `).join("")}
+
+        </div>
+    `;
+
+}
 
 
-    myTeam.innerHTML =
-        "";
+/* =========================================================
+   UPDATE MY TEAM
+========================================================= */
 
+function updateTeam(team) {
 
-    if (
-        team.length === 0
-    ) {
+    if (!Array.isArray(team)) {
+        return;
+    }
+
+    myTeam.innerHTML = "";
+
+    if (team.length === 0) {
 
         myTeam.innerHTML = `
-
             <div
                 style="
                     width:100%;
@@ -2548,244 +1921,700 @@ function updateTeam(
             >
                 No characters purchased yet.
             </div>
-
         `;
 
         return;
-
     }
 
+    team.forEach(character => {
 
-    team.forEach(
-        character => {
+        const item =
+            document.createElement("div");
 
-            const item =
-                document.createElement(
-                    "div"
-                );
+        item.className =
+            "team-character";
 
+        item.appendChild(
+            createImage(character)
+        );
 
-            item.className =
-                "team-character";
+        const name =
+            document.createElement("div");
 
+        name.className =
+            "team-character-name";
 
-            const image =
-                createImage(
-                    character
-                );
+        name.textContent =
+            character;
 
+        item.appendChild(name);
 
-            item.appendChild(
-                image
-            );
+        myTeam.appendChild(item);
 
-
-            const name =
-                document.createElement(
-                    "div"
-                );
-
-
-            name.className =
-                "team-character-name";
-
-
-            name.textContent =
-                character;
-
-
-            item.appendChild(
-                name
-            );
-
-
-            myTeam.appendChild(
-                item
-            );
-
-        }
-    );
+    });
 
 }
 
 
 /* =========================================================
-   FINAL AUCTION TEAMS
+   AI FINAL RESULTS LOADING
 ========================================================= */
 
-function renderAuctionFinalTeams(
-    teams
-) {
+socket.on(
+    "finalResultsLoading",
+    data => {
 
-    if (
-        !Array.isArray(
-            teams
-        )
-    ) {
-
-        return;
+        showAIResultsLoading(
+            data?.message ||
+            "AI is analyzing the complete game..."
+        );
 
     }
+);
 
 
-    const existing =
+/* =========================================================
+   AI FINAL RESULTS
+========================================================= */
+
+socket.on(
+    "finalAIResults",
+    data => {
+
+        if (!data) {
+            return;
+        }
+
+        renderFinalAIResults(
+            data.results,
+            data.gameMode
+        );
+
+    }
+);
+
+
+/* =========================================================
+   CREATE AI RESULTS SCREEN
+========================================================= */
+
+function getAIResultsContainer() {
+
+    let container =
         document.getElementById(
-            "auctionFinalTeams"
+            "aiFinalResults"
         );
 
-
-    if (existing) {
-
-        existing.remove();
-
+    if (container) {
+        return container;
     }
 
-
-    const container =
-        document.createElement(
-            "div"
-        );
-
+    container =
+        document.createElement("div");
 
     container.id =
-        "auctionFinalTeams";
+        "aiFinalResults";
 
+    container.style.maxWidth =
+        "1100px";
 
-    container.className =
-        "panel";
+    container.style.margin =
+        "20px auto";
 
+    container.style.padding =
+        "15px";
 
-    container.style.marginTop =
-        "20px";
-
-
-    container.innerHTML =
-        `<h2>🏆 FINAL TEAMS</h2>`;
-
-
-    teams.forEach(
-        teamData => {
-
-            const teamBox =
-                document.createElement(
-                    "div"
-                );
-
-
-            teamBox.style.marginTop =
-                "20px";
-
-            teamBox.style.padding =
-                "15px";
-
-            teamBox.style.border =
-                "1px solid #333";
-
-            teamBox.style.borderRadius =
-                "12px";
-
-
-            const name =
-                document.createElement(
-                    "h3"
-                );
-
-
-            name.textContent =
-                teamData.playerName ||
-                "Player";
-
-
-            name.style.color =
-                "#ff9800";
-
-
-            teamBox.appendChild(
-                name
-            );
-
-
-            const roster =
-                Array.isArray(
-                    teamData.team
-                )
-                    ? teamData.team
-                    : [];
-
-
-            const list =
-                document.createElement(
-                    "div"
-                );
-
-
-            list.className =
-                "team-list";
-
-
-            roster.forEach(
-                character => {
-
-                    const item =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    item.className =
-                        "team-character";
-
-
-                    item.appendChild(
-                        createImage(
-                            character
-                        )
-                    );
-
-
-                    const label =
-                        document.createElement(
-                            "div"
-                        );
-
-
-                    label.className =
-                        "team-character-name";
-
-
-                    label.textContent =
-                        character;
-
-
-                    item.appendChild(
-                        label
-                    );
-
-
-                    list.appendChild(
-                        item
-                    );
-
-                }
-            );
-
-
-            teamBox.appendChild(
-                list
-            );
-
-
-            container.appendChild(
-                teamBox
-            );
-
-        }
-    );
-
-
-    auctionScreen.appendChild(
+    document.body.appendChild(
         container
     );
+
+    return container;
+}
+
+
+/* =========================================================
+   AI LOADING
+========================================================= */
+
+function showAIResultsLoading(messageText) {
+
+    const container =
+        getAIResultsContainer();
+
+    container.innerHTML = `
+
+        <div
+            class="panel"
+            style="
+                text-align:center;
+                padding:35px 20px;
+            "
+        >
+
+            <div
+                style="
+                    font-size:50px;
+                    margin-bottom:15px;
+                "
+            >
+                🤖
+            </div>
+
+            <h2>
+                AI ANALYZING RESULTS
+            </h2>
+
+            <p
+                style="
+                    margin-top:12px;
+                    color:#aaa;
+                "
+            >
+                ${escapeHtml(messageText)}
+            </p>
+
+            <p
+                style="
+                    margin-top:12px;
+                    color:#ff9800;
+                    font-weight:bold;
+                "
+            >
+                Please wait...
+            </p>
+
+        </div>
+
+    `;
+
+    container.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+/* =========================================================
+   AI FINAL RESULTS RENDER
+========================================================= */
+
+function renderFinalAIResults(
+    results,
+    gameMode
+) {
+
+    const container =
+        getAIResultsContainer();
+
+    if (!results) {
+
+        container.innerHTML = `
+
+            <div class="panel">
+
+                <h2>
+                    🤖 AI RESULTS
+                </h2>
+
+                <p>
+                    AI result data was not available.
+                </p>
+
+            </div>
+
+        `;
+
+        return;
+    }
+
+    const winner =
+        results.winner || {};
+
+    const rankings =
+        Array.isArray(results.rankings)
+            ? results.rankings
+            : [];
+
+    const bestCharacter =
+        results.bestCharacter || {};
+
+    const bestTeam =
+        results.bestTeam || {};
+
+    container.innerHTML = `
+
+        <div class="panel">
+
+            <div
+                style="
+                    text-align:center;
+                    padding:10px;
+                "
+            >
+
+                <div
+                    style="
+                        font-size:50px;
+                    "
+                >
+                    🏆
+                </div>
+
+                <h1
+                    style="
+                        color:#ff9800;
+                        margin-top:10px;
+                    "
+                >
+                    AI FINAL RESULTS
+                </h1>
+
+                <p
+                    style="
+                        color:#999;
+                        margin-top:8px;
+                    "
+                >
+                    ${
+                        gameMode === "auction"
+                            ? "Character Auction Analysis"
+                            : "Character Rank Analysis"
+                    }
+                </p>
+
+            </div>
+
+
+            <div
+                style="
+                    margin-top:25px;
+                    padding:20px;
+                    background:#111;
+                    border:2px solid #ff9800;
+                    border-radius:15px;
+                    text-align:center;
+                "
+            >
+
+                <div
+                    style="
+                        color:#aaa;
+                        font-size:13px;
+                    "
+                >
+                    🥇 BEST PLAYER / TEAM
+                </div>
+
+                <div
+                    style="
+                        margin-top:8px;
+                        font-size:28px;
+                        font-weight:bold;
+                        color:#ff9800;
+                    "
+                >
+                    ${escapeHtml(
+                        winner.playerName ||
+                        bestTeam.playerName ||
+                        "Unknown"
+                    )}
+                </div>
+
+                ${
+                    winner.score !== undefined
+                        ? `
+                            <div
+                                style="
+                                    margin-top:8px;
+                                    font-size:20px;
+                                "
+                            >
+                                Score:
+                                ${escapeHtml(
+                                    winner.score
+                                )}
+                            </div>
+                        `
+                        : ""
+                }
+
+                <p
+                    style="
+                        margin-top:12px;
+                        color:#ccc;
+                        line-height:1.6;
+                    "
+                >
+                    ${escapeHtml(
+                        winner.reason ||
+                        bestTeam.reason ||
+                        ""
+                    )}
+                </p>
+
+            </div>
+
+
+            <div
+                style="
+                    display:grid;
+                    grid-template-columns:
+                        repeat(
+                            auto-fit,
+                            minmax(220px,1fr)
+                        );
+                    gap:15px;
+                    margin-top:20px;
+                "
+            >
+
+                <div
+                    style="
+                        background:#171717;
+                        border:1px solid #333;
+                        border-radius:12px;
+                        padding:18px;
+                    "
+                >
+
+                    <h3>
+                        ⭐ Best Character
+                    </h3>
+
+                    <p
+                        style="
+                            color:#ff9800;
+                            font-size:20px;
+                            font-weight:bold;
+                            margin-top:8px;
+                        "
+                    >
+                        ${escapeHtml(
+                            bestCharacter.character ||
+                            "Unknown"
+                        )}
+                    </p>
+
+                    <p
+                        style="
+                            color:#aaa;
+                            margin-top:7px;
+                        "
+                    >
+                        Owner:
+                        ${escapeHtml(
+                            bestCharacter.owner ||
+                            "Unknown"
+                        )}
+                    </p>
+
+                    <p
+                        style="
+                            margin-top:10px;
+                            line-height:1.5;
+                        "
+                    >
+                        ${escapeHtml(
+                            bestCharacter.reason ||
+                            ""
+                        )}
+                    </p>
+
+                </div>
+
+
+                <div
+                    style="
+                        background:#171717;
+                        border:1px solid #333;
+                        border-radius:12px;
+                        padding:18px;
+                    "
+                >
+
+                    <h3>
+                        🏆 Best Team
+                    </h3>
+
+                    <p
+                        style="
+                            color:#ff9800;
+                            font-size:20px;
+                            font-weight:bold;
+                            margin-top:8px;
+                        "
+                    >
+                        ${escapeHtml(
+                            bestTeam.playerName ||
+                            winner.playerName ||
+                            "Unknown"
+                        )}
+                    </p>
+
+                    <p
+                        style="
+                            margin-top:10px;
+                            line-height:1.5;
+                        "
+                    >
+                        ${escapeHtml(
+                            bestTeam.reason ||
+                            ""
+                        )}
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div style="margin-top:25px;">
+
+                <h2>
+                    📊 PLAYER RANKINGS
+                </h2>
+
+                ${
+                    rankings.length
+                        ? rankings.map(rank => `
+
+                            <div
+                                style="
+                                    margin-top:12px;
+                                    padding:17px;
+                                    background:#171717;
+                                    border:1px solid #333;
+                                    border-radius:12px;
+                                "
+                            >
+
+                                <div
+                                    style="
+                                        display:flex;
+                                        justify-content:space-between;
+                                        gap:10px;
+                                        flex-wrap:wrap;
+                                    "
+                                >
+
+                                    <strong
+                                        style="
+                                            color:#ff9800;
+                                            font-size:18px;
+                                        "
+                                    >
+                                        #${escapeHtml(
+                                            rank.position ??
+                                            ""
+                                        )}
+                                        ${escapeHtml(
+                                            rank.playerName ||
+                                            "Player"
+                                        )}
+                                    </strong>
+
+                                    <strong>
+                                        Score:
+                                        ${escapeHtml(
+                                            rank.score ??
+                                            ""
+                                        )}
+                                    </strong>
+
+                                </div>
+
+
+                                <p
+                                    style="
+                                        margin-top:10px;
+                                        line-height:1.5;
+                                    "
+                                >
+                                    ${escapeHtml(
+                                        rank.reason ||
+                                        ""
+                                    )}
+                                </p>
+
+
+                                ${
+                                    Array.isArray(
+                                        rank.strengths
+                                    ) &&
+                                    rank.strengths.length
+                                        ? `
+                                            <div
+                                                style="
+                                                    margin-top:10px;
+                                                    color:#7cff9b;
+                                                "
+                                            >
+                                                <strong>
+                                                    Strengths:
+                                                </strong>
+
+                                                ${rank.strengths
+                                                    .map(
+                                                        item =>
+                                                            escapeHtml(item)
+                                                    )
+                                                    .join(", ")
+                                                }
+                                            </div>
+                                        `
+                                        : ""
+                                }
+
+
+                                ${
+                                    Array.isArray(
+                                        rank.weaknesses
+                                    ) &&
+                                    rank.weaknesses.length
+                                        ? `
+                                            <div
+                                                style="
+                                                    margin-top:7px;
+                                                    color:#ff8585;
+                                                "
+                                            >
+                                                <strong>
+                                                    Weaknesses:
+                                                </strong>
+
+                                                ${rank.weaknesses
+                                                    .map(
+                                                        item =>
+                                                            escapeHtml(item)
+                                                    )
+                                                    .join(", ")
+                                                }
+                                            </div>
+                                        `
+                                        : ""
+                                }
+
+                            </div>
+
+                        `).join("")
+                        : `
+                            <p
+                                style="
+                                    margin-top:12px;
+                                    color:#888;
+                                "
+                            >
+                                No ranking details available.
+                            </p>
+                        `
+                }
+
+            </div>
+
+
+            <div
+                style="
+                    margin-top:25px;
+                    padding:20px;
+                    background:#171717;
+                    border:1px solid #333;
+                    border-radius:12px;
+                "
+            >
+
+                <h2>
+                    🧠 AI ANALYSIS
+                </h2>
+
+                <p
+                    style="
+                        margin-top:12px;
+                        color:#ccc;
+                        line-height:1.7;
+                        white-space:pre-line;
+                    "
+                >
+                    ${escapeHtml(
+                        results.analysis ||
+                        "No analysis available."
+                    )}
+                </p>
+
+            </div>
+
+
+            <div
+                style="
+                    margin-top:20px;
+                    padding:20px;
+                    background:#171717;
+                    border:1px solid #333;
+                    border-radius:12px;
+                "
+            >
+
+                <h2>
+                    ⚔️ BATTLE PREDICTION
+                </h2>
+
+                <p
+                    style="
+                        margin-top:12px;
+                        color:#ccc;
+                        line-height:1.7;
+                        white-space:pre-line;
+                    "
+                >
+                    ${escapeHtml(
+                        results.battlePrediction ||
+                        "No battle prediction available."
+                    )}
+                </p>
+
+            </div>
+
+
+            <button
+                id="backToRoomButton"
+                class="main-button"
+                style="
+                    margin-top:25px;
+                "
+            >
+                🔄 BACK TO GAME ROOM
+            </button>
+
+        </div>
+
+    `;
+
+    const backButton =
+        document.getElementById(
+            "backToRoomButton"
+        );
+
+    if (backButton) {
+
+        backButton.addEventListener(
+            "click",
+            () => {
+
+                container.remove();
+
+                showScreen(
+                    roomScreen
+                );
+
+            }
+        );
+
+    }
+
+    container.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
 
 }
 
@@ -2807,7 +2636,6 @@ socket.on(
                 "hidden"
             );
 
-
             showMessage(
                 "👑 You are now the host."
             );
@@ -2825,880 +2653,7 @@ socket.on(
 
 
 /* =========================================================
-   FINAL AI RESULTS LOADING
-========================================================= */
-
-socket.on(
-    "finalResultsLoading",
-    data => {
-
-        renderAILoading(
-            data?.message ||
-            "AI is analyzing all teams..."
-        );
-
-    }
-);
-
-
-/* =========================================================
-   FINAL AI RESULTS
-========================================================= */
-
-socket.on(
-    "finalAIResults",
-    data => {
-
-        if (
-            data &&
-            data.results
-        ) {
-
-            renderFinalAIResults(
-                data.results,
-                data.gameMode
-            );
-
-        }
-
-    }
-);
-
-
-/* =========================================================
-   CREATE / GET AI RESULTS CONTAINER
-========================================================= */
-
-function getAIResultsContainer() {
-
-    let container =
-        document.getElementById(
-            "aiFinalResults"
-        );
-
-
-    if (container) {
-
-        return container;
-
-    }
-
-
-    container =
-        document.createElement(
-            "div"
-        );
-
-
-    container.id =
-        "aiFinalResults";
-
-
-    container.className =
-        "panel";
-
-
-    container.style.marginTop =
-        "20px";
-
-
-    /*
-     * Add it to whichever game screen
-     * is currently active.
-     */
-
-    if (
-        currentGameMode ===
-        "auction"
-    ) {
-
-        auctionScreen.appendChild(
-            container
-        );
-
-    } else {
-
-        rankScreen.appendChild(
-            container
-        );
-
-    }
-
-
-    return container;
-
-}
-
-
-/* =========================================================
-   AI LOADING SCREEN
-========================================================= */
-
-function renderAILoading(
-    text
-) {
-
-    const container =
-        getAIResultsContainer();
-
-
-    container.innerHTML = `
-
-        <div style="
-            text-align:center;
-            padding:30px 15px;
-        ">
-
-            <div style="
-                font-size:45px;
-                margin-bottom:15px;
-            ">
-                🤖
-            </div>
-
-            <h2 style="
-                color:#ff9800;
-                margin-bottom:10px;
-            ">
-                AI FINAL ANALYSIS
-            </h2>
-
-            <p style="
-                color:#aaa;
-                font-size:16px;
-            ">
-                ${escapeHtml(text)}
-            </p>
-
-            <div style="
-                margin-top:20px;
-                font-size:30px;
-            ">
-                ⏳
-            </div>
-
-        </div>
-
-    `;
-
-
-    container.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-
-}
-
-
-/* =========================================================
-   FINAL AI RESULTS
-========================================================= */
-
-function renderFinalAIResults(
-    results,
-    gameMode
-) {
-
-    const container =
-        getAIResultsContainer();
-
-
-    if (!results) {
-
-        container.innerHTML = `
-
-            <h2 style="color:#ff9800;">
-                🤖 AI RESULTS
-            </h2>
-
-            <p style="color:#aaa;">
-                AI result unavailable.
-            </p>
-
-        `;
-
-        return;
-
-    }
-
-
-    const winner =
-        results.winner ||
-        {};
-
-
-    const bestCharacter =
-        results.bestCharacter ||
-        {};
-
-
-    const bestTeam =
-        results.bestTeam ||
-        {};
-
-
-    const rankings =
-        Array.isArray(
-            results.rankings
-        )
-            ? results.rankings
-            : [];
-
-
-    const strengths =
-        Array.isArray(
-            winner.strengths
-        )
-            ? winner.strengths
-            : [];
-
-
-    const weaknesses =
-        Array.isArray(
-            winner.weaknesses
-        )
-            ? winner.weaknesses
-            : [];
-
-
-    container.innerHTML =
-        "";
-
-
-    const heading =
-        document.createElement(
-            "h2"
-        );
-
-
-    heading.textContent =
-        "🤖 AI FINAL ANALYSIS";
-
-
-    heading.style.color =
-        "#ff9800";
-
-
-    heading.style.textAlign =
-        "center";
-
-
-    heading.style.marginBottom =
-        "20px";
-
-
-    container.appendChild(
-        heading
-    );
-
-
-    /* =====================================================
-       WINNER
-    ===================================================== */
-
-    const winnerBox =
-        document.createElement(
-            "div"
-        );
-
-
-    winnerBox.style.padding =
-        "20px";
-
-    winnerBox.style.border =
-        "2px solid #ff9800";
-
-    winnerBox.style.borderRadius =
-        "15px";
-
-    winnerBox.style.marginBottom =
-        "20px";
-
-    winnerBox.style.textAlign =
-        "center";
-
-
-    winnerBox.innerHTML = `
-
-        <div style="
-            font-size:45px;
-        ">
-            🏆
-        </div>
-
-        <h2 style="
-            color:#ff9800;
-            margin:10px 0;
-        ">
-            ${escapeHtml(
-                winner.playerName ||
-                "Unknown"
-            )}
-        </h2>
-
-        <div style="
-            font-size:22px;
-            font-weight:bold;
-        ">
-            AI Score:
-            ${Number(
-                winner.score || 0
-            )}
-        </div>
-
-        <p style="
-            color:#ccc;
-            margin-top:12px;
-            line-height:1.6;
-        ">
-            ${escapeHtml(
-                winner.reason ||
-                "Best overall team."
-            )}
-        </p>
-
-    `;
-
-
-    container.appendChild(
-        winnerBox
-    );
-
-
-    /* =====================================================
-       BEST CHARACTER
-    ===================================================== */
-
-    const bestCharacterBox =
-        document.createElement(
-            "div"
-        );
-
-
-    bestCharacterBox.style.padding =
-        "15px";
-
-    bestCharacterBox.style.background =
-        "#171717";
-
-    bestCharacterBox.style.border =
-        "1px solid #333";
-
-    bestCharacterBox.style.borderRadius =
-        "12px";
-
-    bestCharacterBox.style.marginBottom =
-        "15px";
-
-
-    bestCharacterBox.innerHTML = `
-
-        <h3 style="
-            color:#ff9800;
-            margin-bottom:8px;
-        ">
-            ⭐ BEST CHARACTER
-        </h3>
-
-        <p>
-            <strong>
-                ${escapeHtml(
-                    bestCharacter.character ||
-                    "Unknown"
-                )}
-            </strong>
-        </p>
-
-        <p style="
-            color:#aaa;
-            margin-top:6px;
-        ">
-            Owner:
-            ${escapeHtml(
-                bestCharacter.owner ||
-                "Unknown"
-            )}
-        </p>
-
-        <p style="
-            color:#ccc;
-            margin-top:8px;
-            line-height:1.5;
-        ">
-            ${escapeHtml(
-                bestCharacter.reason ||
-                ""
-            )}
-        </p>
-
-    `;
-
-
-    container.appendChild(
-        bestCharacterBox
-    );
-
-
-    /* =====================================================
-       BEST TEAM
-    ===================================================== */
-
-    const bestTeamBox =
-        document.createElement(
-            "div"
-        );
-
-
-    bestTeamBox.style.padding =
-        "15px";
-
-    bestTeamBox.style.background =
-        "#171717";
-
-    bestTeamBox.style.border =
-        "1px solid #333";
-
-    bestTeamBox.style.borderRadius =
-        "12px";
-
-    bestTeamBox.style.marginBottom =
-        "20px";
-
-
-    bestTeamBox.innerHTML = `
-
-        <h3 style="
-            color:#ff9800;
-            margin-bottom:8px;
-        ">
-            👑 BEST TEAM
-        </h3>
-
-        <p>
-            <strong>
-                ${escapeHtml(
-                    bestTeam.playerName ||
-                    winner.playerName ||
-                    "Unknown"
-                )}
-            </strong>
-        </p>
-
-        <p style="
-            color:#ccc;
-            margin-top:8px;
-            line-height:1.5;
-        ">
-            ${escapeHtml(
-                bestTeam.reason ||
-                ""
-            )}
-        </p>
-
-    `;
-
-
-    container.appendChild(
-        bestTeamBox
-    );
-
-
-    /* =====================================================
-       RANKINGS
-    ===================================================== */
-
-    if (
-        rankings.length > 0
-    ) {
-
-        const rankingHeading =
-            document.createElement(
-                "h3"
-            );
-
-
-        rankingHeading.textContent =
-            "📊 TEAM RANKINGS";
-
-
-        rankingHeading.style.color =
-            "#ff9800";
-
-
-        rankingHeading.style.marginBottom =
-            "10px";
-
-
-        container.appendChild(
-            rankingHeading
-        );
-
-
-        rankings.forEach(
-            rank => {
-
-                const row =
-                    document.createElement(
-                        "div"
-                    );
-
-
-                row.style.padding =
-                    "15px";
-
-                row.style.marginBottom =
-                    "10px";
-
-                row.style.background =
-                    "#171717";
-
-                row.style.border =
-                    "1px solid #333";
-
-                row.style.borderRadius =
-                    "10px";
-
-
-                const strengthsText =
-                    Array.isArray(
-                        rank.strengths
-                    )
-                        ? rank.strengths.join(
-                            ", "
-                        )
-                        : "";
-
-
-                const weaknessesText =
-                    Array.isArray(
-                        rank.weaknesses
-                    )
-                        ? rank.weaknesses.join(
-                            ", "
-                        )
-                        : "";
-
-
-                row.innerHTML = `
-
-                    <div style="
-                        font-size:18px;
-                        font-weight:bold;
-                        color:#ff9800;
-                    ">
-                        #${Number(
-                            rank.position || 0
-                        )}
-                        —
-                        ${escapeHtml(
-                            rank.playerName ||
-                            "Player"
-                        )}
-                    </div>
-
-                    <div style="
-                        margin-top:6px;
-                    ">
-                        AI Score:
-                        <strong>
-                            ${Number(
-                                rank.score || 0
-                            )}
-                        </strong>
-                    </div>
-
-                    ${
-                        strengthsText
-                            ? `
-                                <div style="
-                                    margin-top:8px;
-                                    color:#9ccc9c;
-                                ">
-                                    💪 Strengths:
-                                    ${escapeHtml(
-                                        strengthsText
-                                    )}
-                                </div>
-                            `
-                            : ""
-                    }
-
-                    ${
-                        weaknessesText
-                            ? `
-                                <div style="
-                                    margin-top:6px;
-                                    color:#ff9999;
-                                ">
-                                    ⚠️ Weaknesses:
-                                    ${escapeHtml(
-                                        weaknessesText
-                                    )}
-                                </div>
-                            `
-                            : ""
-                    }
-
-                    <p style="
-                        color:#ccc;
-                        margin-top:8px;
-                        line-height:1.5;
-                    ">
-                        ${escapeHtml(
-                            rank.reason ||
-                            ""
-                        )}
-                    </p>
-
-                `;
-
-
-                container.appendChild(
-                    row
-                );
-
-            }
-        );
-
-    }
-
-
-    /* =====================================================
-       OVERALL ANALYSIS
-    ===================================================== */
-
-    if (
-        results.analysis
-    ) {
-
-        const analysisBox =
-            document.createElement(
-                "div"
-            );
-
-
-        analysisBox.style.padding =
-            "15px";
-
-        analysisBox.style.marginTop =
-            "15px";
-
-        analysisBox.style.background =
-            "#171717";
-
-        analysisBox.style.border =
-            "1px solid #333";
-
-        analysisBox.style.borderRadius =
-            "12px";
-
-
-        analysisBox.innerHTML = `
-
-            <h3 style="
-                color:#ff9800;
-                margin-bottom:10px;
-            ">
-                🧠 AI TEAM ANALYSIS
-            </h3>
-
-            <p style="
-                color:#ccc;
-                line-height:1.7;
-                white-space:pre-line;
-            ">
-                ${escapeHtml(
-                    results.analysis
-                )}
-            </p>
-
-        `;
-
-
-        container.appendChild(
-            analysisBox
-        );
-
-    }
-
-
-    /* =====================================================
-       BATTLE PREDICTION
-    ===================================================== */
-
-    if (
-        results.battlePrediction
-    ) {
-
-        const predictionBox =
-            document.createElement(
-                "div"
-            );
-
-
-        predictionBox.style.padding =
-            "15px";
-
-        predictionBox.style.marginTop =
-            "15px";
-
-        predictionBox.style.background =
-            "#171717";
-
-        predictionBox.style.border =
-            "1px solid #333";
-
-        predictionBox.style.borderRadius =
-            "12px";
-
-
-        predictionBox.innerHTML = `
-
-            <h3 style="
-                color:#ff9800;
-                margin-bottom:10px;
-            ">
-                ⚔️ BATTLE PREDICTION
-            </h3>
-
-            <p style="
-                color:#ccc;
-                line-height:1.7;
-                white-space:pre-line;
-            ">
-                ${escapeHtml(
-                    results.battlePrediction
-                )}
-            </p>
-
-        `;
-
-
-        container.appendChild(
-            predictionBox
-        );
-
-    }
-
-
-    /* =====================================================
-       AUCTION RECOMMENDATION
-    ===================================================== */
-
-    if (
-        results.auctionRecommendation
-    ) {
-
-        const recommendationBox =
-            document.createElement(
-                "div"
-            );
-
-
-        recommendationBox.style.padding =
-            "15px";
-
-        recommendationBox.style.marginTop =
-            "15px";
-
-        recommendationBox.style.background =
-            "#171717";
-
-        recommendationBox.style.border =
-            "1px solid #333";
-
-        recommendationBox.style.borderRadius =
-            "12px";
-
-
-        recommendationBox.innerHTML = `
-
-            <h3 style="
-                color:#ff9800;
-                margin-bottom:10px;
-            ">
-                💰 AI AUCTION RECOMMENDATION
-            </h3>
-
-            <p style="
-                color:#ccc;
-                line-height:1.7;
-                white-space:pre-line;
-            ">
-                ${escapeHtml(
-                    typeof results.auctionRecommendation ===
-                    "string"
-
-                        ? results.auctionRecommendation
-
-                        : JSON.stringify(
-                            results.auctionRecommendation,
-                            null,
-                            2
-                        )
-                )}
-            </p>
-
-        `;
-
-
-        container.appendChild(
-            recommendationBox
-        );
-
-    }
-
-
-    /* =====================================================
-       FINISHED
-    ===================================================== */
-
-    const finished =
-        document.createElement(
-            "div"
-        );
-
-
-    finished.style.textAlign =
-        "center";
-
-    finished.style.marginTop =
-        "25px";
-
-    finished.style.padding =
-        "15px";
-
-
-    finished.innerHTML = `
-
-        <div style="
-            font-size:28px;
-        ">
-            🎉
-        </div>
-
-        <strong>
-            AI analysis complete
-        </strong>
-
-    `;
-
-
-    container.appendChild(
-        finished
-    );
-
-
-    container.scrollIntoView({
-        behavior: "smooth",
-        block: "start"
-    });
-
-}
-
-
-/* =========================================================
-   SERVER ERROR
+   ERROR MESSAGE
 ========================================================= */
 
 socket.on(
@@ -3723,7 +2678,6 @@ socket.on(
 
         myPlayerId =
             socket.id;
-
 
         console.log(
             "Connected:",
@@ -3763,7 +2717,6 @@ socket.on(
             error
         );
 
-
         showMessage(
             "Unable to connect to game server."
         );
@@ -3773,33 +2726,9 @@ socket.on(
 
 
 /* =========================================================
-   INITIAL STATE
+   INITIAL
 ========================================================= */
 
 showScreen(
     homeScreen
-);
-
-
-/* =========================================================
-   DEBUG
-========================================================= */
-
-console.log(
-    "Naruto Character Battle loaded."
-);
-
-console.log(
-    "Characters:",
-    SERVER_CHARACTERS.length
-);
-
-console.log(
-    "Rank categories:",
-    RANK_CATEGORIES.length
-);
-
-console.log(
-    "Auction:",
-    `₹${BID_INCREMENT} / ${AUCTION_TIME}s / Team ${TEAM_SIZE}`
 );
