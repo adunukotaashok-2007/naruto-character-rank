@@ -1,1568 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<head>
-
-<meta charset="UTF-8">
-
-<meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
->
-
-<title>Naruto Character Rank + Auction</title>
-
-<style>
-
 /* =========================================================
-   RESET
-========================================================= */
+   NARUTO CHARACTER BATTLE
+   GAME.JS
+   =========================================================
+   FEATURES
+   ---------------------------------------------------------
+   • Multiplayer room
+   • 2–25 players
+   • Character Rank
+   • 16 Rank categories
+   • Private Rank selections
+   • Progress: selected / total players
+   • Character Auction
+   • ₹50 bid increment
+   • 15-second auction timer
+   • Give Up
+   • Team of 5
+   • Final team results
+   • OpenAI final analysis
+   ========================================================= */
 
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-html,
-body {
-    width: 100%;
-    min-height: 100%;
-}
-
-body {
-    min-height: 100vh;
-
-    font-family:
-        Arial,
-        Helvetica,
-        sans-serif;
-
-    background:
-        radial-gradient(
-            circle at top,
-            #35145f 0%,
-            transparent 38%
-        ),
-        linear-gradient(
-            135deg,
-            #050505,
-            #141414,
-            #050505
-        );
-
-    color: white;
-
-    -webkit-tap-highlight-color:
-        transparent;
-}
-
-button,
-input,
-select {
-    font: inherit;
-}
-
-button {
-    cursor: pointer;
-}
-
-.hidden {
-    display: none !important;
-}
-
-
-/* =========================================================
-   SCREEN
-========================================================= */
-
-.screen {
-    min-height: 100vh;
-    padding: 20px 15px;
-}
-
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-header {
-    text-align: center;
-    margin-bottom: 25px;
-}
-
-header h1 {
-    font-size: 32px;
-    color: #ff9800;
-
-    text-shadow:
-        0 0 8px rgba(255,152,0,.4),
-        0 0 20px rgba(255,152,0,.25);
-}
-
-header p {
-    margin-top: 8px;
-    color: #aaa;
-    font-size: 15px;
-}
-
-
-/* =========================================================
-   PANELS
-========================================================= */
-
-.panel {
-    background:
-        rgba(20,20,20,.96);
-
-    border:
-        1px solid #333;
-
-    border-radius:
-        18px;
-
-    padding:
-        25px;
-
-    box-shadow:
-        0 12px 45px
-        rgba(0,0,0,.5);
-}
-
-
-/* =========================================================
-   HOME
-========================================================= */
-
-.home-container {
-    width: 100%;
-    max-width: 600px;
-    margin: auto;
-    padding-top: 50px;
-}
-
-.panel h2 {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.input-group {
-    margin-bottom: 15px;
-}
-
-.input-group label {
-    display: block;
-    margin-bottom: 7px;
-    color: #bbb;
-}
-
-input,
-select {
-    width: 100%;
-
-    padding: 13px;
-
-    border:
-        1px solid #444;
-
-    border-radius:
-        10px;
-
-    background:
-        #0c0c0c;
-
-    color:
-        white;
-
-    outline:
-        none;
-}
-
-input:focus,
-select:focus {
-    border-color:
-        #ff9800;
-}
-
-.main-button {
-    width: 100%;
-
-    border: none;
-
-    border-radius: 10px;
-
-    padding: 14px;
-
-    margin-top: 10px;
-
-    background:
-        #ff9800;
-
-    color:
-        #111;
-
-    font-weight:
-        bold;
-
-    transition:
-        .15s;
-}
-
-.main-button:hover {
-    background:
-        #ffb52e;
-}
-
-.main-button:active {
-    transform:
-        scale(.98);
-}
-
-.secondary-button {
-    width: 100%;
-
-    border:
-        1px solid #555;
-
-    border-radius:
-        10px;
-
-    padding:
-        13px;
-
-    margin-top:
-        10px;
-
-    background:
-        #222;
-
-    color:
-        white;
-}
-
-
-/* =========================================================
-   ROOM
-========================================================= */
-
-.room-container {
-    max-width: 1000px;
-    margin: auto;
-}
-
-.room-code {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.room-code span {
-    display: inline-block;
-
-    margin-top: 8px;
-
-    padding: 12px 25px;
-
-    background: #090909;
-
-    border:
-        2px solid #ff9800;
-
-    border-radius:
-        12px;
-
-    font-size:
-        25px;
-
-    letter-spacing:
-        4px;
-
-    color:
-        #ff9800;
-
-    font-weight:
-        bold;
-}
-
-.player-count {
-    text-align: center;
-    margin: 10px 0 20px;
-    color: #ddd;
-}
-
-
-/* =========================================================
-   PLAYERS
-========================================================= */
-
-.players {
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(
-                180px,
-                1fr
-            )
-        );
-
-    gap: 12px;
-}
-
-.player-card {
-    background:
-        linear-gradient(
-            145deg,
-            #222,
-            #111
-        );
-
-    border:
-        1px solid #393939;
-
-    border-radius:
-        12px;
-
-    padding:
-        15px;
-}
-
-.player-card.me {
-    border:
-        2px solid #ff9800;
-}
-
-.player-name {
-    font-weight: bold;
-    color: #ff9800;
-    font-size: 17px;
-}
-
-.player-balance {
-    margin-top: 7px;
-    color: #bbb;
-}
-
-.player-team {
-    margin-top: 5px;
-    color: #888;
-}
-
-
-/* =========================================================
-   GAME
-========================================================= */
-
-.game-container {
-    max-width: 1150px;
-    margin: auto;
-}
-
-.game-top {
-    display: flex;
-
-    justify-content:
-        space-between;
-
-    align-items:
-        center;
-
-    gap: 10px;
-
-    flex-wrap:
-        wrap;
-
-    margin-bottom:
-        15px;
-}
-
-.status-box {
-    background:
-        #151515;
-
-    border:
-        1px solid #333;
-
-    border-radius:
-        10px;
-
-    padding:
-        10px 15px;
-}
-
-#categoryTitle {
-    color:
-        #ff9800;
-
-    font-size:
-        26px;
-
-    font-weight:
-        bold;
-}
-
-#categoryNumber {
-    color:
-        #999;
-
-    margin-top:
-        4px;
-}
-
-#rankStatus {
-    color:
-        #ddd;
-}
-
-
-/* =========================================================
-   CHARACTER GRID
-========================================================= */
-
-#characterGrid {
-    display: grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(
-                170px,
-                1fr
-            )
-        );
-
-    gap:
-        15px;
-}
-
-.character-card {
-    position: relative;
-    overflow: hidden;
-
-    background:
-        linear-gradient(
-            145deg,
-            #242424,
-            #101010
-        );
-
-    border:
-        1px solid #414141;
-
-    border-radius:
-        15px;
-
-    padding:
-        10px;
-
-    text-align:
-        center;
-
-    transition:
-        transform .15s,
-        border-color .15s;
-
-    cursor:
-        pointer;
-}
-
-.character-card:hover {
-    transform:
-        translateY(-3px);
-
-    border-color:
-        #ff9800;
-}
-
-.character-card.selected {
-    border:
-        3px solid #ff9800;
-
-    box-shadow:
-        0 0 20px
-        rgba(255,152,0,.3);
-}
-
-.character-card img {
-    width:
-        100%;
-
-    height:
-        190px;
-
-    display:
-        block;
-
-    object-fit:
-        cover;
-
-    border-radius:
-        10px;
-
-    background:
-        #222;
-}
-
-.image-fallback {
-    width: 100%;
-    height: 190px;
-
-    display: flex;
-
-    align-items: center;
-    justify-content: center;
-
-    background:
-        #222;
-
-    border-radius:
-        10px;
-
-    color:
-        #777;
-
-    font-size:
-        14px;
-}
-
-.rank-number {
-    position: absolute;
-
-    top:
-        15px;
-
-    left:
-        15px;
-
-    z-index:
-        2;
-
-    padding:
-        5px 9px;
-
-    border-radius:
-        8px;
-
-    background:
-        rgba(0,0,0,.9);
-
-    color:
-        #ff9800;
-
-    font-weight:
-        bold;
-}
-
-.character-name {
-    margin-top:
-        10px;
-
-    font-size:
-        17px;
-
-    font-weight:
-        bold;
-}
-
-.best-badge {
-    margin-top:
-        8px;
-
-    padding:
-        6px;
-
-    border-radius:
-        8px;
-
-    background:
-        #ff9800;
-
-    color:
-        #111;
-
-    font-weight:
-        bold;
-}
-
-.selection-badge {
-    margin-top:
-        7px;
-
-    padding:
-        5px;
-
-    border-radius:
-        7px;
-
-    background:
-        #1f7a3a;
-
-    color:
-        white;
-
-    font-size:
-        12px;
-
-    font-weight:
-        bold;
-}
-
-
-/* =========================================================
-   AUCTION
-========================================================= */
-
-.auction-panel {
-    max-width:
-        1000px;
-
-    margin:
-        auto;
-
-    text-align:
-        center;
-}
-
-.auction-character-box {
-    position:
-        relative;
-
-    max-width:
-        400px;
-
-    margin:
-        15px auto 20px;
-
-    background:
-        #111;
-
-    border:
-        2px solid #333;
-
-    border-radius:
-        18px;
-
-    padding:
-        12px;
-
-    overflow:
-        hidden;
-}
-
-#auctionCharacterImage {
-    width:
-        100%;
-
-    height:
-        330px;
-
-    object-fit:
-        cover;
-
-    border-radius:
-        12px;
-
-    background:
-        #222;
-}
-
-.auction-image-fallback {
-    width:
-        100%;
-
-    height:
-        330px;
-
-    display:
-        flex;
-
-    align-items:
-        center;
-
-    justify-content:
-        center;
-
-    background:
-        #222;
-
-    border-radius:
-        12px;
-
-    color:
-        #777;
-}
-
-#auctionCharacter {
-    font-size:
-        34px;
-
-    color:
-        #ff9800;
-
-    font-weight:
-        bold;
-
-    margin-top:
-        12px;
-}
-
-#auctionTimer {
-    font-size:
-        55px;
-
-    font-weight:
-        bold;
-
-    color:
-        #fff;
-
-    margin:
-        12px;
-}
-
-#auctionTimer.warning {
-    color:
-        #ff3333;
-
-    animation:
-        timerPulse .5s infinite alternate;
-}
-
-@keyframes timerPulse {
-    from {
-        transform:
-            scale(1);
-    }
-
-    to {
-        transform:
-            scale(1.08);
-    }
-}
-
-.auction-info {
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(
-                180px,
-                1fr
-            )
-        );
-
-    gap:
-        10px;
-
-    margin:
-        15px 0;
-}
-
-.auction-info-box {
-    background:
-        #171717;
-
-    border:
-        1px solid #333;
-
-    border-radius:
-        10px;
-
-    padding:
-        12px;
-}
-
-.auction-label {
-    color:
-        #888;
-
-    font-size:
-        12px;
-}
-
-.auction-value {
-    margin-top:
-        5px;
-
-    font-size:
-        20px;
-
-    font-weight:
-        bold;
-
-    color:
-        #ff9800;
-}
-
-#auctionNextBid {
-    color:
-        #ff9800;
-
-    font-size:
-        19px;
-
-    font-weight:
-        bold;
-
-    margin:
-        8px 0;
-}
-
-#auctionMoney {
-    color:
-        #aaa;
-
-    margin:
-        15px 0;
-
-    font-size:
-        17px;
-}
-
-
-/* =========================================================
-   AUCTION BUTTONS
-========================================================= */
-
-.auction-buttons {
-    display:
-        flex;
-
-    gap:
-        10px;
-
-    justify-content:
-        center;
-
-    flex-wrap:
-        wrap;
-
-    margin-top:
-        15px;
-}
-
-.auction-buttons button {
-    min-width:
-        160px;
-
-    padding:
-        14px 20px;
-
-    border:
-        none;
-
-    border-radius:
-        10px;
-
-    font-weight:
-        bold;
-}
-
-#bidButton {
-    background:
-        #ff9800;
-
-    color:
-        #111;
-}
-
-#bidButton:hover {
-    background:
-        #ffb52e;
-}
-
-#bidButton:disabled {
-    background:
-        #555;
-
-    color:
-        #999;
-
-    cursor:
-        not-allowed;
-}
-
-#giveUpButton {
-    background:
-        #b71c1c;
-
-    color:
-        white;
-}
-
-#giveUpButton:disabled {
-    background:
-        #444;
-
-    color:
-        #888;
-
-    cursor:
-        not-allowed;
-}
-
-
-/* =========================================================
-   TEAM
-========================================================= */
-
-.team-panel {
-    margin-top:
-        20px;
-}
-
-.team-list {
-    display:
-        grid;
-
-    grid-template-columns:
-        repeat(
-            auto-fit,
-            minmax(
-                150px,
-                1fr
-            )
-        );
-
-    gap:
-        10px;
-
-    margin-top:
-        15px;
-}
-
-.team-character {
-    position:
-        relative;
-
-    overflow:
-        hidden;
-
-    background:
-        #1b1b1b;
-
-    border:
-        1px solid #444;
-
-    border-radius:
-        10px;
-
-    padding:
-        8px;
-
-    text-align:
-        center;
-}
-
-.team-character img {
-    width:
-        100%;
-
-    height:
-        130px;
-
-    object-fit:
-        cover;
-
-    border-radius:
-        7px;
-
-    background:
-        #222;
-}
-
-.team-character-name {
-    margin-top:
-        7px;
-
-    font-weight:
-        bold;
-
-    color:
-        #ff9800;
-}
-
-
-/* =========================================================
-   MESSAGE
-========================================================= */
-
-#message {
-    position:
-        fixed;
-
-    left:
-        50%;
-
-    bottom:
-        20px;
-
-    transform:
-        translateX(-50%);
-
-    z-index:
-        9999;
-
-    width:
-        max-content;
-
-    max-width:
-        90%;
-
-    padding:
-        12px 18px;
-
-    background:
-        #222;
-
-    border:
-        1px solid #555;
-
-    border-radius:
-        10px;
-
-    color:
-        white;
-
-    text-align:
-        center;
-
-    opacity:
-        0;
-
-    pointer-events:
-        none;
-
-    transition:
-        opacity .2s;
-}
-
-#message.show {
-    opacity:
-        1;
-}
-
-
-/* =========================================================
-   MOBILE
-========================================================= */
-
-@media (max-width: 600px) {
-
-    .screen {
-        padding:
-            12px;
-    }
-
-    header h1 {
-        font-size:
-            25px;
-    }
-
-    .home-container {
-        padding-top:
-            25px;
-    }
-
-    .panel {
-        padding:
-            18px;
-    }
-
-    #categoryTitle {
-        font-size:
-            20px;
-    }
-
-    #characterGrid {
-        grid-template-columns:
-            repeat(
-                2,
-                1fr
-            );
-
-        gap:
-            9px;
-    }
-
-    .character-card {
-        padding:
-            7px;
-
-        border-radius:
-            11px;
-    }
-
-    .character-card img,
-    .image-fallback {
-        height:
-            145px;
-    }
-
-    .character-name {
-        font-size:
-            14px;
-    }
-
-    .rank-number {
-        top:
-            10px;
-
-        left:
-            10px;
-
-        font-size:
-            12px;
-
-        padding:
-            4px 7px;
-    }
-
-    .best-badge {
-        font-size:
-            11px;
-    }
-
-    #auctionCharacterImage,
-    .auction-image-fallback {
-        height:
-            260px;
-    }
-
-    #auctionCharacter {
-        font-size:
-            27px;
-    }
-
-    #auctionTimer {
-        font-size:
-            42px;
-    }
-
-    .auction-buttons button {
-        width:
-            100%;
-    }
-}
-
-
-/* =========================================================
-   PERFORMANCE
-========================================================= */
-
-@media (prefers-reduced-motion: reduce) {
-
-    * {
-        animation:
-            none !important;
-
-        transition:
-            none !important;
-    }
-}
-
-</style>
-
-</head>
-
-
-<body>
-
-
-<!-- =======================================================
-     HOME
-======================================================= -->
-
-<section
-    id="homeScreen"
-    class="screen"
->
-
-<div class="home-container">
-
-<header>
-
-<h1>
-🍥 NARUTO CHARACTER BATTLE
-</h1>
-
-<p>
-Multiplayer Character Rank & Auction
-</p>
-
-</header>
-
-
-<div class="panel">
-
-<h2>
-Enter Game
-</h2>
-
-
-<div class="input-group">
-
-<label>
-Your Name
-</label>
-
-<input
-    id="playerName"
-    type="text"
-    placeholder="Enter your name"
-    maxlength="20"
-    autocomplete="off"
->
-
-</div>
-
-
-<div class="input-group">
-
-<label>
-Game Mode
-</label>
-
-<select id="gameMode">
-
-<option value="rank">
-🏆 Character Rank
-</option>
-
-<option value="auction">
-🔥 Character Auction
-</option>
-
-</select>
-
-</div>
-
-
-<button
-    id="createButton"
-    class="main-button"
->
-CREATE ROOM
-</button>
-
-
-<button
-    id="showJoinButton"
-    class="secondary-button"
->
-JOIN ROOM
-</button>
-
-
-<div
-    id="joinBox"
-    class="hidden"
-    style="margin-top:20px;"
->
-
-<div class="input-group">
-
-<label>
-Room Code
-</label>
-
-<input
-    id="roomCodeInput"
-    type="text"
-    placeholder="ABC123"
-    maxlength="6"
-    autocomplete="off"
->
-
-</div>
-
-
-<button
-    id="joinButton"
-    class="main-button"
->
-JOIN ROOM
-</button>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =======================================================
-     ROOM
-======================================================= -->
-
-<section
-    id="roomScreen"
-    class="screen hidden"
->
-
-<div class="room-container">
-
-<header>
-
-<h1>
-🥷 GAME ROOM
-</h1>
-
-<p id="roomMode">
-Waiting for players...
-</p>
-
-</header>
-
-
-<div class="panel">
-
-<div class="room-code">
-
-<div>
-ROOM CODE
-</div>
-
-<span id="roomCodeDisplay">
-------
-</span>
-
-</div>
-
-
-<div
-    id="playerCount"
-    class="player-count"
->
-Players: 0
-</div>
-
-
-<div
-    id="playersList"
-    class="players"
-></div>
-
-
-<button
-    id="startGameButton"
-    class="main-button"
->
-START GAME
-</button>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =======================================================
-     RANK
-======================================================= -->
-
-<section
-    id="rankScreen"
-    class="screen hidden"
->
-
-<div class="game-container">
-
-<div class="game-top">
-
-<div class="status-box">
-
-<div id="categoryTitle">
-🧠 CHARACTER RANK
-</div>
-
-<div id="categoryNumber">
-Category 1 / 16
-</div>
-
-</div>
-
-
-<div
-    id="rankStatus"
-    class="status-box"
->
-Waiting...
-</div>
-
-</div>
-
-
-<div id="characterGrid"></div>
-
-</div>
-
-</section>
-
-
-<!-- =======================================================
-     AUCTION
-======================================================= -->
-
-<section
-    id="auctionScreen"
-    class="screen hidden"
->
-
-<div class="auction-panel">
-
-<header>
-
-<h1>
-🔥 NARUTO CHARACTER AUCTION
-</h1>
-
-<p id="auctionCharacterNumber">
-Character 1
-</p>
-
-</header>
-
-
-<div class="panel">
-
-
-<div class="auction-character-box">
-
-<img
-    id="auctionCharacterImage"
-    src=""
-    alt="Auction Character"
->
-
-<div id="auctionCharacter">
-Waiting...
-</div>
-
-</div>
-
-
-<div id="auctionTimer">
-15
-</div>
-
-
-<div class="auction-info">
-
-
-<div class="auction-info-box">
-
-<div class="auction-label">
-CURRENT BID
-</div>
-
-<div
-    id="auctionBid"
-    class="auction-value"
->
-₹0
-</div>
-
-</div>
-
-
-<div class="auction-info-box">
-
-<div class="auction-label">
-HIGHEST BIDDER
-</div>
-
-<div
-    id="auctionHighest"
-    class="auction-value"
->
-Nobody
-</div>
-
-</div>
-
-
-<div class="auction-info-box">
-
-<div class="auction-label">
-YOUR BALANCE
-</div>
-
-<div
-    id="auctionBalance"
-    class="auction-value"
->
-₹1000
-</div>
-
-</div>
-
-</div>
-
-
-<div id="auctionNextBid">
-Next Bid: ₹50
-</div>
-
-
-<div id="auctionMoney">
-Balance: ₹1000 | Spent: ₹0
-</div>
-
-
-<div class="auction-buttons">
-
-<button id="bidButton">
-💰 BID ₹50
-</button>
-
-<button id="giveUpButton">
-❌ GIVE UP
-</button>
-
-</div>
-
-</div>
-
-
-<div class="panel team-panel">
-
-<h2>
-🏆 Your Team
-</h2>
-
-<div
-    id="myTeam"
-    class="team-list"
-></div>
-
-</div>
-
-</div>
-
-</section>
-
-
-<!-- =======================================================
-     MESSAGE
-======================================================= -->
-
-<div id="message"></div>
-
-
-<!-- =======================================================
-     SOCKET.IO
-======================================================= -->
-
-<script src="/socket.io/socket.io.js"></script>
-
-
-<script>
 
 /* =========================================================
    SOCKET
@@ -1578,14 +34,10 @@ const socket = io({
 
 /* =========================================================
    CHARACTER IMAGE DATABASE
-   EXACT FILES SUPPLIED BY YOU
+   MUST MATCH SERVER
 ========================================================= */
 
 const CHARACTER_IMAGES = {
-
-    /* =====================================================
-       ORIGINAL IMAGES
-    ===================================================== */
 
     "Naruto":
         "assets/characters/images%20%282%29.jpeg",
@@ -1623,13 +75,7 @@ const CHARACTER_IMAGES = {
     "Might Guy":
         "assets/characters/images%20%2812%29.jpeg",
 
-    "Guy":
-        "assets/characters/images%20%2812%29.jpeg",
-
     "Rock Lee":
-        "assets/characters/images%20%2813%29.jpeg",
-
-    "Lee":
         "assets/characters/images%20%2813%29.jpeg",
 
     "Shikamaru":
@@ -1650,91 +96,11 @@ const CHARACTER_IMAGES = {
     "Nagato":
         "assets/characters/images%20%2819%29.jpeg",
 
-    "Nagato/Pain":
-        "assets/characters/images%20%2819%29.jpeg",
-
-    "Pain":
-        "assets/characters/images%20%2819%29.jpeg",
-
     "Obito":
         "assets/characters/images%20%2820%29.jpeg",
 
-    /* =====================================================
-       MORE IMAGES
-    ===================================================== */
-
-    "Chiyo":
-        "assets/characters/images%20%2821%29.jpeg",
-
-    "Rasa":
-        "assets/characters/images%20%2822%29.jpeg",
-
-    "Gaara Father":
-        "assets/characters/images%20%2822%29.jpeg",
-
-    "Darui":
-        "assets/characters/images%20%2824%29.jpeg",
-
-    "Chojuro":
-        "assets/characters/images%20%2825%29.jpeg",
-
-    "Chōjūrō":
-        "assets/characters/images%20%2825%29.jpeg",
-
-    /* =====================================================
-       DOWNLOAD FILES
-    ===================================================== */
-
-    "Killer Bee":
+    "Killer B":
         "assets/characters/download%20%281%29.jpeg",
-
-    "KillerB":
-        "assets/characters/download%20%281%29.jpeg",
-
-    "Kabuto":
-        "assets/characters/download%20%282%29.jpeg",
-
-    "Shisui":
-        "assets/characters/download%20%283%29.jpeg",
-
-    "Sakumo":
-        "assets/characters/download%20%284%29.jpeg",
-
-    "Hanzo":
-        "assets/characters/download%20%285%29.jpeg",
-
-    "3rd Raikage":
-        "assets/characters/download%20%286%29.jpeg",
-
-    "Third Raikage":
-        "assets/characters/download%20%286%29.jpeg",
-
-    "ThirdRaikage":
-        "assets/characters/download%20%286%29.jpeg",
-
-    "4th Raikage":
-        "assets/characters/download%20%287%29.jpeg",
-
-    "Fourth Raikage":
-        "assets/characters/download%20%287%29.jpeg",
-
-    "FourthRaikage":
-        "assets/characters/download%20%287%29.jpeg",
-
-    "Ohnoki":
-        "assets/characters/download%20%288%29.jpeg",
-
-    "Onoki":
-        "assets/characters/download%20%288%29.jpeg",
-
-    "Ōnoki":
-        "assets/characters/download%20%288%29.jpeg",
-
-    "Lady Mizukage":
-        "assets/characters/download%20%289%29.jpeg",
-
-    "Mei":
-        "assets/characters/download%20%289%29.jpeg",
 
     "Sasori":
         "assets/characters/download%20%2810%29.jpeg",
@@ -1745,19 +111,10 @@ const CHARACTER_IMAGES = {
     "Mu":
         "assets/characters/download%20%2812%29.jpeg",
 
-    "Mū":
-        "assets/characters/download%20%2812%29.jpeg",
-
     "Gengetsu Hōzuki":
         "assets/characters/download%20%2813%29.jpeg",
 
-    "Gengetsu":
-        "assets/characters/download%20%2813%29.jpeg",
-
     "Danzo":
-        "assets/characters/download%20%2814%29.jpeg",
-
-    "Danzō":
         "assets/characters/download%20%2814%29.jpeg",
 
     "Kakuzu":
@@ -1775,13 +132,13 @@ const CHARACTER_IMAGES = {
     "Kimimaro":
         "assets/characters/download%20%2819%29.jpeg",
 
+    "Kabuto":
+        "assets/characters/download%20%282%29.jpeg",
+
     "Suigetsu":
         "assets/characters/download%20%2820%29.jpeg",
 
     "Jugo":
-        "assets/characters/download%20%2821%29.jpeg",
-
-    "Jūgo":
         "assets/characters/download%20%2821%29.jpeg",
 
     "Karin":
@@ -1802,14 +159,14 @@ const CHARACTER_IMAGES = {
     "Choji":
         "assets/characters/download%20%2827%29.jpeg",
 
-    "Chōji":
-        "assets/characters/download%20%2827%29.jpeg",
-
     "Kiba":
         "assets/characters/download%20%2828%29.jpeg",
 
     "Shino":
         "assets/characters/download%20%2829%29.jpeg",
+
+    "Shisui":
+        "assets/characters/download%20%283%29.jpeg",
 
     "Tenten":
         "assets/characters/download%20%2830%29.jpeg",
@@ -1821,9 +178,6 @@ const CHARACTER_IMAGES = {
         "assets/characters/download%20%2832%29.jpeg",
 
     "Duy":
-        "assets/characters/download%20%2833%29.jpeg",
-
-    "Might Duy":
         "assets/characters/download%20%2833%29.jpeg",
 
     "Shizune":
@@ -1844,8 +198,8 @@ const CHARACTER_IMAGES = {
     "Konohamaru":
         "assets/characters/download%20%2839%29.jpeg",
 
-    "Konahamaru":
-        "assets/characters/download%20%2839%29.jpeg",
+    "Sakumo":
+        "assets/characters/download%20%284%29.jpeg",
 
     "Kurotsuchi":
         "assets/characters/download%20%2840%29.jpeg",
@@ -1859,20 +213,46 @@ const CHARACTER_IMAGES = {
     "Utakata":
         "assets/characters/download%20%2843%29.jpeg",
 
+    "Hanzo":
+        "assets/characters/download%20%285%29.jpeg",
+
     "Four Tails Jinchuriki":
         "assets/characters/download%20%2844%29.jpeg",
 
-    "Roshi":
-        "assets/characters/download%20%2844%29.jpeg",
+    "Third Raikage":
+        "assets/characters/download%20%286%29.jpeg",
+
+    "Fourth Raikage":
+        "assets/characters/download%20%287%29.jpeg",
+
+    "Onoki":
+        "assets/characters/download%20%288%29.jpeg",
+
+    "Mei":
+        "assets/characters/download%20%289%29.jpeg",
 
     "Tsunade":
-        "assets/characters/download.jpeg"
+        "assets/characters/download.jpeg",
 
+    "Chiyo":
+        "assets/characters/images%20%2821%29.jpeg",
+
+    "Rasa":
+        "assets/characters/images%20%2822%29.jpeg",
+
+    "Masashi Kishimoto":
+        "assets/characters/images%20%2823%29.jpeg",
+
+    "Darui":
+        "assets/characters/images%20%2824%29.jpeg",
+
+    "Chōjūrō":
+        "assets/characters/images%20%2825%29.jpeg"
 };
 
 
 /* =========================================================
-   COMPLETE CHARACTER LIST
+   EXACT SERVER CHARACTER LIST
 ========================================================= */
 
 const SERVER_CHARACTERS = [
@@ -1898,20 +278,10 @@ const SERVER_CHARACTERS = [
     "Gaara",
     "Kisame",
     "Sakura",
-    "Nagato/Pain",
+    "Nagato",
     "Obito",
 
-    "Tsunade",
-    "Killer Bee",
-    "Kabuto",
-    "Shisui",
-    "Sakumo",
-    "Hanzo",
-    "3rd Raikage",
-    "4th Raikage",
-    "Ohnoki",
-    "Lady Mizukage",
-
+    "Killer B",
     "Sasori",
     "Deidara",
     "Mu",
@@ -1923,6 +293,7 @@ const SERVER_CHARACTERS = [
     "Zabuza",
     "Kimimaro",
 
+    "Kabuto",
     "Suigetsu",
     "Jugo",
     "Karin",
@@ -1934,6 +305,7 @@ const SERVER_CHARACTERS = [
     "Choji",
     "Kiba",
     "Shino",
+    "Shisui",
     "Tenten",
     "Iruka",
     "Anko",
@@ -1944,106 +316,88 @@ const SERVER_CHARACTERS = [
     "Sai",
     "Konohamaru",
 
+    "Sakumo",
     "Kurotsuchi",
     "Mifune",
     "Fu",
     "Utakata",
+    "Hanzo",
+
+    "Four Tails Jinchuriki",
+    "Third Raikage",
+    "Fourth Raikage",
+    "Onoki",
+    "Mei",
+    "Tsunade",
 
     "Chiyo",
     "Rasa",
+    "Masashi Kishimoto",
     "Darui",
-    "Chōjūrō",
-
-    "Four Tails Jinchuriki"
+    "Chōjūrō"
 ];
 
 
 /* =========================================================
-   IMAGE NORMALIZER
+   RANK CATEGORIES
 ========================================================= */
 
-function normalizeCharacterName(
-    character
-) {
+const RANK_CATEGORIES = [
 
-    if (!character) {
-        return "";
-    }
+    "⚡ SPEED",
 
-    const value =
-        String(character)
-            .trim();
+    "💪 STRENGTH",
 
-    const aliases = {
+    "🧠 BATTLE IQ",
 
-        "Guy": "Might Guy",
+    "🩸 DURABILITY",
 
-        "Lee": "Rock Lee",
+    "🌀 CHAKRA",
 
-        "KillerB": "Killer Bee",
+    "🔥 NINJUTSU",
 
-        "Nagato": "Nagato/Pain",
+    "⚔️ TAIJUTSU",
 
-        "Pain": "Nagato/Pain",
+    "👁️ GENJUTSU",
 
-        "Gengetsu": "Gengetsu Hōzuki",
+    "🛡️ DEFENSE",
 
-        "Danzō": "Danzo",
+    "💥 ATTACK",
 
-        "Mū": "Mu",
+    "❤️ STAMINA",
 
-        "Jūgo": "Jugo",
+    "👑 LEADERSHIP",
 
-        "Chōji": "Choji",
+    "🔄 VERSATILITY",
 
-        "Chojuro": "Chōjūrō",
+    "📚 EXPERIENCE",
 
-        "Ōnoki": "Ohnoki",
+    "🤝 TEAMWORK",
 
-        "ThirdRaikage":
-            "3rd Raikage",
+    "🏆 OVERALL POWER"
 
-        "FourthRaikage":
-            "4th Raikage",
-
-        "Roshi":
-            "Four Tails Jinchuriki",
-
-        "Konahamaru":
-            "Konohamaru"
-    };
-
-    return aliases[value] || value;
-}
+];
 
 
 /* =========================================================
-   GET IMAGE
+   CONSTANTS
 ========================================================= */
 
-function getCharacterImage(
-    character
-) {
+const STARTING_BALANCE =
+    1000;
 
-    const normalized =
-        normalizeCharacterName(
-            character
-        );
+const BID_INCREMENT =
+    50;
 
-    return (
-        CHARACTER_IMAGES[
-            normalized
-        ] ||
-        CHARACTER_IMAGES[
-            character
-        ] ||
-        ""
-    );
-}
+const AUCTION_TIME =
+    15;
+
+const TEAM_SIZE =
+    5;
 
 
 /* =========================================================
-   ELEMENTS
+   DOM ELEMENTS
 ========================================================= */
 
 const homeScreen =
@@ -2197,19 +551,24 @@ let selectedCharacter =
 let currentAuction =
     null;
 
+let currentTeam =
+    [];
 
-/* =========================================================
-   CONSTANTS
-========================================================= */
+let roomSettings = {
 
-const STARTING_BALANCE =
-    1000;
+    teamSize:
+        TEAM_SIZE,
 
-const BID_INCREMENT =
-    50;
+    startingBalance:
+        STARTING_BALANCE,
 
-const AUCTION_TIME =
-    15;
+    bidAmount:
+        BID_INCREMENT,
+
+    bidTime:
+        AUCTION_TIME
+
+};
 
 
 /* =========================================================
@@ -2229,77 +588,33 @@ function escapeHtml(
         String(value);
 
     return div.innerHTML;
+
 }
 
 
 /* =========================================================
-   SHOW SCREEN
+   GET CHARACTER IMAGE
 ========================================================= */
 
-function showScreen(
-    screen
+function getCharacterImage(
+    character
 ) {
 
-    [
-        homeScreen,
-        roomScreen,
-        rankScreen,
-        auctionScreen
-    ]
-    .forEach(
-        item => {
+    if (!character) {
+        return "";
+    }
 
-            item.classList.add(
-                "hidden"
-            );
-
-        }
+    return (
+        CHARACTER_IMAGES[
+            character
+        ] || ""
     );
 
-    screen.classList.remove(
-        "hidden"
-    );
 }
 
 
 /* =========================================================
-   MESSAGE
-========================================================= */
-
-let messageTimer =
-    null;
-
-function showMessage(
-    text
-) {
-
-    message.textContent =
-        text;
-
-    message.classList.add(
-        "show"
-    );
-
-    clearTimeout(
-        messageTimer
-    );
-
-    messageTimer =
-        setTimeout(
-            () => {
-
-                message.classList.remove(
-                    "show"
-                );
-
-            },
-            2500
-        );
-}
-
-
-/* =========================================================
-   SAFE IMAGE
+   CREATE SAFE IMAGE
 ========================================================= */
 
 function createImage(
@@ -2326,6 +641,7 @@ function createImage(
             "Image unavailable";
 
         return fallback;
+
     }
 
 
@@ -2340,13 +656,15 @@ function createImage(
     img.alt =
         character;
 
-    if (className) {
-        img.className =
-            className;
-    }
-
     img.loading =
         "lazy";
+
+    if (className) {
+
+        img.className =
+            className;
+
+    }
 
 
     img.addEventListener(
@@ -2359,10 +677,7 @@ function createImage(
                 );
 
             fallback.className =
-                className ===
-                "team-image"
-                    ? "image-fallback"
-                    : "image-fallback";
+                "image-fallback";
 
             fallback.textContent =
                 "Image unavailable";
@@ -2376,6 +691,91 @@ function createImage(
 
 
     return img;
+
+}
+
+
+/* =========================================================
+   SHOW SCREEN
+========================================================= */
+
+function showScreen(
+    screen
+) {
+
+    [
+        homeScreen,
+        roomScreen,
+        rankScreen,
+        auctionScreen
+    ]
+    .forEach(
+        item => {
+
+            if (item) {
+
+                item.classList.add(
+                    "hidden"
+                );
+
+            }
+
+        }
+    );
+
+
+    if (screen) {
+
+        screen.classList.remove(
+            "hidden"
+        );
+
+    }
+
+}
+
+
+/* =========================================================
+   MESSAGE
+========================================================= */
+
+let messageTimer =
+    null;
+
+function showMessage(
+    text
+) {
+
+    if (!message) {
+        return;
+    }
+
+
+    message.textContent =
+        text;
+
+    message.classList.add(
+        "show"
+    );
+
+
+    clearTimeout(
+        messageTimer
+    );
+
+
+    messageTimer =
+        setTimeout(
+            () => {
+
+                message.classList.remove(
+                    "show"
+                );
+
+            },
+            2500
+        );
+
 }
 
 
@@ -2392,7 +792,8 @@ document
         () => {
 
             const name =
-                playerNameInput.value.trim();
+                playerNameInput.value
+                    .trim();
 
             const gameMode =
                 gameModeSelect.value;
@@ -2407,6 +808,7 @@ document
                 playerNameInput.focus();
 
                 return;
+
             }
 
 
@@ -2414,29 +816,32 @@ document
                 "createRoom",
                 {
 
-                    name,
+                    name:
 
-                    gameMode,
+                        name,
+
+                    gameMode:
+
+                        gameMode,
 
                     maxPlayers:
+
                         25,
 
                     teamSize:
-                        5,
+
+                        TEAM_SIZE,
 
                     startingBalance:
+
                         STARTING_BALANCE,
 
-                    /*
-                     * FIXED ₹50
-                     */
                     bidAmount:
+
                         BID_INCREMENT,
 
-                    /*
-                     * FIXED 15 SECONDS
-                     */
                     bidTime:
+
                         AUCTION_TIME
 
                 }
@@ -2447,7 +852,7 @@ document
 
 
 /* =========================================================
-   SHOW JOIN
+   SHOW JOIN BOX
 ========================================================= */
 
 document
@@ -2458,14 +863,18 @@ document
         "click",
         () => {
 
-            document
-                .getElementById(
+            const box =
+                document.getElementById(
                     "joinBox"
-                )
-                .classList
-                .toggle(
+                );
+
+            if (box) {
+
+                box.classList.toggle(
                     "hidden"
                 );
+
+            }
 
         }
     );
@@ -2484,7 +893,8 @@ document
         () => {
 
             const name =
-                playerNameInput.value.trim();
+                playerNameInput.value
+                    .trim();
 
             const roomCode =
                 roomCodeInput.value
@@ -2499,6 +909,7 @@ document
                 );
 
                 return;
+
             }
 
 
@@ -2509,6 +920,7 @@ document
                 );
 
                 return;
+
             }
 
 
@@ -2516,9 +928,13 @@ document
                 "joinRoom",
                 {
 
-                    name,
+                    name:
 
-                    roomCode
+                        name,
+
+                    roomCode:
+
+                        roomCode
 
                 }
             );
@@ -2544,6 +960,7 @@ socket.on(
         currentGameMode =
             data.gameMode;
 
+
         roomCodeDisplay.textContent =
             data.roomCode;
 
@@ -2553,9 +970,12 @@ socket.on(
                 "roomMode"
             )
             .textContent =
+
                 data.gameMode ===
                 "auction"
+
                     ? "🔥 Auction Mode — ₹50 bid increment — 15 seconds"
+
                     : "🏆 Character Rank Mode";
 
 
@@ -2589,6 +1009,7 @@ socket.on(
         currentGameMode =
             data.gameMode;
 
+
         roomCodeDisplay.textContent =
             data.roomCode;
 
@@ -2598,9 +1019,12 @@ socket.on(
                 "roomMode"
             )
             .textContent =
+
                 data.gameMode ===
                 "auction"
+
                     ? "🔥 Auction Mode — ₹50 bid increment — 15 seconds"
+
                     : "🏆 Character Rank Mode";
 
 
@@ -2700,7 +1124,7 @@ socket.on(
 
                         💰 Balance:
                         ₹${Number(
-                            player.balance ||
+                            player.balance ??
                             STARTING_BALANCE
                         ).toLocaleString(
                             "en-IN"
@@ -2711,7 +1135,7 @@ socket.on(
                     <div class="player-team">
 
                         🏆 Team:
-                        ${teamCount}
+                        ${teamCount}/${TEAM_SIZE}
 
                     </div>
 
@@ -2788,12 +1212,12 @@ socket.on(
 
         currentCategory =
             Number(
-                data.categoryIndex ||
-                0
+                data.categoryIndex ?? 0
             );
 
         selectedCharacter =
             null;
+
 
         renderRankCategory(
             data
@@ -2813,12 +1237,12 @@ socket.on(
 
         currentCategory =
             Number(
-                data.categoryIndex ||
-                0
+                data.categoryIndex ?? 0
             );
 
         selectedCharacter =
             null;
+
 
         renderRankCategory(
             data
@@ -2841,35 +1265,50 @@ function renderRankCategory(
     );
 
 
-    document
-        .getElementById(
+    const categoryTitle =
+        document.getElementById(
             "categoryTitle"
-        )
-        .textContent =
+        );
+
+
+    const categoryNumber =
+        document.getElementById(
+            "categoryNumber"
+        );
+
+
+    if (categoryTitle) {
+
+        categoryTitle.textContent =
             data.categoryName ||
+            RANK_CATEGORIES[
+                currentCategory
+            ] ||
             "Character Rank";
 
+    }
 
-    document
-        .getElementById(
-            "categoryNumber"
-        )
-        .textContent =
+
+    if (categoryNumber) {
+
+        categoryNumber.textContent =
             `Category ${
                 Number(
-                    data.categoryNumber ||
-                    1
+                    data.categoryNumber ??
+                    currentCategory + 1
                 )
             } / ${
                 Number(
-                    data.totalCategories ||
+                    data.totalCategories ??
                     16
                 )
             }`;
 
+    }
+
 
     rankStatus.textContent =
-        "Choose a character.";
+        "Choose one character.";
 
 
     renderRankCharacters();
@@ -2898,6 +1337,7 @@ function renderRankCharacters() {
                     "div"
                 );
 
+
             card.className =
                 "character-card";
 
@@ -2918,20 +1358,18 @@ function renderRankCharacters() {
             }
 
 
-            const rank =
-                index + 1;
-
-
             const rankNumber =
                 document.createElement(
                     "div"
                 );
 
+
             rankNumber.className =
                 "rank-number";
 
+
             rankNumber.textContent =
-                `#${rank}`;
+                `#${index + 1}`;
 
 
             card.appendChild(
@@ -2955,8 +1393,10 @@ function renderRankCharacters() {
                     "div"
                 );
 
+
             name.className =
                 "character-name";
+
 
             name.textContent =
                 character;
@@ -2976,11 +1416,14 @@ function renderRankCharacters() {
                         "div"
                     );
 
+
                 badge.className =
                     "best-badge";
 
+
                 badge.textContent =
                     "🥇 CHARACTER";
+
 
                 card.appendChild(
                     badge
@@ -2999,11 +1442,14 @@ function renderRankCharacters() {
                         "div"
                     );
 
+
                 badge.className =
                     "selection-badge";
 
+
                 badge.textContent =
                     "✅ SELECTED";
+
 
                 card.appendChild(
                     badge
@@ -3023,7 +1469,7 @@ function renderRankCharacters() {
 
 
 /* =========================================================
-   RANK SELECTION
+   RANK CHARACTER CLICK
 ========================================================= */
 
 characterGrid.addEventListener(
@@ -3050,15 +1496,14 @@ characterGrid.addEventListener(
         }
 
 
-        if (
-            selectedCharacter
-        ) {
+        if (selectedCharacter) {
 
             showMessage(
                 "You already selected a character for this category."
             );
 
             return;
+
         }
 
 
@@ -3072,7 +1517,7 @@ characterGrid.addEventListener(
 
 
         rankStatus.textContent =
-            `Selected: ${character} — waiting for other players...`;
+            `Selected: ${character} | Waiting for other players...`;
 
 
         socket.emit(
@@ -3080,9 +1525,11 @@ characterGrid.addEventListener(
             {
 
                 categoryIndex:
+
                     currentCategory,
 
                 character:
+
                     character
 
             }
@@ -3093,49 +1540,36 @@ characterGrid.addEventListener(
 
 
 /* =========================================================
-   RANK SELECTION MADE
+   PRIVATE RANK SELECTION ACCEPTED
+   IMPORTANT:
+   SERVER SENDS THIS ONLY TO THE PLAYER
 ========================================================= */
 
 socket.on(
-    "rankSelectionMade",
+    "rankSelectionAccepted",
     data => {
 
         if (
-            data.playerId ===
-            myPlayerId
+            Number(
+                data.categoryIndex
+            ) !==
+            currentCategory
         ) {
+
             return;
-        }
-
-
-        showMessage(
-            `${data.playerName} selected ${data.character}`
-        );
-
-    }
-);
-
-
-/* =========================================================
-   MY RANK STATUS
-========================================================= */
-
-socket.on(
-    "myRankStatus",
-    data => {
-
-        if (
-            data.selected
-        ) {
-
-            selectedCharacter =
-                data.character;
-
-
-            rankStatus.textContent =
-                `✅ Selected: ${data.character} — waiting...`;
 
         }
+
+
+        selectedCharacter =
+            data.character;
+
+
+        rankStatus.textContent =
+            `✅ Selected: ${data.character} | Waiting for other players...`;
+
+
+        renderRankCharacters();
 
     }
 );
@@ -3143,6 +1577,8 @@ socket.on(
 
 /* =========================================================
    RANK WAITING
+   ONLY SHOW COUNT
+   NEVER SHOW OTHER PLAYER'S CHARACTER
 ========================================================= */
 
 socket.on(
@@ -3151,21 +1587,17 @@ socket.on(
 
         const selected =
             Number(
-                data.selectedCount ||
-                0
+                data.selectedCount || 0
             );
 
 
         const total =
             Number(
-                data.totalPlayers ||
-                0
+                data.totalPlayers || 0
             );
 
 
-        if (
-            selectedCharacter
-        ) {
+        if (selectedCharacter) {
 
             rankStatus.textContent =
                 `✅ You selected ${selectedCharacter} | ${selected}/${total} players selected`;
@@ -3182,7 +1614,7 @@ socket.on(
 
 
 /* =========================================================
-   RANK COMPLETE
+   RANK CATEGORY COMPLETE
 ========================================================= */
 
 socket.on(
@@ -3190,7 +1622,36 @@ socket.on(
     () => {
 
         rankStatus.textContent =
-            "✅ Everyone selected! Next category loading...";
+            "✅ Everyone selected! Loading next category...";
+
+    }
+);
+
+
+/* =========================================================
+   MY RANK STATUS
+========================================================= */
+
+socket.on(
+    "myRankStatus",
+    data => {
+
+        if (
+            data &&
+            data.selected
+        ) {
+
+            selectedCharacter =
+                data.character;
+
+
+            rankStatus.textContent =
+                `✅ Selected: ${data.character} | Waiting...`;
+
+
+            renderRankCharacters();
+
+        }
 
     }
 );
@@ -3202,26 +1663,61 @@ socket.on(
 
 socket.on(
     "rankFinished",
-    () => {
+    data => {
 
-        document
-            .getElementById(
+        selectedCharacter =
+            null;
+
+
+        const categoryTitle =
+            document.getElementById(
                 "categoryTitle"
-            )
-            .textContent =
+            );
+
+
+        const categoryNumber =
+            document.getElementById(
+                "categoryNumber"
+            );
+
+
+        if (categoryTitle) {
+
+            categoryTitle.textContent =
                 "🏆 RANKING COMPLETE";
 
+        }
 
-        document
-            .getElementById(
-                "categoryNumber"
-            )
-            .textContent =
+
+        if (categoryNumber) {
+
+            categoryNumber.textContent =
                 "16 / 16 Categories";
+
+        }
 
 
         rankStatus.textContent =
-            "🎉 Game Finished!";
+            "🎉 All categories completed!";
+
+
+        /*
+         * The server may reveal all selections
+         * only AFTER the game is complete.
+         */
+
+        if (
+            data &&
+            Array.isArray(
+                data.results
+            )
+        ) {
+
+            renderRankFinalSelections(
+                data.results
+            );
+
+        }
 
 
         showScreen(
@@ -3233,20 +1729,178 @@ socket.on(
 
 
 /* =========================================================
+   RANK FINAL SELECTIONS
+========================================================= */
+
+function renderRankFinalSelections(
+    results
+) {
+
+    if (!characterGrid) {
+        return;
+    }
+
+
+    characterGrid.innerHTML =
+        "";
+
+
+    if (
+        !Array.isArray(
+            results
+        ) ||
+        results.length === 0
+    ) {
+
+        const box =
+            document.createElement(
+                "div"
+            );
+
+        box.className =
+            "panel";
+
+        box.style.gridColumn =
+            "1 / -1";
+
+        box.innerHTML = `
+            <h2>🎉 Rank Game Complete</h2>
+            <p style="text-align:center;color:#aaa;">
+                All 16 categories have been completed.
+            </p>
+        `;
+
+        characterGrid.appendChild(
+            box
+        );
+
+        return;
+
+    }
+
+
+    results.forEach(
+        category => {
+
+            const box =
+                document.createElement(
+                    "div"
+                );
+
+
+            box.className =
+                "panel";
+
+            box.style.gridColumn =
+                "1 / -1";
+
+            const title =
+                document.createElement(
+                    "h2"
+                );
+
+
+            title.textContent =
+                category.categoryName ||
+                "Category";
+
+
+            box.appendChild(
+                title
+            );
+
+
+            const selections =
+                category.selections ||
+                category.players ||
+                [];
+
+
+            selections.forEach(
+                selection => {
+
+                    const row =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    row.style.padding =
+                        "8px";
+
+                    row.style.borderBottom =
+                        "1px solid #333";
+
+
+                    row.textContent =
+                        `${selection.playerName || "Player"} → ${selection.character || "Unknown"}`;
+
+
+                    box.appendChild(
+                        row
+                    );
+
+                }
+            );
+
+
+            characterGrid.appendChild(
+                box
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
    AUCTION STARTED
 ========================================================= */
 
 socket.on(
     "auctionStarted",
-    () => {
+    data => {
 
         showScreen(
             auctionScreen
         );
 
 
+        roomSettings =
+            {
+
+                teamSize:
+                    Number(
+                        data?.teamSize ??
+                        TEAM_SIZE
+                    ),
+
+                startingBalance:
+                    Number(
+                        data?.startingBalance ??
+                        STARTING_BALANCE
+                    ),
+
+                bidAmount:
+                    BID_INCREMENT,
+
+                bidTime:
+                    AUCTION_TIME
+
+            };
+
+
         bidButton.textContent =
             "💰 BID ₹50";
+
+
+        giveUpButton.disabled =
+            false;
+
+
+        auctionTimer.textContent =
+            AUCTION_TIME;
 
 
         showMessage(
@@ -3274,6 +1928,10 @@ socket.on(
             data.character;
 
 
+        currentAuction =
+            data;
+
+
         auctionCharacter.textContent =
             character;
 
@@ -3291,10 +1949,6 @@ socket.on(
                     SERVER_CHARACTERS.length
                 }`;
 
-
-        /*
-         * RESET AUCTION DISPLAY
-         */
 
         auctionBid.textContent =
             "₹0";
@@ -3317,9 +1971,13 @@ socket.on(
         );
 
 
-        /*
-         * LOAD CHARACTER PHOTO
-         */
+        bidButton.disabled =
+            false;
+
+
+        giveUpButton.disabled =
+            false;
+
 
         updateAuctionCharacter(
             character
@@ -3330,7 +1988,7 @@ socket.on(
 
 
 /* =========================================================
-   AUCTION CHARACTER FALLBACK
+   AUCTION CHARACTER
 ========================================================= */
 
 socket.on(
@@ -3370,19 +2028,20 @@ function updateAuctionCharacter(
         );
 
 
-    /*
-     * Remove old image/fallback
-     */
-
-    const old =
-        auctionImage.parentNode
-            .querySelector(
-                ".auction-image-fallback"
-            );
+    const parent =
+        auctionImage.parentNode;
 
 
-    if (old) {
-        old.remove();
+    const oldFallback =
+        parent.querySelector(
+            ".auction-image-fallback"
+        );
+
+
+    if (oldFallback) {
+
+        oldFallback.remove();
+
     }
 
 
@@ -3412,14 +2071,16 @@ function updateAuctionCharacter(
                 "div"
             );
 
+
         fallback.className =
             "auction-image-fallback";
+
 
         fallback.textContent =
             "Image unavailable";
 
 
-        auctionImage.parentNode.insertBefore(
+        parent.insertBefore(
             fallback,
             auctionCharacter
         );
@@ -3430,7 +2091,7 @@ function updateAuctionCharacter(
 
 
 /* =========================================================
-   AUCTION UPDATE
+   AUCTION UPDATED
 ========================================================= */
 
 socket.on(
@@ -3452,29 +2113,19 @@ socket.on(
         }
 
 
-        const current =
+        const currentBid =
             Number(
-                data.currentBid ||
-                0
+                data.currentBid || 0
             );
 
 
-        /*
-         * ALWAYS USE ₹50
-         *
-         * This prevents:
-         * ₹50 → ₹100 → unexpected
-         * increments caused by frontend
-         * calculations.
-         */
-
-        const next =
-            current +
+        const nextBid =
+            currentBid +
             BID_INCREMENT;
 
 
         auctionBid.textContent =
-            `₹${current.toLocaleString(
+            `₹${currentBid.toLocaleString(
                 "en-IN"
             )}`;
 
@@ -3485,15 +2136,14 @@ socket.on(
 
 
         auctionNextBid.textContent =
-            `Next Bid: ₹${next.toLocaleString(
+            `Next Bid: ₹${nextBid.toLocaleString(
                 "en-IN"
             )}`;
 
 
         const seconds =
             Number(
-                data.remainingTime ||
-                0
+                data.remainingTime ?? 0
             );
 
 
@@ -3519,8 +2169,7 @@ socket.on(
 
         const seconds =
             Number(
-                data.seconds ||
-                0
+                data.seconds ?? 0
             );
 
 
@@ -3565,7 +2214,7 @@ function updateTimerStyle(
 
 
 /* =========================================================
-   AUCTION MONEY
+   AUCTION MONEY UPDATED
 ========================================================= */
 
 socket.on(
@@ -3574,32 +2223,24 @@ socket.on(
 
         const balance =
             Number(
-                data.balance ||
-                0
+                data.balance ?? 0
             );
 
 
         const spent =
             Number(
-                data.spent ||
-                0
+                data.spent ?? 0
             );
 
 
-        const current =
+        const currentBid =
             Number(
-                data.currentBid ||
-                0
+                data.currentBid ?? 0
             );
 
-
-        /*
-         * NEVER TRUST A RANDOM
-         * FRONTEND INCREMENT.
-         */
 
         const nextBid =
-            current +
+            currentBid +
             BID_INCREMENT;
 
 
@@ -3628,14 +2269,16 @@ socket.on(
 
 
         giveUpButton.disabled =
-            !!data.gaveUp;
+            Boolean(
+                data.gaveUp
+            );
 
     }
 );
 
 
 /* =========================================================
-   BID
+   BID BUTTON
 ========================================================= */
 
 bidButton.addEventListener(
@@ -3645,7 +2288,9 @@ bidButton.addEventListener(
         if (
             bidButton.disabled
         ) {
+
             return;
+
         }
 
 
@@ -3658,7 +2303,7 @@ bidButton.addEventListener(
 
 
 /* =========================================================
-   GIVE UP
+   GIVE UP BUTTON
 ========================================================= */
 
 giveUpButton.addEventListener(
@@ -3668,7 +2313,9 @@ giveUpButton.addEventListener(
         if (
             giveUpButton.disabled
         ) {
+
             return;
+
         }
 
 
@@ -3690,8 +2337,7 @@ socket.on(
 
         const amount =
             Number(
-                data.bid ||
-                0
+                data.bid || 0
             );
 
 
@@ -3738,8 +2384,7 @@ socket.on(
 
         const price =
             Number(
-                data.price ||
-                0
+                data.price || 0
             );
 
 
@@ -3755,8 +2400,16 @@ socket.on(
             myPlayerId
         ) {
 
+            currentTeam =
+                Array.isArray(
+                    data.team
+                )
+                    ? data.team
+                    : currentTeam;
+
+
             updateTeam(
-                data.team
+                currentTeam
             );
 
         }
@@ -3774,7 +2427,7 @@ socket.on(
     data => {
 
         showMessage(
-            `${data.character} was unsold`
+            `❌ ${data.character} was unsold`
         );
 
     }
@@ -3795,7 +2448,9 @@ socket.on(
 
 
         if (
-            data.teams
+            Array.isArray(
+                data.teams
+            )
         ) {
 
             const myResult =
@@ -3806,12 +2461,18 @@ socket.on(
                 );
 
 
-            if (
-                myResult
-            ) {
+            if (myResult) {
+
+                currentTeam =
+                    Array.isArray(
+                        myResult.team
+                    )
+                        ? myResult.team
+                        : [];
+
 
                 updateTeam(
-                    myResult.team
+                    currentTeam
                 );
 
             }
@@ -3819,23 +2480,34 @@ socket.on(
         }
 
 
-        setTimeout(
-            () => {
+        /*
+         * Keep the auction screen visible
+         * while the server generates AI results.
+         */
 
-                showScreen(
-                    roomScreen
-                );
-
-            },
-            1800
+        showScreen(
+            auctionScreen
         );
+
+
+        if (
+            Array.isArray(
+                data.teams
+            )
+        ) {
+
+            renderAuctionFinalTeams(
+                data.teams
+            );
+
+        }
 
     }
 );
 
 
 /* =========================================================
-   UPDATE TEAM
+   UPDATE MY TEAM
 ========================================================= */
 
 function updateTeam(
@@ -3843,10 +2515,18 @@ function updateTeam(
 ) {
 
     if (
-        !Array.isArray(team)
+        !Array.isArray(
+            team
+        )
     ) {
+
         return;
+
     }
+
+
+    currentTeam =
+        team;
 
 
     myTeam.innerHTML =
@@ -3858,6 +2538,7 @@ function updateTeam(
     ) {
 
         myTeam.innerHTML = `
+
             <div
                 style="
                     width:100%;
@@ -3867,9 +2548,11 @@ function updateTeam(
             >
                 No characters purchased yet.
             </div>
+
         `;
 
         return;
+
     }
 
 
@@ -3880,6 +2563,7 @@ function updateTeam(
                 document.createElement(
                     "div"
                 );
+
 
             item.className =
                 "team-character";
@@ -3901,8 +2585,10 @@ function updateTeam(
                     "div"
                 );
 
+
             name.className =
                 "team-character-name";
+
 
             name.textContent =
                 character;
@@ -3918,6 +2604,187 @@ function updateTeam(
             );
 
         }
+    );
+
+}
+
+
+/* =========================================================
+   FINAL AUCTION TEAMS
+========================================================= */
+
+function renderAuctionFinalTeams(
+    teams
+) {
+
+    if (
+        !Array.isArray(
+            teams
+        )
+    ) {
+
+        return;
+
+    }
+
+
+    const existing =
+        document.getElementById(
+            "auctionFinalTeams"
+        );
+
+
+    if (existing) {
+
+        existing.remove();
+
+    }
+
+
+    const container =
+        document.createElement(
+            "div"
+        );
+
+
+    container.id =
+        "auctionFinalTeams";
+
+
+    container.className =
+        "panel";
+
+
+    container.style.marginTop =
+        "20px";
+
+
+    container.innerHTML =
+        `<h2>🏆 FINAL TEAMS</h2>`;
+
+
+    teams.forEach(
+        teamData => {
+
+            const teamBox =
+                document.createElement(
+                    "div"
+                );
+
+
+            teamBox.style.marginTop =
+                "20px";
+
+            teamBox.style.padding =
+                "15px";
+
+            teamBox.style.border =
+                "1px solid #333";
+
+            teamBox.style.borderRadius =
+                "12px";
+
+
+            const name =
+                document.createElement(
+                    "h3"
+                );
+
+
+            name.textContent =
+                teamData.playerName ||
+                "Player";
+
+
+            name.style.color =
+                "#ff9800";
+
+
+            teamBox.appendChild(
+                name
+            );
+
+
+            const roster =
+                Array.isArray(
+                    teamData.team
+                )
+                    ? teamData.team
+                    : [];
+
+
+            const list =
+                document.createElement(
+                    "div"
+                );
+
+
+            list.className =
+                "team-list";
+
+
+            roster.forEach(
+                character => {
+
+                    const item =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    item.className =
+                        "team-character";
+
+
+                    item.appendChild(
+                        createImage(
+                            character
+                        )
+                    );
+
+
+                    const label =
+                        document.createElement(
+                            "div"
+                        );
+
+
+                    label.className =
+                        "team-character-name";
+
+
+                    label.textContent =
+                        character;
+
+
+                    item.appendChild(
+                        label
+                    );
+
+
+                    list.appendChild(
+                        item
+                    );
+
+                }
+            );
+
+
+            teamBox.appendChild(
+                list
+            );
+
+
+            container.appendChild(
+                teamBox
+            );
+
+        }
+    );
+
+
+    auctionScreen.appendChild(
+        container
     );
 
 }
@@ -3958,7 +2825,880 @@ socket.on(
 
 
 /* =========================================================
-   ERROR
+   FINAL AI RESULTS LOADING
+========================================================= */
+
+socket.on(
+    "finalResultsLoading",
+    data => {
+
+        renderAILoading(
+            data?.message ||
+            "AI is analyzing all teams..."
+        );
+
+    }
+);
+
+
+/* =========================================================
+   FINAL AI RESULTS
+========================================================= */
+
+socket.on(
+    "finalAIResults",
+    data => {
+
+        if (
+            data &&
+            data.results
+        ) {
+
+            renderFinalAIResults(
+                data.results,
+                data.gameMode
+            );
+
+        }
+
+    }
+);
+
+
+/* =========================================================
+   CREATE / GET AI RESULTS CONTAINER
+========================================================= */
+
+function getAIResultsContainer() {
+
+    let container =
+        document.getElementById(
+            "aiFinalResults"
+        );
+
+
+    if (container) {
+
+        return container;
+
+    }
+
+
+    container =
+        document.createElement(
+            "div"
+        );
+
+
+    container.id =
+        "aiFinalResults";
+
+
+    container.className =
+        "panel";
+
+
+    container.style.marginTop =
+        "20px";
+
+
+    /*
+     * Add it to whichever game screen
+     * is currently active.
+     */
+
+    if (
+        currentGameMode ===
+        "auction"
+    ) {
+
+        auctionScreen.appendChild(
+            container
+        );
+
+    } else {
+
+        rankScreen.appendChild(
+            container
+        );
+
+    }
+
+
+    return container;
+
+}
+
+
+/* =========================================================
+   AI LOADING SCREEN
+========================================================= */
+
+function renderAILoading(
+    text
+) {
+
+    const container =
+        getAIResultsContainer();
+
+
+    container.innerHTML = `
+
+        <div style="
+            text-align:center;
+            padding:30px 15px;
+        ">
+
+            <div style="
+                font-size:45px;
+                margin-bottom:15px;
+            ">
+                🤖
+            </div>
+
+            <h2 style="
+                color:#ff9800;
+                margin-bottom:10px;
+            ">
+                AI FINAL ANALYSIS
+            </h2>
+
+            <p style="
+                color:#aaa;
+                font-size:16px;
+            ">
+                ${escapeHtml(text)}
+            </p>
+
+            <div style="
+                margin-top:20px;
+                font-size:30px;
+            ">
+                ⏳
+            </div>
+
+        </div>
+
+    `;
+
+
+    container.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+/* =========================================================
+   FINAL AI RESULTS
+========================================================= */
+
+function renderFinalAIResults(
+    results,
+    gameMode
+) {
+
+    const container =
+        getAIResultsContainer();
+
+
+    if (!results) {
+
+        container.innerHTML = `
+
+            <h2 style="color:#ff9800;">
+                🤖 AI RESULTS
+            </h2>
+
+            <p style="color:#aaa;">
+                AI result unavailable.
+            </p>
+
+        `;
+
+        return;
+
+    }
+
+
+    const winner =
+        results.winner ||
+        {};
+
+
+    const bestCharacter =
+        results.bestCharacter ||
+        {};
+
+
+    const bestTeam =
+        results.bestTeam ||
+        {};
+
+
+    const rankings =
+        Array.isArray(
+            results.rankings
+        )
+            ? results.rankings
+            : [];
+
+
+    const strengths =
+        Array.isArray(
+            winner.strengths
+        )
+            ? winner.strengths
+            : [];
+
+
+    const weaknesses =
+        Array.isArray(
+            winner.weaknesses
+        )
+            ? winner.weaknesses
+            : [];
+
+
+    container.innerHTML =
+        "";
+
+
+    const heading =
+        document.createElement(
+            "h2"
+        );
+
+
+    heading.textContent =
+        "🤖 AI FINAL ANALYSIS";
+
+
+    heading.style.color =
+        "#ff9800";
+
+
+    heading.style.textAlign =
+        "center";
+
+
+    heading.style.marginBottom =
+        "20px";
+
+
+    container.appendChild(
+        heading
+    );
+
+
+    /* =====================================================
+       WINNER
+    ===================================================== */
+
+    const winnerBox =
+        document.createElement(
+            "div"
+        );
+
+
+    winnerBox.style.padding =
+        "20px";
+
+    winnerBox.style.border =
+        "2px solid #ff9800";
+
+    winnerBox.style.borderRadius =
+        "15px";
+
+    winnerBox.style.marginBottom =
+        "20px";
+
+    winnerBox.style.textAlign =
+        "center";
+
+
+    winnerBox.innerHTML = `
+
+        <div style="
+            font-size:45px;
+        ">
+            🏆
+        </div>
+
+        <h2 style="
+            color:#ff9800;
+            margin:10px 0;
+        ">
+            ${escapeHtml(
+                winner.playerName ||
+                "Unknown"
+            )}
+        </h2>
+
+        <div style="
+            font-size:22px;
+            font-weight:bold;
+        ">
+            AI Score:
+            ${Number(
+                winner.score || 0
+            )}
+        </div>
+
+        <p style="
+            color:#ccc;
+            margin-top:12px;
+            line-height:1.6;
+        ">
+            ${escapeHtml(
+                winner.reason ||
+                "Best overall team."
+            )}
+        </p>
+
+    `;
+
+
+    container.appendChild(
+        winnerBox
+    );
+
+
+    /* =====================================================
+       BEST CHARACTER
+    ===================================================== */
+
+    const bestCharacterBox =
+        document.createElement(
+            "div"
+        );
+
+
+    bestCharacterBox.style.padding =
+        "15px";
+
+    bestCharacterBox.style.background =
+        "#171717";
+
+    bestCharacterBox.style.border =
+        "1px solid #333";
+
+    bestCharacterBox.style.borderRadius =
+        "12px";
+
+    bestCharacterBox.style.marginBottom =
+        "15px";
+
+
+    bestCharacterBox.innerHTML = `
+
+        <h3 style="
+            color:#ff9800;
+            margin-bottom:8px;
+        ">
+            ⭐ BEST CHARACTER
+        </h3>
+
+        <p>
+            <strong>
+                ${escapeHtml(
+                    bestCharacter.character ||
+                    "Unknown"
+                )}
+            </strong>
+        </p>
+
+        <p style="
+            color:#aaa;
+            margin-top:6px;
+        ">
+            Owner:
+            ${escapeHtml(
+                bestCharacter.owner ||
+                "Unknown"
+            )}
+        </p>
+
+        <p style="
+            color:#ccc;
+            margin-top:8px;
+            line-height:1.5;
+        ">
+            ${escapeHtml(
+                bestCharacter.reason ||
+                ""
+            )}
+        </p>
+
+    `;
+
+
+    container.appendChild(
+        bestCharacterBox
+    );
+
+
+    /* =====================================================
+       BEST TEAM
+    ===================================================== */
+
+    const bestTeamBox =
+        document.createElement(
+            "div"
+        );
+
+
+    bestTeamBox.style.padding =
+        "15px";
+
+    bestTeamBox.style.background =
+        "#171717";
+
+    bestTeamBox.style.border =
+        "1px solid #333";
+
+    bestTeamBox.style.borderRadius =
+        "12px";
+
+    bestTeamBox.style.marginBottom =
+        "20px";
+
+
+    bestTeamBox.innerHTML = `
+
+        <h3 style="
+            color:#ff9800;
+            margin-bottom:8px;
+        ">
+            👑 BEST TEAM
+        </h3>
+
+        <p>
+            <strong>
+                ${escapeHtml(
+                    bestTeam.playerName ||
+                    winner.playerName ||
+                    "Unknown"
+                )}
+            </strong>
+        </p>
+
+        <p style="
+            color:#ccc;
+            margin-top:8px;
+            line-height:1.5;
+        ">
+            ${escapeHtml(
+                bestTeam.reason ||
+                ""
+            )}
+        </p>
+
+    `;
+
+
+    container.appendChild(
+        bestTeamBox
+    );
+
+
+    /* =====================================================
+       RANKINGS
+    ===================================================== */
+
+    if (
+        rankings.length > 0
+    ) {
+
+        const rankingHeading =
+            document.createElement(
+                "h3"
+            );
+
+
+        rankingHeading.textContent =
+            "📊 TEAM RANKINGS";
+
+
+        rankingHeading.style.color =
+            "#ff9800";
+
+
+        rankingHeading.style.marginBottom =
+            "10px";
+
+
+        container.appendChild(
+            rankingHeading
+        );
+
+
+        rankings.forEach(
+            rank => {
+
+                const row =
+                    document.createElement(
+                        "div"
+                    );
+
+
+                row.style.padding =
+                    "15px";
+
+                row.style.marginBottom =
+                    "10px";
+
+                row.style.background =
+                    "#171717";
+
+                row.style.border =
+                    "1px solid #333";
+
+                row.style.borderRadius =
+                    "10px";
+
+
+                const strengthsText =
+                    Array.isArray(
+                        rank.strengths
+                    )
+                        ? rank.strengths.join(
+                            ", "
+                        )
+                        : "";
+
+
+                const weaknessesText =
+                    Array.isArray(
+                        rank.weaknesses
+                    )
+                        ? rank.weaknesses.join(
+                            ", "
+                        )
+                        : "";
+
+
+                row.innerHTML = `
+
+                    <div style="
+                        font-size:18px;
+                        font-weight:bold;
+                        color:#ff9800;
+                    ">
+                        #${Number(
+                            rank.position || 0
+                        )}
+                        —
+                        ${escapeHtml(
+                            rank.playerName ||
+                            "Player"
+                        )}
+                    </div>
+
+                    <div style="
+                        margin-top:6px;
+                    ">
+                        AI Score:
+                        <strong>
+                            ${Number(
+                                rank.score || 0
+                            )}
+                        </strong>
+                    </div>
+
+                    ${
+                        strengthsText
+                            ? `
+                                <div style="
+                                    margin-top:8px;
+                                    color:#9ccc9c;
+                                ">
+                                    💪 Strengths:
+                                    ${escapeHtml(
+                                        strengthsText
+                                    )}
+                                </div>
+                            `
+                            : ""
+                    }
+
+                    ${
+                        weaknessesText
+                            ? `
+                                <div style="
+                                    margin-top:6px;
+                                    color:#ff9999;
+                                ">
+                                    ⚠️ Weaknesses:
+                                    ${escapeHtml(
+                                        weaknessesText
+                                    )}
+                                </div>
+                            `
+                            : ""
+                    }
+
+                    <p style="
+                        color:#ccc;
+                        margin-top:8px;
+                        line-height:1.5;
+                    ">
+                        ${escapeHtml(
+                            rank.reason ||
+                            ""
+                        )}
+                    </p>
+
+                `;
+
+
+                container.appendChild(
+                    row
+                );
+
+            }
+        );
+
+    }
+
+
+    /* =====================================================
+       OVERALL ANALYSIS
+    ===================================================== */
+
+    if (
+        results.analysis
+    ) {
+
+        const analysisBox =
+            document.createElement(
+                "div"
+            );
+
+
+        analysisBox.style.padding =
+            "15px";
+
+        analysisBox.style.marginTop =
+            "15px";
+
+        analysisBox.style.background =
+            "#171717";
+
+        analysisBox.style.border =
+            "1px solid #333";
+
+        analysisBox.style.borderRadius =
+            "12px";
+
+
+        analysisBox.innerHTML = `
+
+            <h3 style="
+                color:#ff9800;
+                margin-bottom:10px;
+            ">
+                🧠 AI TEAM ANALYSIS
+            </h3>
+
+            <p style="
+                color:#ccc;
+                line-height:1.7;
+                white-space:pre-line;
+            ">
+                ${escapeHtml(
+                    results.analysis
+                )}
+            </p>
+
+        `;
+
+
+        container.appendChild(
+            analysisBox
+        );
+
+    }
+
+
+    /* =====================================================
+       BATTLE PREDICTION
+    ===================================================== */
+
+    if (
+        results.battlePrediction
+    ) {
+
+        const predictionBox =
+            document.createElement(
+                "div"
+            );
+
+
+        predictionBox.style.padding =
+            "15px";
+
+        predictionBox.style.marginTop =
+            "15px";
+
+        predictionBox.style.background =
+            "#171717";
+
+        predictionBox.style.border =
+            "1px solid #333";
+
+        predictionBox.style.borderRadius =
+            "12px";
+
+
+        predictionBox.innerHTML = `
+
+            <h3 style="
+                color:#ff9800;
+                margin-bottom:10px;
+            ">
+                ⚔️ BATTLE PREDICTION
+            </h3>
+
+            <p style="
+                color:#ccc;
+                line-height:1.7;
+                white-space:pre-line;
+            ">
+                ${escapeHtml(
+                    results.battlePrediction
+                )}
+            </p>
+
+        `;
+
+
+        container.appendChild(
+            predictionBox
+        );
+
+    }
+
+
+    /* =====================================================
+       AUCTION RECOMMENDATION
+    ===================================================== */
+
+    if (
+        results.auctionRecommendation
+    ) {
+
+        const recommendationBox =
+            document.createElement(
+                "div"
+            );
+
+
+        recommendationBox.style.padding =
+            "15px";
+
+        recommendationBox.style.marginTop =
+            "15px";
+
+        recommendationBox.style.background =
+            "#171717";
+
+        recommendationBox.style.border =
+            "1px solid #333";
+
+        recommendationBox.style.borderRadius =
+            "12px";
+
+
+        recommendationBox.innerHTML = `
+
+            <h3 style="
+                color:#ff9800;
+                margin-bottom:10px;
+            ">
+                💰 AI AUCTION RECOMMENDATION
+            </h3>
+
+            <p style="
+                color:#ccc;
+                line-height:1.7;
+                white-space:pre-line;
+            ">
+                ${escapeHtml(
+                    typeof results.auctionRecommendation ===
+                    "string"
+
+                        ? results.auctionRecommendation
+
+                        : JSON.stringify(
+                            results.auctionRecommendation,
+                            null,
+                            2
+                        )
+                )}
+            </p>
+
+        `;
+
+
+        container.appendChild(
+            recommendationBox
+        );
+
+    }
+
+
+    /* =====================================================
+       FINISHED
+    ===================================================== */
+
+    const finished =
+        document.createElement(
+            "div"
+        );
+
+
+    finished.style.textAlign =
+        "center";
+
+    finished.style.marginTop =
+        "25px";
+
+    finished.style.padding =
+        "15px";
+
+
+    finished.innerHTML = `
+
+        <div style="
+            font-size:28px;
+        ">
+            🎉
+        </div>
+
+        <strong>
+            AI analysis complete
+        </strong>
+
+    `;
+
+
+    container.appendChild(
+        finished
+    );
+
+
+    container.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+/* =========================================================
+   SERVER ERROR
 ========================================================= */
 
 socket.on(
@@ -3974,7 +3714,7 @@ socket.on(
 
 
 /* =========================================================
-   CONNECTION
+   SOCKET CONNECTED
 ========================================================= */
 
 socket.on(
@@ -3995,7 +3735,7 @@ socket.on(
 
 
 /* =========================================================
-   DISCONNECT
+   SOCKET DISCONNECTED
 ========================================================= */
 
 socket.on(
@@ -4033,15 +3773,33 @@ socket.on(
 
 
 /* =========================================================
-   INITIAL
+   INITIAL STATE
 ========================================================= */
 
 showScreen(
     homeScreen
 );
 
-</script>
 
-</body>
+/* =========================================================
+   DEBUG
+========================================================= */
 
-</html>
+console.log(
+    "Naruto Character Battle loaded."
+);
+
+console.log(
+    "Characters:",
+    SERVER_CHARACTERS.length
+);
+
+console.log(
+    "Rank categories:",
+    RANK_CATEGORIES.length
+);
+
+console.log(
+    "Auction:",
+    `₹${BID_INCREMENT} / ${AUCTION_TIME}s / Team ${TEAM_SIZE}`
+);
